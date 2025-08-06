@@ -1,11 +1,14 @@
+'use client';
 import Image from "next/image"
 import Link from "next/link"
-import { Star, MapPin, Phone, Mail, Globe, Download, Share2, Heart, ChevronRight, CheckCircle } from "lucide-react"
+import {
+  Star, MapPin, Phone, Mail, Globe, Download, Heart, ChevronRight, CheckCircle, TwitterIcon, InstagramIcon, LinkedinIcon} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Separator } from "@/components/ui/separator"
+// import { Separator } from "@/components/ui/separator"
+import StarRating from "@/components/Star-Rating"
 
 export default function CollegePage({ params }: { params: { id: string } }) {
   // Mock data for the college
@@ -20,7 +23,7 @@ export default function CollegePage({ params }: { params: { id: string } }) {
     affiliation: "Bangalore University, Bengaluru",
     adress: "PLOT 325-B,PART A,BOMMASANDRA-JIGANI LINK ROAD,JIGANI INDUSTRIAL AREA,JIGANI POST,ANEKAL TALUK,BENGALURU 560105",
     rating: 4.8,
-    reviews: 2847,
+
     // ranking: {
     //   nirf: 2,
     //   india: 1,
@@ -122,6 +125,11 @@ export default function CollegePage({ params }: { params: { id: string } }) {
     },
   ]
 
+  const handleRatingChange = (value: number) => {
+    console.log('Rated:', value);
+    // You can send this to your backend via fetch/axios here
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Breadcrumb */}
@@ -155,7 +163,7 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                   height={400}
                   className="w-full h-80 object-cover rounded-lg"
                 />
-                <div className="absolute bottom-4 right-4 flex gap-2">
+                {/* <div className="absolute bottom-4 right-4 flex gap-2">
                   <Button size="sm" variant="secondary" className="bg-white/90">
                     <Share2 className="w-4 h-4 mr-1" />
                     Share
@@ -164,7 +172,7 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                     <Heart className="w-4 h-4 mr-1" />
                     Save
                   </Button>
-                </div>
+                </div> */}
               </div>
             </div>
 
@@ -191,14 +199,15 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                 </div>
 
                 {/* Rating */}
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center bg-green-100 px-3 py-2 rounded-lg">
-                    <Star className="w-5 h-5 fill-green-600 text-green-600 mr-2" />
-                    <span className="font-bold text-green-700 text-lg">{college.rating}</span>
-                  </div>
-                  <div>
-                    <div className="font-semibold">{college.reviews} Reviews</div>
-                    <div className="text-sm text-gray-600">Based on student feedback</div>
+                <div className="flex flex-col items-start gap-4">
+                  {/* ✅ Existing Average Rating Display */}
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center bg-green-100 px-3 py-2 rounded-lg">
+                      <Star className="w-5 h-5 fill-green-600 text-green-600 mr-2" />
+                      <span className="font-bold text-green-700 text-lg">{college.rating}</span>
+                    </div>
+                    <span>Rate Us</span>
+                    <StarRating initialRating={0} onRate={handleRatingChange} />
                   </div>
                 </div>
 
@@ -218,8 +227,6 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                   </div>
                 </div> */}
 
-                
-
                 {/* Contact Info */}
                 <div className="space-y-2 text-sm">
                   <div className="flex items-center">
@@ -230,22 +237,35 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                     <Mail className="w-4 h-4 mr-2 text-gray-500" />
                     <span>{college.contact.email}</span>
                   </div>
-                  <div className="flex items-center">
-                    <Globe className="w-4 h-4 mr-2 text-gray-500" />
-                    <Link href={college.contact.website} className="text-blue-600 hover:underline">
-                      Official Website
+                  <div className="flex items-center gap-4">
+                    <Link href="https://example.com" target="_blank" rel="noopener noreferrer">
+                      <Globe className="w-5 h-5 text-gray-600 hover:text-blue-600 transition" />
+                    </Link>
+                    <Link href="https://twitter.com/example" target="_blank" rel="noopener noreferrer">
+                      <TwitterIcon className="w-5 h-5 text-gray-600 hover:text-sky-500 transition" />
+                    </Link>
+                    <Link href="https://instagram.com/example" target="_blank" rel="noopener noreferrer">
+                      <InstagramIcon className="w-5 h-5 text-gray-600 hover:text-pink-500 transition" />
+                    </Link>
+                    <Link href="https://linkedin.com/in/example" target="_blank" rel="noopener noreferrer">
+                      <LinkedinIcon className="w-5 h-5 text-gray-600 hover:text-blue-700 transition" />
                     </Link>
                   </div>
                 </div>
 
                 {/* Action Buttons */}
                 <div className="space-y-3">
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                    <Download className="w-4 h-4 mr-2" />
-                    Download Brochure
+                  <Button asChild className="w-full bg-blue-600 hover:bg-blue-700">
+                    <Link href="/brochure.pdf" target="_blank">
+                      <Download className="w-4 h-4 mr-2" />
+                      Download Brochure
+                    </Link>
                   </Button>
-                  <Button variant="outline" className="w-full border-blue-600 text-blue-600 bg-transparent">
-                    Apply Now
+
+                  <Button asChild variant="outline" className="w-full border-blue-600 text-blue-600 bg-transparent">
+                    <Link href="/apply">
+                      Apply Now
+                    </Link>
                   </Button>
                 </div>
               </div>
@@ -517,7 +537,7 @@ export default function CollegePage({ params }: { params: { id: string } }) {
             </Card>
 
             {/* Similar Colleges */}
-            <Card>
+            {/* <Card>
               <CardHeader>
                 <CardTitle className="text-lg">Similar Colleges</CardTitle>
               </CardHeader>
@@ -542,10 +562,10 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                   </div>
                 ))}
               </CardContent>
-            </Card>
+            </Card> */}
 
             {/* Latest News */}
-            <Card>
+            {/* <Card>
               <CardHeader>
                 <CardTitle className="text-lg">Latest Updates</CardTitle>
               </CardHeader>
@@ -565,7 +585,7 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                   <div className="text-gray-600 text-xs">3 days ago</div>
                 </div>
               </CardContent>
-            </Card>
+            </Card> */}
           </div>
         </div>
       </div>

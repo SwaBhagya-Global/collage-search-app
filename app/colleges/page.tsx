@@ -34,7 +34,6 @@ export default function CollegesPage() {
       location: "BANGALORE URBAN",
       address: "PLOT 325-B,PART A,BOMMASANDRA-JIGANI LINK ROAD,JIGANI INDUSTRIAL AREA,JIGANI POST,ANEKAL TALUK,BENGALURU 560105",
       rating: 4.8,
-      reviews: 2847,
       fees: "₹7.25 Lakhs",
       courses: "MBA, ",
       image: "/placeholder.svg?height=200&width=300",

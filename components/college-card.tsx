@@ -17,7 +17,6 @@ interface CollegeCardProps {
     shortName?: string
     location: string
     rating: number
-    reviews: number
     fees: string
     courses: string
     image: string
@@ -174,7 +173,7 @@ export default function CollegeCard({ college }: CollegeCardProps) {
             </div>
             <div className="flex items-center text-gray-600">
               <Users className="w-4 h-4 mr-1" />
-              <span>{college.reviews}</span>
+              {/* <span>{college.reviews}</span> */}
             </div>
           </div>
         )}

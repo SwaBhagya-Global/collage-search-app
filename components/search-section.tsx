@@ -16,6 +16,7 @@ export default function SearchSection() {
   const [activeTab, setActiveTab] = useState("colleges")
   const [location, setLocation] = useState("all-india")
   const [category, setCategory] = useState("all-categories")
+  const [specialization, setSpecialization] = useState("specialization")
   const [collegeType, setCollegeType] = useState("all-types")
   const [feesRange, setFeesRange] = useState("any")
   const router = useRouter()
@@ -93,22 +94,27 @@ export default function SearchSection() {
               <TabsTrigger value="courses" className="text-sm">
                 Courses
               </TabsTrigger>
-            </TabsList> */}
-
+            </TabsList> */}  
+ 
             <TabsContent value="colleges">
               <Card className="bg-white/95 rounded-lg p-6 max-w-5xl mx-auto">
                 <CardContent className="p-0">
                   <form onSubmit={handleSearch} className="space-y-6">
                     {/* All 5 Filters in One Row - Added Search Input */}
-                    {/* <Search className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
-                     <Input
+                    <div className="flex justify-center items-center min-h-[45px]">
+                      <div className="relative w-[400px]">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <Input
                           placeholder="Search by name, location or course..."
-                          className="h-12 bg-white border-gray-300 pl-10"
+                          className="h-12 w-full bg-white border border-gray-300 pl-10 rounded"
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
-                        /> */}
+                        />
+                      </div>
+                    </div>
+
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-                      <div className="relative">
+                      {/* <div className="relative">
                         <Search className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
                         <Input
                           placeholder="Search by name, location or course..."
@@ -116,7 +122,7 @@ export default function SearchSection() {
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
                         />
-                      </div>
+                      </div> */}
 
                       <Select value={location} onValueChange={setLocation}>
                         <SelectTrigger className="h-12 bg-white border-gray-300">
@@ -143,15 +149,28 @@ export default function SearchSection() {
                         </SelectContent>
                       </Select>
 
+                      <Select value={specialization} onValueChange={setSpecialization}>
+                        <SelectTrigger className="h-12 bg-white border-gray-300">
+                          <SelectValue placeholder="Select Specialization" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="specialization">Specialization</SelectItem>
+                          <SelectItem value="hr">HR</SelectItem>
+                          <SelectItem value="marketing">Marketing</SelectItem>
+                          <SelectItem value="finance">Finance</SelectItem>
+                        </SelectContent>
+                      </Select>
+
                       <Select value={collegeType} onValueChange={setCollegeType}>
                         <SelectTrigger className="h-12 bg-white border-gray-300">
                           <SelectValue placeholder="College Type" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="all-types">All Types</SelectItem>
-                          <SelectItem value="government">Government</SelectItem>
-                          <SelectItem value="private">Private</SelectItem>
-                          <SelectItem value="deemed">Deemed University</SelectItem>
+                          <SelectItem value="full-time">Full Time</SelectItem>
+                          <SelectItem value="part-time">Part Time</SelectItem>
+                          <SelectItem value="executive">Executive</SelectItem>
+                          <SelectItem value="online">Online</SelectItem>
                         </SelectContent>
                       </Select>
 
