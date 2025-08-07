@@ -28,6 +28,7 @@ export default function SearchSection() {
     if (location !== "all-india") params.set("location", location)
     if (category !== "all-categories") params.set("category", category)
     if (collegeType !== "all-types") params.set("type", collegeType)
+    if (specialization !== "specialization") params.set("specialization", specialization)
     if (feesRange !== "any") params.set("fees", feesRange)
 
     router.push(`/${activeTab}?${params.toString()}`)
