@@ -2,132 +2,109 @@
 import Image from "next/image"
 import Link from "next/link"
 import {
-  Star, MapPin, Phone, Mail, Globe, Download, Heart, ChevronRight, CheckCircle, TwitterIcon, InstagramIcon, LinkedinIcon} from "lucide-react"
+  Star, MapPin, Phone, Mail, Globe, Download, Heart, ChevronRight, CheckCircle, TwitterIcon, InstagramIcon, LinkedinIcon,
+  Facebook
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 // import { Separator } from "@/components/ui/separator"
 import StarRating from "@/components/Star-Rating"
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+
+interface ApiCollege {
+  _id: string
+  name: string
+  shortName: string
+  location: string
+  affiliation?: string
+  address?: string
+  rating: number
+  intake?: string
+  type?: string
+  images: string[]
+  brochureLink?: string
+  highlights: string[]
+  established: number
+  courses: {
+    name: string
+    duration: string
+    fees: string
+    eligibility: string
+    seats: number
+    _id: string
+  }[]
+  facilities?: string[]
+  admissionProcess?: string[]
+  links?: {
+    website?: string
+    facebook?: string
+    instagram?: string
+    linkedin?: string
+    _id: string
+  }
+  averagePackage: string
+  highestPackage: string
+  topRecruiters: string[]
+  mapUrl: string
+  createdAt: string
+  updatedAt: string
+  contact?: {
+    email?: string
+    phone?: string
+    _id: string
+  }
+}
 
 export default function CollegePage({ params }: { params: { id: string } }) {
-  // Mock data for the college
-  const college = {
-    id: 1,
-    name: "IZEE BUSINESS SCHOOL",
-    shortName: "IIT Delhi",
-    location: "Hauz Khas, New Delhi, Delhi",
-    brochureLink: "https://izeeinstitutions.com/wp-content/uploads/2025/03/Fee-structure-edited-1.pdf",
-    established: 1961,
-    type: "Public/Government",
-    affiliation: "Bangalore University, Bengaluru",
-    adress: "PLOT 325-B,PART A,BOMMASANDRA-JIGANI LINK ROAD,JIGANI INDUSTRIAL AREA,JIGANI POST,ANEKAL TALUK,BENGALURU 560105",
-    rating: 4.8,
+  const { id } = useParams();
+  const [college, setCollege] = useState<ApiCollege | null>(null);
+  const [loading, setLoading] = useState(true);
 
-    // ranking: {
-    //   nirf: 2,
-    //   india: 1,
-    //   world: 185,
-    // },
-    intake: "240",
-    images: [
-      "/placeholder.svg?height=400&width=600",
-      "/placeholder.svg?height=400&width=600",
-      "/placeholder.svg?height=400&width=600",
-    ],
-    contact: {
-      phone: "+8050002929, 9606043002",
-      email: "admin@izeeinstitutions.com",
-      website: "https://izeeinstitutions.com",
-    },
-    highlights: [
-      "NIRF Ranking 2 in Engineering",
-      "100% Placement Record",
-      "Top Faculty from IITs/IIMs",
-      "State-of-the-art Infrastructure",
-      "Research Excellence",
-    ],
-    courses: [
-      {
-        name: "MBA",
-        duration: "4 Years",
-        fees: "₹2.18 Lakhs",
-        eligibility: "JEE Advanced",
-        seats: 120,
-      },
-      {
-        name: "PGDM",
-        duration: "4 Years",
-        fees: "₹2.18 Lakhs",
-        eligibility: "JEE Advanced",
-        seats: 100,
-      },
-      {
-        name: "M.Tech Computer Science",
-        duration: "2 Years",
-        fees: "₹1.5 Lakhs",
-        eligibility: "GATE",
-        seats: 80,
-      },
-    ],
-    placements: {
-      averagePackage: "₹18.5 LPA",
-      highestPackage: "₹7.25 CPA",
-      placementRate: 95,
-      topRecruiters: ["Google", "Microsoft", "Amazon", "Goldman Sachs", "McKinsey"],
-    },
-    facilities: [
-      "Library",
-      "Hostel",
-      "Sports Complex",
-      "Medical Center",
-      "Cafeteria",
-      "Wi-Fi Campus",
-      "Laboratories",
-      "Auditorium",
-      "Gym",
-      "Swimming Pool",
-    ],
-    admissionProcess: [
-      "JEE Advanced Qualification",
-      "Counselling Registration",
-      "Choice Filling",
-      "Seat Allotment",
-      "Document Verification",
-      "Fee Payment",
-    ],
-  }
+  useEffect(() => {
+    async function fetchColleges() {
+      try {
+        const res = await fetch(`http://localhost:6002/api/colleges/${id}`); // 🔹 replace with your API endpoint
+        // const data: ApiCollege[] = await res.json();
+        const data = await res.json();
 
-  const reviews = [
-    {
-      id: 1,
-      author: "Rahul Sharma",
-      course: "B.Tech CSE",
-      year: "2023",
-      rating: 5,
-      title: "Excellent Infrastructure and Faculty",
-      content:
-        "IIT Delhi provides world-class education with excellent faculty and infrastructure. The placement opportunities are outstanding.",
-      likes: 45,
-      helpful: true,
-    },
-    {
-      id: 2,
-      author: "Priya Patel",
-      course: "M.Tech EE",
-      year: "2022",
-      rating: 4,
-      title: "Great Research Opportunities",
-      content:
-        "The research facilities and opportunities at IIT Delhi are exceptional. Faculty is very supportive and knowledgeable.",
-      likes: 32,
-      helpful: true,
-    },
-  ]
+        setCollege(data.data);
+      } catch (err) {
+        console.error("Failed to fetch colleges", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchColleges();
+  }, [id])
+
+  console.log("collage", college);
 
   const handleRatingChange = (value: number) => {
     console.log('Rated:', value);
     // You can send this to your backend via fetch/axios here
+  };
+    const handleRatingSubmit = async (rating: number) => {
+    try {
+      const response = await fetch(`http://localhost:6002/api/colleges/${id}/rating`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ rating }),
+      });
+
+      if (!response.ok) throw new Error('Failed to update rating');
+
+      const data = await response.json();
+      console.log('Rating updated successfully:', data);
+      // Optional: Update UI with new average rating
+    } catch (error) {
+      console.error('Error updating rating:', error);
+    }
   };
 
   return (
@@ -144,7 +121,7 @@ export default function CollegePage({ params }: { params: { id: string } }) {
               Colleges
             </Link>
             <ChevronRight className="w-4 h-4" />
-            <span className="text-gray-900">{college.name}</span>
+            <span className="text-gray-900">{college?.name}</span>
           </div>
         </div>
       </div>
@@ -157,8 +134,8 @@ export default function CollegePage({ params }: { params: { id: string } }) {
             <div className="lg:w-2/3">
               <div className="relative">
                 <Image
-                  src={college.images[0] || "/placeholder.svg"}
-                  alt={college.name}
+                  src={college?.images[0] || "/placeholder.svg"}
+                  alt={college?.name || ""}
                   width={600}
                   height={400}
                   className="w-full h-80 object-cover rounded-lg"
@@ -180,21 +157,21 @@ export default function CollegePage({ params }: { params: { id: string } }) {
             <div className="lg:w-1/3">
               <div className="space-y-4">
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-900 mb-2">{college.name}</h1>
+                  <h1 className="text-2xl font-bold text-gray-900 mb-2">{college?.name}</h1>
                   <div className="flex items-center text-gray-600 mb-2">
                     <MapPin className="w-4 h-4 mr-1" />
-                    <span className="text-sm">{college.location}</span>
+                    <span className="text-sm">{college?.location}</span>
                   </div>
                   <div className="flex items-center text-gray-600 mb-2">
                     <MapPin className="w-4 h-4 mr-1" />
-                    <span className="text-[11px]">{college.adress}</span>
+                    <span className="text-[11px]">{college?.address}</span>
                   </div>
                   <div className="flex items-center gap-4 text-sm text-gray-600">
-                    <span>Est. {college.established}</span>
+                    <span>Est. {college?.established}</span>
                     <span>•</span>
-                    <span>{college.type}</span>
+                    <span>{college?.type}</span>
                     <span>•</span>
-                    <span>{college.affiliation}</span>
+                    <span>{college?.affiliation}</span>
                   </div>
                 </div>
 
@@ -204,63 +181,50 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                   <div className="flex items-center gap-4">
                     <div className="flex items-center bg-green-100 px-3 py-2 rounded-lg">
                       <Star className="w-5 h-5 fill-green-600 text-green-600 mr-2" />
-                      <span className="font-bold text-green-700 text-lg">{college.rating}</span>
+                      <span className="font-bold text-green-700 text-lg">{college?.rating}</span>
                     </div>
                     <span>Rate Us</span>
-                    <StarRating initialRating={0} onRate={handleRatingChange} />
+                    <StarRating initialRating={0} onRate={handleRatingChange} onSubmit={handleRatingSubmit} />
                   </div>
                 </div>
-
-                {/* Rankings */}
-                {/* <div className="grid grid-cols-3 gap-4">
-                  <div className="text-center p-3 bg-blue-50 rounded-lg">
-                    <div className="font-bold text-blue-600 text-xl">#{college.intake}</div>
-                    <div className="text-xs text-gray-600">NIRF Ranking</div>
-                  </div>
-                  <div className="text-center p-3 bg-blue-50 rounded-lg">
-                    <div className="font-bold text-blue-600 text-xl">#{college.ranking.india}</div>
-                    <div className="text-xs text-gray-600">India Ranking</div>
-                  </div>
-                  <div className="text-center p-3 bg-blue-50 rounded-lg">
-                    <div className="font-bold text-blue-600 text-xl">#{college.ranking.world}</div>
-                    <div className="text-xs text-gray-600">World Ranking</div>
-                  </div>
-                </div> */}
 
                 {/* Contact Info */}
                 <div className="space-y-2 text-sm">
                   <div className="flex items-center">
                     <Phone className="w-4 h-4 mr-2 text-gray-500" />
-                    <span>{college.contact.phone}</span>
+                    <span>{college?.contact?.phone}</span>
                   </div>
                   <div className="flex items-center">
                     <Mail className="w-4 h-4 mr-2 text-gray-500" />
-                    <span>{college.contact.email}</span>
+                    <span>{college?.contact?.email}</span>
                   </div>
                   <div className="flex items-center gap-4">
-                    <Link href="https://example.com" target="_blank" rel="noopener noreferrer">
-                      <Globe className="w-5 h-5 text-gray-600 hover:text-blue-600 transition" />
-                    </Link>
-                    <Link href="https://twitter.com/example" target="_blank" rel="noopener noreferrer">
-                      <TwitterIcon className="w-5 h-5 text-gray-600 hover:text-sky-500 transition" />
-                    </Link>
-                    <Link href="https://instagram.com/example" target="_blank" rel="noopener noreferrer">
-                      <InstagramIcon className="w-5 h-5 text-gray-600 hover:text-pink-500 transition" />
-                    </Link>
-                    <Link href="https://linkedin.com/in/example" target="_blank" rel="noopener noreferrer">
-                      <LinkedinIcon className="w-5 h-5 text-gray-600 hover:text-blue-700 transition" />
-                    </Link>
+                      <Link href={college?.links?.website || ""} target="_blank" rel="noopener noreferrer">
+                        <Globe className="w-5 h-5 text-gray-600 hover:text-blue-600 transition" />
+                      </Link>
+                      <Link href={college?.links?.facebook || ""} target="_blank" rel="noopener noreferrer">
+                        <Facebook className="w-5 h-5 text-gray-600 hover:text-blue-500 transition" />
+                      </Link>
+
+                      <Link href={college?.links?.instagram || ""} target="_blank" rel="noopener noreferrer">
+                        <InstagramIcon className="w-5 h-5 text-gray-600 hover:text-pink-500 transition" />
+                      </Link>
+
+                      <Link href={college?.links?.linkedin || ""} target="_blank" rel="noopener noreferrer">
+                        <LinkedinIcon className="w-5 h-5 text-gray-600 hover:text-blue-700 transition" />
+                      </Link>
                   </div>
+
                 </div>
 
                 {/* Action Buttons */}
                 <div className="space-y-3">
-                  <Button asChild className="w-full bg-blue-600 hover:bg-blue-700">
-                    <Link href="/brochure.pdf" target="_blank">
-                      <Download className="w-4 h-4 mr-2" />
-                      Download Brochure
-                    </Link>
-                  </Button>
+                    <Button asChild className="w-full bg-blue-600 hover:bg-blue-700">
+                      <a href={college?.brochureLink} target="_blank" rel="noopener noreferrer">
+                        <Download className="w-4 h-4 mr-2" />
+                        Download Brochure
+                      </a>
+                    </Button>
 
                   <Button asChild variant="outline" className="w-full border-blue-600 text-blue-600 bg-transparent">
                     <Link href="/apply">
@@ -278,7 +242,7 @@ export default function CollegePage({ params }: { params: { id: string } }) {
       <div className="bg-white border-t">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-wrap gap-4">
-            {college.highlights.map((highlight, index) => (
+            {college?.highlights.map((highlight, index) => (
               <Badge key={index} variant="secondary" className="bg-green-100 text-green-700 px-3 py-1">
                 <CheckCircle className="w-3 h-3 mr-1" />
                 {highlight}
@@ -300,13 +264,12 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                 <TabsTrigger value="admission">Admission</TabsTrigger>
                 <TabsTrigger value="placements">Placements</TabsTrigger>
                 <TabsTrigger value="facilities">Facilities</TabsTrigger>
-                <TabsTrigger value="reviews">Reviews</TabsTrigger>
               </TabsList>
 
               <TabsContent value="overview" className="space-y-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>About {college.shortName}</CardTitle>
+                    <CardTitle>About {college?.shortName}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <p className="text-gray-700 leading-relaxed">
@@ -354,7 +317,7 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      {college.courses.map((course, index) => (
+                      {college?.courses.map((course, index) => (
                         <div key={index} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
                           <div className="flex justify-between items-start mb-3">
                             <div>
@@ -372,9 +335,6 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                           </div>
                           <div className="flex justify-between items-center">
                             <Badge variant="outline">{course.eligibility}</Badge>
-                            <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
-                              View Details
-                            </Button>
                           </div>
                         </div>
                       ))}
@@ -390,7 +350,7 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      {college.admissionProcess.map((step, index) => (
+                      {college?.admissionProcess?.map((step, index) => (
                         <div key={index} className="flex items-center gap-4">
                           <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold text-sm">
                             {index + 1}
@@ -403,7 +363,7 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                     </div>
                   </CardContent>
                 </Card>
-
+{/* 
                 <Card>
                   <CardHeader>
                     <CardTitle>Important Dates</CardTitle>
@@ -424,7 +384,7 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                       </div>
                     </div>
                   </CardContent>
-                </Card>
+                </Card> */}
               </TabsContent>
 
               <TabsContent value="placements" className="space-y-6">
@@ -434,24 +394,29 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-6">
-                      <div className="text-center p-4 bg-green-50 rounded-lg">
-                        <div className="text-2xl font-bold text-green-600">{college.placements.averagePackage}</div>
-                        <div className="text-sm text-gray-600">Average Package</div>
-                      </div>
-                      <div className="text-center p-4 bg-blue-50 rounded-lg">
-                        <div className="text-2xl font-bold text-blue-600">{college.placements.highestPackage}</div>
-                        <div className="text-sm text-gray-600">Highest Package</div>
-                      </div>
-                      <div className="text-center p-4 bg-blue-50 rounded-lg">
-                        <div className="text-2xl font-bold text-blue-600">{college.placements.placementRate}%</div>
-                        <div className="text-sm text-gray-600">Placement Rate</div>
-                      </div>
+                      {college?.averagePackage && (
+                        <div className="text-center p-4 bg-green-50 rounded-lg">
+                          <div className="text-2xl font-bold text-green-600">
+                            {college.averagePackage}
+                          </div>
+                          <div className="text-sm text-gray-600">Average Package</div>
+                        </div>
+                      )}
+
+                      {college?.highestPackage && (
+                        <div className="text-center p-4 bg-blue-50 rounded-lg">
+                          <div className="text-2xl font-bold text-blue-600">
+                            {college.highestPackage}
+                          </div>
+                          <div className="text-sm text-gray-600">Highest Package</div>
+                        </div>
+                      )}
                     </div>
 
                     <div>
                       <h4 className="font-semibold mb-3">Top Recruiters</h4>
                       <div className="flex flex-wrap gap-2">
-                        {college.placements.topRecruiters.map((recruiter, index) => (
+                        {college?.topRecruiters.map((recruiter, index) => (
                           <Badge key={index} variant="outline" className="px-3 py-1">
                             {recruiter}
                           </Badge>
@@ -469,46 +434,10 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                      {college.facilities.map((facility, index) => (
+                      {college?.facilities?.map((facility, index) => (
                         <div key={index} className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
                           <CheckCircle className="w-5 h-5 text-green-600" />
                           <span className="text-sm">{facility}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              <TabsContent value="reviews" className="space-y-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Student Reviews</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-6">
-                      {reviews.map((review) => (
-                        <div key={review.id} className="border-b pb-6 last:border-b-0">
-                          <div className="flex justify-between items-start mb-3">
-                            <div>
-                              <div className="font-semibold">{review.author}</div>
-                              <div className="text-sm text-gray-600">
-                                {review.course} • {review.year}
-                              </div>
-                            </div>
-                            <div className="flex items-center bg-green-100 px-2 py-1 rounded">
-                              <Star className="w-4 h-4 fill-green-600 text-green-600 mr-1" />
-                              <span className="font-semibold text-green-700">{review.rating}</span>
-                            </div>
-                          </div>
-                          <h4 className="font-medium mb-2">{review.title}</h4>
-                          <p className="text-gray-700 mb-3">{review.content}</p>
-                          <div className="flex items-center gap-4 text-sm text-gray-600">
-                            <button className="flex items-center gap-1 hover:text-blue-600">
-                              <Heart className="w-4 h-4" />
-                              {review.likes} Helpful
-                            </button>
-                          </div>
                         </div>
                       ))}
                     </div>
@@ -523,19 +452,20 @@ export default function CollegePage({ params }: { params: { id: string } }) {
             {/* Quick Apply */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Quick Apply</CardTitle>
+                <CardTitle className="text-lg">Google Map</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <Button className="w-full bg-blue-600 hover:bg-blue-700">Apply Now</Button>
-                <Button variant="outline" className="w-full border-blue-600 text-blue-600 bg-transparent">
-                  Download Brochure
-                </Button>
-                <Button variant="outline" className="w-full bg-transparent">
-                  Get Expert Guidance
-                </Button>
+                <iframe
+                src="https://www.google.com/maps?q=NARAYANA%20INSTITUTE%20OF%20MANAGEMENT%2C%20RAVIVENKATAMPALLI%20(VILLAGE)%2C%20ANANTAPUR%2C%20ANDHRA%20PRADESH&output=embed"
+                width="100%"
+                height="300"
+                style={{ border: 0, borderRadius: "12px" }}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              ></iframe>
               </CardContent>
             </Card>
-
+            <Image src={"https://tpc.googlesyndication.com/simgad/18114101648311561798"} alt={college?.name || ""} width={250} height={250} className="w-full h-40 rounded-lg" />
             {/* Similar Colleges */}
             {/* <Card>
               <CardHeader>

@@ -155,7 +155,7 @@ export default function SearchSection() {
                           <SelectValue placeholder="Select Specialization" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="specialization">Specialization</SelectItem>
+                          <SelectItem value="specialization">All Specialization</SelectItem>
                           <SelectItem value="hr">HR</SelectItem>
                           <SelectItem value="marketing">Marketing</SelectItem>
                           <SelectItem value="finance">Finance</SelectItem>

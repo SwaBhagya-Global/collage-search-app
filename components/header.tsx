@@ -42,7 +42,7 @@ export default function Header() {
           <div className="flex items-center justify-between py-4">
             {/* Logo */}
             <Link href="/" className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+              {/* <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
                 <span className="text-white font-bold text-xl">E</span>
               </div>
               <div>
@@ -50,7 +50,8 @@ export default function Header() {
                   EduFinder
                 </span>
                 <div className="text-xs text-gray-500 -mt-1">Find Your Perfect College</div>
-              </div>
+              </div> */}
+              <img src="../logo_mba.png" width={150}/>
             </Link>
 
             {/* Desktop Navigation */}

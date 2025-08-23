@@ -8,11 +8,71 @@ import { Search, Filter, SlidersHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Label } from "@/components/ui/label"
-import Header from "@/components/header"
+// import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
+// import { Checkbox } from "@/components/ui/checkbox"
+// import { Label } from "@/components/ui/label"
 import CollegeCard from "@/components/college-card"
+import Loader from "@/components/loader"
+
+interface ApiCollege {
+  _id: string
+  name: string
+  shortName: string
+  location: string
+  affiliation?: string
+  address?: string
+  rating: number
+  intake?: string
+  type?: string
+  images: string[]
+  brochureLink?: string
+  highlights: string[]
+  courses: {
+    name: string
+    duration: string
+    fees: string
+    eligibility: string
+    seats: number
+    _id: string
+  }[]
+  facilities?: string[]
+  admissionProcess?: string[]
+  links?: {
+    website?: string
+    facebook?: string
+    instagram?: string
+    linkedin?: string
+    _id: string
+  }
+  createdAt: string
+  updatedAt: string
+  contact?: {
+    email?: string
+    _id: string
+  }
+}
+
+interface CollegeCardProps {
+  college: {
+    id: string
+    name: string
+    shortName?: string
+    location: string
+    rating: number
+    fees: string
+    courses: string
+    images: string
+    featured?: boolean
+    established: number
+    type: string
+    ranking?: number
+    placement?: string
+    avgPackage?: string
+    highlights?: string[]
+    cutoff?: string
+  }
+}
+
 
 export default function CollegesPage() {
   const searchParams = useSearchParams()
@@ -25,56 +85,67 @@ export default function CollegesPage() {
     fees: "",
     rating: "",
   })
+  const [visibleCount, setVisibleCount] = useState(12);
 
-  const allColleges = [
-    {
-      id: 1,
-      name: "IZEE BUSINESS SCHOOL",
-      university: "Bangalore University, Bengaluru",
-      location: "BANGALORE URBAN",
-      address: "PLOT 325-B,PART A,BOMMASANDRA-JIGANI LINK ROAD,JIGANI INDUSTRIAL AREA,JIGANI POST,ANEKAL TALUK,BENGALURU 560105",
-      rating: 4.8,
-      fees: "₹7.25 Lakhs",
-      courses: "MBA, ",
-      image: "/placeholder.svg?height=200&width=300",
-      established: 1961,
-      type: "Public/Government",
-      category: "engineering",
-      contactNumber: "8050002929, 9606043002",
-      email: "admin@izeeinstitutions.com",
-      website: "https://izeeinstitutions.com",
-    },
-    {
-      id: 2,
-      name: "All India Institute of Medical Sciences",
-      location: "New Delhi",
-      rating: 4.9,
-      reviews: 1923,
-      fees: "₹5,500",
-      courses: "MBBS, MD, MS",
-      image: "/placeholder.svg?height=200&width=300",
-      established: 1956,
-      type: "Public/Government",
-      category: "medical",
-    },
-  ]
+  const [colleges, setColleges] = useState<ApiCollege[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let filtered = allColleges
+    async function fetchColleges() {
+      try {
+        const res = await fetch("http://localhost:6002/api/colleges"); // 🔹 replace with your API endpoint
+        // const data: ApiCollege[] = await res.json();
+        const data = await res.json();
 
+        setColleges(data.data);
+      } catch (err) {
+        console.error("Failed to fetch colleges", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchColleges();
+  }, []);
+
+  function mapApiToCard(apiCollege: ApiCollege, idx: number): CollegeCardProps["college"] {
+    return {
+      id: apiCollege._id, // or parseInt(apiCollege._id, 16) if you want unique id
+      name: apiCollege.name,
+      shortName: apiCollege.shortName,
+      location: apiCollege.location,
+      rating: apiCollege.rating,
+      fees: apiCollege.courses?.[0]?.fees || "N/A",
+      courses: apiCollege.courses.map(c => c.name).join(", "),
+      images: apiCollege.images?.[0] || "/placeholder.svg", // fallback
+      established: new Date(apiCollege.createdAt).getFullYear(),
+      type: "Full Time", // map affiliation/type properly
+      highlights: apiCollege.highlights,
+      cutoff: "N/A",
+    }
+  }
+
+
+  useEffect(() => {
+    let filtered = colleges
+
+    console.log("searchQuery", searchQuery);
     // Apply search filter
     if (searchQuery) {
       filtered = filtered.filter(
         (college) =>
           college.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           college.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          college.courses.toLowerCase().includes(searchQuery.toLowerCase()),
+          college.shortName.toLowerCase().includes(searchQuery.toLowerCase()),
       )
     }
 
-    // Apply category filter
+    // Apply category filter (match against course names)
     if (filters.category && filters.category !== "all") {
-      filtered = filtered.filter((college) => college.category === filters.category)
+      const categoryLower = filters.category.toLowerCase()
+      filtered = filtered.filter((college) =>
+        Array.isArray(college.courses) && college.courses.some((c) => c.name?.toLowerCase().includes(categoryLower)),
+      )
     }
 
     // Apply location filter
@@ -92,10 +163,10 @@ export default function CollegesPage() {
       const minRating = Number.parseFloat(filters.rating)
       filtered = filtered.filter((college) => college.rating >= minRating)
     }
-
+    setVisibleCount(12);
     setFilteredColleges(filtered)
-  }, [searchQuery, filters])
-
+  }, [searchQuery, filters, colleges])
+  
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     // Search is handled by useEffect
@@ -112,9 +183,12 @@ export default function CollegesPage() {
     setSearchQuery("")
   }
 
+  // if (loading) return <Loader />;
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      {loading && (
+        <Loader overlay={true} className="z-50" />
+      )}
 
       {/* Search Header */}
       <div className="bg-white border-b">
@@ -160,19 +234,13 @@ export default function CollegesPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Categories</SelectItem>
-                  <SelectItem value="engineering">Engineering</SelectItem>
-                  <SelectItem value="medical">Medical</SelectItem>
-                  <SelectItem value="management">Management</SelectItem>
-                  <SelectItem value="arts">Arts</SelectItem>
-                  <SelectItem value="science">Science</SelectItem>
-                  <SelectItem value="commerce">Commerce</SelectItem>
-                  <SelectItem value="law">Law</SelectItem>
-                  <SelectItem value="design">Design</SelectItem>
+                  <SelectItem value="MBA">MBA</SelectItem>
+                  <SelectItem value="PGDM">PGDM</SelectItem>
                 </SelectContent>
               </Select>
 
               {/* Mobile Filters */}
-              <Sheet>
+              {/* <Sheet>
                 <SheetTrigger asChild>
                   <Button variant="outline" className="lg:hidden bg-transparent">
                     <SlidersHorizontal className="w-4 h-4 mr-2" />
@@ -233,13 +301,13 @@ export default function CollegesPage() {
                     </Button>
                   </div>
                 </SheetContent>
-              </Sheet>
+              </Sheet> */}
 
               {/* Desktop More Filters */}
-              <Button variant="outline" className="hidden lg:flex h-12 bg-transparent">
+              {/* <Button variant="outline" className="hidden lg:flex h-12 bg-transparent">
                 <Filter className="w-4 h-4 mr-2" />
                 More Filters
-              </Button>
+              </Button> */}
             </div>
           </div>
         </div>
@@ -271,8 +339,8 @@ export default function CollegesPage() {
 
         {/* College Grid - 4x4 layout */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
-          {filteredColleges.map((college) => (
-            <CollegeCard key={college.id} college={college} />
+          {filteredColleges.slice(0, visibleCount).map((college, i) => (
+            <CollegeCard key={college._id ?? i} college={mapApiToCard(college, i)} />
           ))}
         </div>
 
@@ -290,12 +358,9 @@ export default function CollegesPage() {
         {filteredColleges.length > 0 && (
           <div className="flex justify-center mt-12">
             <div className="flex gap-2">
-              <Button variant="outline">Previous</Button>
-              <Button variant="outline">1</Button>
-              <Button>2</Button>
-              <Button variant="outline">3</Button>
-              <Button variant="outline">4</Button>
-              <Button variant="outline">Next</Button>
+              <Button onClick={() => setVisibleCount(visibleCount + 12)}>
+                Load More
+              </Button>
             </div>
           </div>
         )}

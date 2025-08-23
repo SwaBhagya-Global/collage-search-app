@@ -12,27 +12,26 @@ import { useState } from "react"
 
 interface CollegeCardProps {
   college: {
-    id: number
+    id: string
     name: string
     shortName?: string
     location: string
     rating: number
     fees: string
     courses: string
-    image: string
+    images: string
     featured?: boolean
     established: number
     type: string
     ranking?: number
     placement?: string
-    avgPackage?: string
+    averagePackage?: string
     highlights?: string[]
     cutoff?: string
   }
 }
 
 export default function CollegeCard({ college }: CollegeCardProps) {
-  console.log("college",college);
   const [isLiked, setIsLiked] = useState(false)
   const [isCompared, setIsCompared] = useState(false)
 
@@ -85,7 +84,7 @@ export default function CollegeCard({ college }: CollegeCardProps) {
       {/* Image with overlay */}
       <div className="relative h-48 overflow-hidden">
         <Image
-          src={college.image || "/placeholder.svg"}
+          src={college.images}
           alt={college.name}
           width={400}
           height={200}
@@ -159,7 +158,7 @@ export default function CollegeCard({ college }: CollegeCardProps) {
             <div className="text-xs text-gray-600">Total Fees</div>
           </div>
           <div className="text-center p-2 bg-green-50 rounded-lg">
-            <div className="font-bold text-green-600 text-sm">{college.avgPackage}</div>
+            <div className="font-bold text-green-600 text-sm">{college.averagePackage}</div>
             <div className="text-xs text-gray-600">Avg Package</div>
           </div>
         </div>

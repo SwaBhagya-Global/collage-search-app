@@ -5,8 +5,8 @@ import { Star } from 'lucide-react';
 
 interface StarRatingProps {
   initialRating?: number;
-  onRate?: (rating: number) => void;
-  onSubmit?: (rating: number) => void;
+  onRate?: (rating: number) => void; // when user selects a star
+  onSubmit?: (rating: number) => void; // when user clicks Submit
 }
 
 export default function StarRating({ initialRating = 0, onRate, onSubmit }: StarRatingProps) {
@@ -17,14 +17,13 @@ export default function StarRating({ initialRating = 0, onRate, onSubmit }: Star
   const handleClick = (value: number) => {
     if (isSubmitted) return;
     setRating(value);
-    if (onRate) onRate(value);
+    if (onRate) onRate(value); // notify parent when user selects a star
   };
 
   const handleSubmit = () => {
     if (rating === 0 || isSubmitted) return;
     setIsSubmitted(true);
-    if (onSubmit) onSubmit(rating);
-    alert(`Submitted rating: ${rating}`);
+    if (onSubmit) onSubmit(rating); // notify parent when user clicks Submit
   };
 
   return (
@@ -39,12 +38,8 @@ export default function StarRating({ initialRating = 0, onRate, onSubmit }: Star
                 ${isFilled ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}
                 ${isSubmitted ? 'cursor-default' : 'cursor-pointer'}`}
               onClick={() => handleClick(star)}
-              onMouseEnter={() => {
-                if (!isSubmitted) setHover(star);
-              }}
-              onMouseLeave={() => {
-                if (!isSubmitted) setHover(0);
-              }}
+              onMouseEnter={() => !isSubmitted && setHover(star)}
+              onMouseLeave={() => !isSubmitted && setHover(0)}
             />
           );
         })}

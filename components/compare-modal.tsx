@@ -56,27 +56,18 @@ export default function CompareModal({ open, onClose }: CompareModalProps) {
       title: "Basic Information",
       items: [
         { label: "Established", key: "established" },
-        { label: "Type", key: "type" },
         { label: "Location", key: "location" },
         { label: "Rating", key: "rating" },
-        { label: "Reviews", key: "reviews" },
-      ],
-    },
-    {
-      title: "Rankings & Fees",
-      items: [
-        { label: "Ranking", key: "ranking" },
         { label: "Total Fees", key: "fees" },
-        { label: "Cutoff", key: "cutoff" },
-      ],
-    },
-    {
-      title: "Placements",
-      items: [
         { label: "Average Package", key: "avgPackage" },
-        { label: "Placement Rate", key: "placement" },
       ],
     },
+    // {
+    //   title: "Rankings & Fees",
+    //   items: [
+    //     { label: "Total Fees", key: "fees" },
+    //   ],
+    // },
   ]
 
   const getValue = (obj: any, path: string) => {
@@ -90,15 +81,11 @@ export default function CompareModal({ open, onClose }: CompareModalProps) {
 
     if (key === "rating") {
       return (
-        <div className="flex items-center">
+        <div className="flex items-center ml-[150px]">
           <Star className="w-4 h-4 fill-yellow-400 text-yellow-400 mr-1" />
           <span className="font-semibold">{value}</span>
         </div>
       )
-    }
-
-    if (key === "ranking") {
-      return <span className="font-bold text-blue-600">#{value}</span>
     }
 
     if (key === "fees" || key === "avgPackage") {
@@ -171,14 +158,14 @@ export default function CompareModal({ open, onClose }: CompareModalProps) {
                     className="rounded-lg object-cover"
                   />
                   <div className="flex-1">
-                    <h3 className="font-bold text-lg mb-1">{college.shortName || college.name}</h3>
+                    <h3 className="font-bold text-lg mb-1">{college.name || college.shortname}</h3>
                     <div className="flex items-center text-sm text-gray-600 mb-2">
                       <MapPin className="w-4 h-4 mr-1" />
                       {college.location}
                     </div>
                     <div className="flex items-center space-x-4">
                       <div className="flex items-center bg-green-100 px-2 py-1 rounded">
-                        <Star className="w-4 h-4 fill-green-600 text-green-600 mr-1" />
+                        <Star className="w-4 h-4 fill-green-600 text-green-600 m1-1" />
                         <span className="font-semibold text-green-700">{college.rating}</span>
                       </div>
                       <span className="text-sm text-gray-600">({college.reviews} reviews)</span>
@@ -188,12 +175,6 @@ export default function CompareModal({ open, onClose }: CompareModalProps) {
 
                 {/* Quick Stats */}
                 <div className="grid grid-cols-3 gap-4 mb-4">
-                  <div className="text-center p-2 bg-blue-50 rounded">
-                    <div className="font-bold text-blue-600 text-sm">
-                      {college.ranking ? `#${college.ranking}` : "-"}
-                    </div>
-                    <div className="text-xs text-gray-600">Ranking</div>
-                  </div>
                   <div className="text-center p-2 bg-green-50 rounded">
                     <div className="font-bold text-green-600 text-sm">{college.placement || "-"}</div>
                     <div className="text-xs text-gray-600">Placement</div>
@@ -273,14 +254,14 @@ export default function CompareModal({ open, onClose }: CompareModalProps) {
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4 mt-8 pt-6 border-t">
-          <Button className="bg-blue-600 hover:bg-blue-700 px-8">
+          {/* <Button className="bg-blue-600 hover:bg-blue-700 px-8">
             <BookOpen className="w-4 h-4 mr-2" />
             Download Comparison Report
           </Button>
           <Button variant="outline" className="px-8 bg-transparent">
             <Users className="w-4 h-4 mr-2" />
             Share Comparison
-          </Button>
+          </Button> */}
           <div
             className={`grid gap-2 sm:contents ${compareColleges.length === 1 ? "grid-cols-1" : compareColleges.length === 2 ? "grid-cols-2" : "grid-cols-3"}`}
           >
