@@ -13,6 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import StarRating from "@/components/Star-Rating"
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import BASE_URL from "@/app/config/api";
 
 interface ApiCollege {
   _id: string
@@ -66,7 +67,7 @@ export default function CollegePage({ params }: { params: { id: string } }) {
   useEffect(() => {
     async function fetchColleges() {
       try {
-        const res = await fetch(`http://localhost:6002/api/colleges/${id}`); // 🔹 replace with your API endpoint
+        const res = await fetch(`${BASE_URL}/api/colleges/${id}`); // 🔹 replace with your API endpoint
         // const data: ApiCollege[] = await res.json();
         const data = await res.json();
 
@@ -89,7 +90,7 @@ export default function CollegePage({ params }: { params: { id: string } }) {
   };
     const handleRatingSubmit = async (rating: number) => {
     try {
-      const response = await fetch(`http://localhost:6002/api/colleges/${id}/rating`, {
+      const response = await fetch(`${BASE_URL}/api/colleges/${id}/rating`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -465,7 +466,7 @@ export default function CollegePage({ params }: { params: { id: string } }) {
               ></iframe>
               </CardContent>
             </Card>
-            <Image src={"https://tpc.googlesyndication.com/simgad/18114101648311561798"} alt={college?.name || ""} width={250} height={250} className="w-full h-40 rounded-lg" />
+            <Image src={"../logo-mba.png"} alt={college?.name || ""} width={250} height={250} className="w-full h-40 rounded-lg" />
             {/* Similar Colleges */}
             {/* <Card>
               <CardHeader>

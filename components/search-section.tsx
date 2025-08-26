@@ -69,7 +69,8 @@ export default function SearchSection() {
   ]
 
   return (
-    <section className="relative h-[500px] flex items-center justify-center">
+    <section className="relative h-[800px] sm:h-[500px] flex items-center justify-center">
+
       {/* Real College Building Photo Background */}
       <div
         className="absolute inset-0 bg-cover bg-center"
