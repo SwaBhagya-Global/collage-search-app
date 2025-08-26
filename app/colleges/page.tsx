@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 // import { Label } from "@/components/ui/label"
 import CollegeCard from "@/components/college-card"
 import Loader from "@/components/loader"
+import BASE_URL from "@/app/config/api";
 
 interface ApiCollege {
   _id: string
@@ -93,7 +94,7 @@ export default function CollegesPage() {
   useEffect(() => {
     async function fetchColleges() {
       try {
-        const res = await fetch("http://localhost:6002/api/colleges"); // 🔹 replace with your API endpoint
+        const res = await fetch(`${BASE_URL}/api/colleges`); // 🔹 replace with your API endpoint
         // const data: ApiCollege[] = await res.json();
         const data = await res.json();
 

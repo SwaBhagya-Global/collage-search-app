@@ -9,6 +9,8 @@ import CollegeCard from "@/components/college-card"
 import { useEffect, useState } from "react"
 import Loader from "@/components/loader"
 import Image from "next/image"
+import AdBanner from "@/components/AdBanner"
+import BASE_URL from "./config/api"
 interface ApiCollege {
   _id: string
   name: string
@@ -74,13 +76,13 @@ export default function HomePage() {
   useEffect(() => {
     async function fetchColleges() {
       try {
-        const res = await fetch("http://localhost:6002/api/colleges"); // 🔹 replace with your API endpoint
+        const res = await fetch(`${BASE_URL}/api/colleges`); // 🔹 replace with your API endpoint
         // const data: ApiCollege[] = await res.json();
         const data = await res.json();
         // 🔹 Filter top rated colleges (rating 4.5 or 5)
-     const topRated = data.data
-      .filter((college: ApiCollege) => college.rating >= 4.5)
-      .sort((a:ApiCollege, b:ApiCollege) => b?.rating - a?.rating); // Sort in descending order
+        const topRated = data.data
+          .filter((college: ApiCollege) => college.rating >= 4.5)
+          .sort((a: ApiCollege, b: ApiCollege) => b?.rating - a?.rating); // Sort in descending order
 
         setTopRatedColleges(topRated);
         setfeaturedColleges(data.data);
@@ -95,35 +97,35 @@ export default function HomePage() {
   }, []);
 
   function mapApiToCard(apiCollege: ApiCollege, idx: number): CollegeCardProps["college"] {
-  return {
-    id: apiCollege._id, // or parseInt(apiCollege._id, 16) if you want unique id
-    name: apiCollege.name,
-    shortName: apiCollege.shortName,
-    location: apiCollege.location,
-    rating: apiCollege.rating,
-    fees: apiCollege.courses?.[0]?.fees || "N/A",
-    courses: apiCollege.courses.map(c => c.name).join(", "),
-    images: apiCollege.images?.[0] || "/placeholder.svg", // fallback
-    established: new Date(apiCollege.createdAt).getFullYear(),
-    type: apiCollege.affiliation || "Private", // map affiliation/type properly
-    highlights: apiCollege.highlights,
-    averagePackage:apiCollege.averagePackage,
-    cutoff: "N/A",
+    return {
+      id: apiCollege._id, // or parseInt(apiCollege._id, 16) if you want unique id
+      name: apiCollege.name,
+      shortName: apiCollege.shortName,
+      location: apiCollege.location,
+      rating: apiCollege.rating,
+      fees: apiCollege.courses?.[0]?.fees || "N/A",
+      courses: apiCollege.courses.map(c => c.name).join(", "),
+      images: apiCollege.images?.[0] || "/placeholder.svg", // fallback
+      established: new Date(apiCollege.createdAt).getFullYear(),
+      type: apiCollege.affiliation || "Private", // map affiliation/type properly
+      highlights: apiCollege.highlights,
+      averagePackage: apiCollege.averagePackage,
+      cutoff: "N/A",
+    }
   }
-}
 
-// if (loading) return <Loader/>;
+  // if (loading) return <Loader/>;
 
   return (
     <div className="min-h-screen bg-white relative">
-     {/* Loader Overlay */}
-    {loading && (
-      <Loader overlay={true} className="z-50" />
-    )}
+      {/* Loader Overlay */}
+      {loading && (
+        <Loader overlay={true} className="z-50" />
+      )}
 
-    {/* Always visible content */}
-    <SearchSection />
-      <section className="py-16">
+      {/* Always visible content */}
+      <SearchSection />
+      <section className="py-8">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-10">
             <div>
@@ -153,14 +155,15 @@ export default function HomePage() {
         </div>
       </section>
 
-<section className="flex justify-center">
-  <Image
-    src={"https://tpc.googlesyndication.com/simgad/18114101648311561798"}
-    alt={'ads'}
-    width={800}
-    height={200}
-  />
-</section>
+      <section className="flex justify-center">
+        {/* <Image
+          src={"https://tpc.googlesyndication.com/simgad/18114101648311561798"}
+          alt={'ads'}
+          width={800}
+          height={200}
+        /> */}
+        <AdBanner/>
+      </section>
       {/* Top Rated Colleges */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
@@ -181,8 +184,8 @@ export default function HomePage() {
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {topRatedColleges.slice(0, 12).map((college,i) => (
-              <CollegeCard key={college._id} college={mapApiToCard(college,i)} />
+            {topRatedColleges.slice(0, 12).map((college, i) => (
+              <CollegeCard key={college._id} college={mapApiToCard(college, i)} />
             ))}
           </div>
         </div>
@@ -194,9 +197,9 @@ export default function HomePage() {
           <h2 className="text-4xl font-bold mb-6">Ready to Find Your Dream College? 🎯</h2>
           <p className="text-xl mb-8 opacity-90">Join 2M+ students who found their perfect match</p>
           <Link href="/colleges">
-          <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100 text-lg px-8 py-4">
-            Start Your Journey
-          </Button>
+            <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100 text-lg px-8 py-4">
+              Start Your Journey
+            </Button>
           </Link>
         </div>
       </section>
@@ -225,28 +228,11 @@ export default function HomePage() {
       <footer className="bg-gray-900 text-white py-12">
         <div className="container mx-auto px-4 text-center">
           <div className="flex items-center justify-center space-x-3 mb-6">
-            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
-              <span className="text-white font-bold text-xl">E</span>
-            </div>
-            <span className="text-2xl font-bold">EduFinder</span>
+             <img src="../logo-mba.png" width={150}/>
           </div>
           <p className="text-gray-400 mb-6">Your journey to the perfect college starts here</p>
-          <div className="flex justify-center space-x-8 text-sm">
-            <Link href="#" className="hover:text-blue-400 transition-colors">
-              About
-            </Link>
-            <Link href="#" className="hover:text-blue-400 transition-colors">
-              Contact
-            </Link>
-            <Link href="#" className="hover:text-blue-400 transition-colors">
-              Privacy
-            </Link>
-            <Link href="#" className="hover:text-blue-400 transition-colors">
-              Terms
-            </Link>
-          </div>
           <div className="mt-8 pt-6 border-t border-gray-800 text-gray-500 text-sm">
-            © 2024 EduFinder. Made with ❤️ for students
+            © 2025 Admission In MBA. Made with ❤️ for students
           </div>
         </div>
       </footer>

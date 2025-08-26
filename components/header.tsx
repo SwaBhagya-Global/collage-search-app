@@ -51,7 +51,7 @@ export default function Header() {
                 </span>
                 <div className="text-xs text-gray-500 -mt-1">Find Your Perfect College</div>
               </div> */}
-              <img src="../logo_mba.png" width={150}/>
+              <img src="../logo-mba.png" width={150}/>
             </Link>
 
             {/* Desktop Navigation */}
