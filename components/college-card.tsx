@@ -115,7 +115,7 @@ export default function CollegeCard({ college }: CollegeCardProps) {
 
         {/* Bottom info on image */}
         <div className="absolute bottom-3 left-3 right-3">
-          <h3 className="text-white font-bold text-lg mb-2 line-clamp-2">{college.shortName || college.name}</h3>
+          <h3 className="text-white font-bold text-sm mb-2 line-clamp-1">{college.name}</h3>
           <div className="flex items-center justify-between">
             <div className="flex items-center text-white/90 text-sm">
               <MapPin className="w-3 h-3 mr-1" />

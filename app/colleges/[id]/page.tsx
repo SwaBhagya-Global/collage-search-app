@@ -88,7 +88,7 @@ export default function CollegePage({ params }: { params: { id: string } }) {
     console.log('Rated:', value);
     // You can send this to your backend via fetch/axios here
   };
-    const handleRatingSubmit = async (rating: number) => {
+  const handleRatingSubmit = async (rating: number) => {
     try {
       const response = await fetch(`${BASE_URL}/api/colleges/${id}/rating`, {
         method: 'PATCH',
@@ -200,32 +200,32 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                     <span>{college?.contact?.email}</span>
                   </div>
                   <div className="flex items-center gap-4">
-                      <Link href={college?.links?.website || ""} target="_blank" rel="noopener noreferrer">
-                        <Globe className="w-5 h-5 text-gray-600 hover:text-blue-600 transition" />
-                      </Link>
-                      <Link href={college?.links?.facebook || ""} target="_blank" rel="noopener noreferrer">
-                        <Facebook className="w-5 h-5 text-gray-600 hover:text-blue-500 transition" />
-                      </Link>
+                    <Link href={college?.links?.website || ""} target="_blank" rel="noopener noreferrer">
+                      <Globe className="w-5 h-5 text-gray-600 hover:text-blue-600 transition" />
+                    </Link>
+                    <Link href={college?.links?.facebook || ""} target="_blank" rel="noopener noreferrer">
+                      <Facebook className="w-5 h-5 text-gray-600 hover:text-blue-500 transition" />
+                    </Link>
 
-                      <Link href={college?.links?.instagram || ""} target="_blank" rel="noopener noreferrer">
-                        <InstagramIcon className="w-5 h-5 text-gray-600 hover:text-pink-500 transition" />
-                      </Link>
+                    <Link href={college?.links?.instagram || ""} target="_blank" rel="noopener noreferrer">
+                      <InstagramIcon className="w-5 h-5 text-gray-600 hover:text-pink-500 transition" />
+                    </Link>
 
-                      <Link href={college?.links?.linkedin || ""} target="_blank" rel="noopener noreferrer">
-                        <LinkedinIcon className="w-5 h-5 text-gray-600 hover:text-blue-700 transition" />
-                      </Link>
+                    <Link href={college?.links?.linkedin || ""} target="_blank" rel="noopener noreferrer">
+                      <LinkedinIcon className="w-5 h-5 text-gray-600 hover:text-blue-700 transition" />
+                    </Link>
                   </div>
 
                 </div>
 
                 {/* Action Buttons */}
                 <div className="space-y-3">
-                    <Button asChild className="w-full bg-blue-600 hover:bg-blue-700">
-                      <a href={college?.brochureLink} target="_blank" rel="noopener noreferrer">
-                        <Download className="w-4 h-4 mr-2" />
-                        Download Brochure
-                      </a>
-                    </Button>
+                  <Button asChild className="w-full bg-blue-600 hover:bg-blue-700">
+                    <a href={college?.brochureLink} target="_blank" rel="noopener noreferrer">
+                      <Download className="w-4 h-4 mr-2" />
+                      Download Brochure
+                    </a>
+                  </Button>
 
                   <Button asChild variant="outline" className="w-full border-blue-600 text-blue-600 bg-transparent">
                     <Link href="/apply">
@@ -259,12 +259,12 @@ export default function CollegePage({ params }: { params: { id: string } }) {
           {/* Main Content */}
           <div className="lg:w-2/3">
             <Tabs defaultValue="overview" className="w-full">
-              <TabsList className="grid w-full grid-cols-6 mb-6">
-                <TabsTrigger value="overview">Overview</TabsTrigger>
-                <TabsTrigger value="courses">Courses</TabsTrigger>
-                <TabsTrigger value="admission">Admission</TabsTrigger>
-                <TabsTrigger value="placements">Placements</TabsTrigger>
-                <TabsTrigger value="facilities">Facilities</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-x-2 gap-y-4 mb-6">
+                <TabsTrigger className="min-w-0 text-sm sm:text-base" value="overview">Overview</TabsTrigger>
+                <TabsTrigger className="min-w-0 text-sm sm:text-base" value="courses">Courses</TabsTrigger>
+                <TabsTrigger className="min-w-0 text-sm sm:text-base" value="admission">Admission</TabsTrigger>
+                <TabsTrigger className="min-w-0 text-sm sm:text-base" value="placements">Placements</TabsTrigger>
+                <TabsTrigger className="min-w-0 text-sm sm:text-base" value="facilities">Facilities</TabsTrigger>
               </TabsList>
 
               <TabsContent value="overview" className="space-y-6">
@@ -364,7 +364,7 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                     </div>
                   </CardContent>
                 </Card>
-{/* 
+                {/* 
                 <Card>
                   <CardHeader>
                     <CardTitle>Important Dates</CardTitle>
@@ -457,13 +457,13 @@ export default function CollegePage({ params }: { params: { id: string } }) {
               </CardHeader>
               <CardContent className="space-y-4">
                 <iframe
-                src="https://www.google.com/maps?q=NARAYANA%20INSTITUTE%20OF%20MANAGEMENT%2C%20RAVIVENKATAMPALLI%20(VILLAGE)%2C%20ANANTAPUR%2C%20ANDHRA%20PRADESH&output=embed"
-                width="100%"
-                height="300"
-                style={{ border: 0, borderRadius: "12px" }}
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              ></iframe>
+                  src="https://www.google.com/maps?q=NARAYANA%20INSTITUTE%20OF%20MANAGEMENT%2C%20RAVIVENKATAMPALLI%20(VILLAGE)%2C%20ANANTAPUR%2C%20ANDHRA%20PRADESH&output=embed"
+                  width="100%"
+                  height="300"
+                  style={{ border: 0, borderRadius: "12px" }}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                ></iframe>
               </CardContent>
             </Card>
             <Image src={"../logo-mba.png"} alt={college?.name || ""} width={250} height={250} className="w-full h-40 rounded-lg" />

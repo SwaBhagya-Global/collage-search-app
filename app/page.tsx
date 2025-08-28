@@ -126,12 +126,14 @@ export default function HomePage() {
       {/* Always visible content */}
       <SearchSection />
       <section className="py-8">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-8">
           <div className="flex justify-between items-center mb-10">
             <div>
-              <h2 className="text-3xl font-bold mb-2 flex items-center">
+              <h2 className="text-2xl sm:text-3xl font-bold mb-2 flex items-center flex-wrap">
                 Trending Colleges
-                <TrendingUp className="w-6 h-6 ml-2 text-orange-500" />
+                <span className="ml-2">
+                  <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-orange-500" />
+                </span>
               </h2>
               <p className="text-gray-600">Most popular colleges this month</p>
             </div>
@@ -162,11 +164,11 @@ export default function HomePage() {
           width={800}
           height={200}
         /> */}
-        <AdBanner/>
+        <AdBanner />
       </section>
       {/* Top Rated Colleges */}
       <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-8">
           <div className="flex justify-between items-center mb-10">
             <div>
               <h2 className="text-3xl font-bold mb-2 flex items-center">
@@ -193,7 +195,7 @@ export default function HomePage() {
 
       {/* Simple CTA */}
       <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-        <div className="container mx-auto px-4 text-center">
+        <div className="container mx-auto px-8 text-center">
           <h2 className="text-4xl font-bold mb-6">Ready to Find Your Dream College? 🎯</h2>
           <p className="text-xl mb-8 opacity-90">Join 2M+ students who found their perfect match</p>
           <Link href="/colleges">
@@ -206,12 +208,12 @@ export default function HomePage() {
 
       {/* Simple Stats */}
       <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-8">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 text-center">
             {[
-              { number: "40K+", label: "Colleges", icon: "🏫" },
-              { number: "8K+", label: "Courses", icon: "📚" },
-              { number: "2M+", label: "Students", icon: "👨‍🎓" },
+              { number: "3K+", label: "Colleges", icon: "🏫" },
+              { number: "6K+", label: "Courses", icon: "📚" },
+              { number: "50K+", label: "Students", icon: "👨‍🎓" },
               { number: "95%", label: "Success Rate", icon: "🎯" },
             ].map((stat, index) => (
               <div key={index} className="group">
@@ -223,19 +225,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* Minimal Footer */}
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="container mx-auto px-4 text-center">
-          <div className="flex items-center justify-center space-x-3 mb-6">
-             <img src="../logo-mba.png" width={150}/>
-          </div>
-          <p className="text-gray-400 mb-6">Your journey to the perfect college starts here</p>
-          <div className="mt-8 pt-6 border-t border-gray-800 text-gray-500 text-sm">
-            © 2025 Admission In MBA. Made with ❤️ for students
-          </div>
-        </div>
-      </footer>
     </div>
   )
 }
