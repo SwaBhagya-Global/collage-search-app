@@ -3,7 +3,8 @@ import Image from "next/image"
 import Link from "next/link"
 import {
   Star, MapPin, Phone, Mail, Globe, Download, Heart, ChevronRight, CheckCircle, TwitterIcon, InstagramIcon, LinkedinIcon,
-  Facebook
+  Facebook,
+  MapPinnedIcon
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -14,12 +15,15 @@ import StarRating from "@/components/Star-Rating"
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import BASE_URL from "@/app/config/api";
+import BrochureDownload from "@/components/BrochureDownload";
+import ApplyModal from "@/components/ApplyModal";
+import Loader from "@/components/loader";
 
 interface ApiCollege {
   _id: string
   name: string
   shortName: string
-  location: string
+  state: string
   affiliation?: string
   address?: string
   rating: number
@@ -82,8 +86,6 @@ export default function CollegePage({ params }: { params: { id: string } }) {
     fetchColleges();
   }, [id])
 
-  console.log("collage", college);
-
   const handleRatingChange = (value: number) => {
     console.log('Rated:', value);
     // You can send this to your backend via fetch/axios here
@@ -108,9 +110,16 @@ export default function CollegePage({ params }: { params: { id: string } }) {
     }
   };
 
+    const [isOpen, setIsOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Breadcrumb */}
+      {loading && (
+              <Loader overlay={true} className="z-50" />
+          )
+      }
+
       <div className="bg-white border-b">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center space-x-2 text-sm text-gray-600">
@@ -161,7 +170,7 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                   <h1 className="text-2xl font-bold text-gray-900 mb-2">{college?.name}</h1>
                   <div className="flex items-center text-gray-600 mb-2">
                     <MapPin className="w-4 h-4 mr-1" />
-                    <span className="text-sm">{college?.location}</span>
+                    <span className="text-sm">{college?.state}</span>
                   </div>
                   <div className="flex items-center text-gray-600 mb-2">
                     <MapPin className="w-4 h-4 mr-1" />
@@ -214,24 +223,41 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                     <Link href={college?.links?.linkedin || ""} target="_blank" rel="noopener noreferrer">
                       <LinkedinIcon className="w-5 h-5 text-gray-600 hover:text-blue-700 transition" />
                     </Link>
+
+                    <Link href={college?.mapUrl || ""} target="_blank" rel="noopener noreferrer">
+                      <MapPinnedIcon className="w-5 h-5 text-gray-600 hover:text-red-600 transition" />
+                    </Link>
                   </div>
 
                 </div>
 
                 {/* Action Buttons */}
                 <div className="space-y-3">
-                  <Button asChild className="w-full bg-blue-600 hover:bg-blue-700">
+                  {/* <Button asChild className="w-full bg-blue-600 hover:bg-blue-700">
                     <a href={college?.brochureLink} target="_blank" rel="noopener noreferrer">
                       <Download className="w-4 h-4 mr-2" />
                       Download Brochure
                     </a>
+                  </Button> */}
+                  <Button asChild className="w-full bg-blue-600 hover:bg-blue-700">
+                    <BrochureDownload brochureLink={college?.brochureLink ?? ''} />
                   </Button>
 
-                  <Button asChild variant="outline" className="w-full border-blue-600 text-blue-600 bg-transparent">
+                  {/* <Button asChild variant="outline" className="w-full border-blue-600 text-blue-600 bg-transparent">
                     <Link href="/apply">
                       Apply Now
                     </Link>
-                  </Button>
+                  </Button> */}
+                  <Button
+        asChild
+        variant="outline"
+        className="w-full border-blue-600 text-blue-600 bg-transparent"
+        onClick={() => setIsOpen(true)}
+      >
+        <span>Apply Now</span>
+      </Button>
+
+      <ApplyModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
                 </div>
               </div>
             </div>
@@ -284,7 +310,7 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                   </CardContent>
                 </Card>
 
-                <Card>
+                {/* <Card>
                   <CardHeader>
                     <CardTitle>Key Statistics</CardTitle>
                   </CardHeader>
@@ -308,7 +334,7 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                       </div>
                     </div>
                   </CardContent>
-                </Card>
+                </Card> */}
               </TabsContent>
 
               <TabsContent value="courses" className="space-y-6">
@@ -451,7 +477,7 @@ export default function CollegePage({ params }: { params: { id: string } }) {
           {/* Sidebar */}
           <div className="lg:w-1/3 space-y-6">
             {/* Quick Apply */}
-            <Card>
+            {/* <Card>
               <CardHeader>
                 <CardTitle className="text-lg">Google Map</CardTitle>
               </CardHeader>
@@ -465,7 +491,7 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                   referrerPolicy="no-referrer-when-downgrade"
                 ></iframe>
               </CardContent>
-            </Card>
+            </Card> */}
             <Image src={"../logo-mba.png"} alt={college?.name || ""} width={250} height={250} className="w-full h-40 rounded-lg" />
             {/* Similar Colleges */}
             {/* <Card>

@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation"
 export default function SearchSection() {
   const [searchQuery, setSearchQuery] = useState("")
   const [activeTab, setActiveTab] = useState("colleges")
-  const [location, setLocation] = useState("all-india")
+  const [state, setState] = useState("all-india")
   const [category, setCategory] = useState("all-categories")
   const [specialization, setSpecialization] = useState("specialization")
   const [collegeType, setCollegeType] = useState("all-types")
@@ -25,7 +25,7 @@ export default function SearchSection() {
     e.preventDefault()
     const params = new URLSearchParams()
     if (searchQuery.trim()) params.set("search", searchQuery.trim())
-    if (location !== "all-india") params.set("location", location)
+    if (state !== "all-india") params.set("state", state)
     if (category !== "all-categories") params.set("category", category)
     if (collegeType !== "all-types") params.set("type", collegeType)
     if (specialization !== "specialization") params.set("specialization", specialization)
@@ -107,7 +107,7 @@ export default function SearchSection() {
                       <div className="relative w-[400px]">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                         <Input
-                          placeholder="Search by name, location or course..."
+                          placeholder="Search by name, state or course..."
                           className="h-12 w-full bg-white border border-gray-300 pl-10 rounded"
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
@@ -126,14 +126,14 @@ export default function SearchSection() {
                         />
                       </div> */}
 
-                      <Select value={location} onValueChange={setLocation}>
+                      <Select value={state} onValueChange={setState}>
                         <SelectTrigger className="h-12 bg-white border-gray-300">
                           <SelectValue placeholder="All India" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="all-india">All India</SelectItem>
                           {indianStates.map((state) => (
-                            <SelectItem key={state} value={state.toLowerCase().replace(/\s+/g, "-")}>
+                            <SelectItem key={state} value={state.replace(/\s+/g, "-")}>
                               {state}
                             </SelectItem>
                           ))}
@@ -230,7 +230,7 @@ export default function SearchSection() {
                         </SelectContent>
                       </Select>
 
-                      <Select value={location} onValueChange={setLocation}>
+                      <Select value={state} onValueChange={setState}>
                         <SelectTrigger className="h-12 bg-white border-gray-300">
                           <SelectValue placeholder="All India" />
                         </SelectTrigger>

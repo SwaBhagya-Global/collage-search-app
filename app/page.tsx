@@ -15,10 +15,11 @@ interface ApiCollege {
   _id: string
   name: string
   shortName: string
-  location: string
+  state: string
   affiliation?: string
   address?: string
   rating: number
+  established:number
   intake?: string
   images: string[]
   highlights: string[]
@@ -52,7 +53,7 @@ interface CollegeCardProps {
     id: string
     name: string
     shortName?: string
-    location: string
+    state: string
     rating: number
     fees: string
     courses: string
@@ -101,12 +102,12 @@ export default function HomePage() {
       id: apiCollege._id, // or parseInt(apiCollege._id, 16) if you want unique id
       name: apiCollege.name,
       shortName: apiCollege.shortName,
-      location: apiCollege.location,
+      state: apiCollege.state,
       rating: apiCollege.rating,
       fees: apiCollege.courses?.[0]?.fees || "N/A",
       courses: apiCollege.courses.map(c => c.name).join(", "),
       images: apiCollege.images?.[0] || "/placeholder.svg", // fallback
-      established: new Date(apiCollege.createdAt).getFullYear(),
+      established: apiCollege.established,
       type: apiCollege.affiliation || "Private", // map affiliation/type properly
       highlights: apiCollege.highlights,
       averagePackage: apiCollege.averagePackage,
