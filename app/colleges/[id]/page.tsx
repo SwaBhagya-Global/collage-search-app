@@ -56,11 +56,8 @@ interface ApiCollege {
   mapUrl: string
   createdAt: string
   updatedAt: string
-  contact?: {
-    email?: string
-    phone?: string
-    _id: string
-  }
+  email?: string
+  phone?: string
 }
 
 export default function CollegePage({ params }: { params: { id: string } }) {
@@ -202,11 +199,11 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                 <div className="space-y-2 text-sm">
                   <div className="flex items-center">
                     <Phone className="w-4 h-4 mr-2 text-gray-500" />
-                    <span>{college?.contact?.phone}</span>
+                    <span>{college?.phone}</span>
                   </div>
                   <div className="flex items-center">
                     <Mail className="w-4 h-4 mr-2 text-gray-500" />
-                    <span>{college?.contact?.email}</span>
+                    <span>{college?.email}</span>
                   </div>
                   <div className="flex items-center gap-4">
                     <Link href={college?.links?.website || ""} target="_blank" rel="noopener noreferrer">
