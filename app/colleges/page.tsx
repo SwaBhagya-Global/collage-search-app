@@ -19,10 +19,11 @@ interface ApiCollege {
   _id: string
   name: string
   shortName: string
-  location: string
+  state: string
   affiliation?: string
   address?: string
   rating: number
+  established:number
   intake?: string
   type?: string
   images: string[]
@@ -47,10 +48,8 @@ interface ApiCollege {
   }
   createdAt: string
   updatedAt: string
-  contact?: {
-    email?: string
-    _id: string
-  }
+  email:string
+  phone:string
 }
 
 interface CollegeCardProps {
@@ -58,7 +57,7 @@ interface CollegeCardProps {
     id: string
     name: string
     shortName?: string
-    location: string
+    state: string
     rating: number
     fees: string
     courses: string
@@ -74,20 +73,54 @@ interface CollegeCardProps {
   }
 }
 
+const indianStates = [
+  "Andhra Pradesh",
+  "Arunachal Pradesh",
+  "Assam",
+  "Bihar",
+  "Chhattisgarh",
+  "Goa",
+  "Gujarat",
+  "Haryana",
+  "Himachal Pradesh",
+  "Jharkhand",
+  "Karnataka",
+  "Kerala",
+  "Madhya Pradesh",
+  "Maharashtra",
+  "Manipur",
+  "Meghalaya",
+  "Mizoram",
+  "Nagaland",
+  "Odisha",
+  "Punjab",
+  "Rajasthan",
+  "Sikkim",
+  "Tamil Nadu",
+  "Telangana",
+  "Tripura",
+  "Uttar Pradesh",
+  "Uttarakhand",
+  "West Bengal",
+  "Delhi",
+  "Jammu and Kashmir",
+  "Ladakh",
+]
 
 export default function CollegesPage() {
   const searchParams = useSearchParams()
+  console.log("searchParams",searchParams);
   const [searchQuery, setSearchQuery] = useState(searchParams?.get("search") || "")
   const [filteredColleges, setFilteredColleges] = useState<any[]>([])
   const [filters, setFilters] = useState({
-    location: "",
+    state: searchParams?.get("state")?.replace(/-/g, " ") || "",
     category: searchParams?.get("category") || "",
     type: "",
     fees: "",
     rating: "",
   })
   const [visibleCount, setVisibleCount] = useState(12);
-
+console.log("filters",filters);
   const [colleges, setColleges] = useState<ApiCollege[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -114,12 +147,12 @@ export default function CollegesPage() {
       id: apiCollege._id, // or parseInt(apiCollege._id, 16) if you want unique id
       name: apiCollege.name,
       shortName: apiCollege.shortName,
-      location: apiCollege.location,
+      state: apiCollege.state,
       rating: apiCollege.rating,
       fees: apiCollege.courses?.[0]?.fees || "N/A",
       courses: apiCollege.courses.map(c => c.name).join(", "),
       images: apiCollege.images?.[0] || "/placeholder.svg", // fallback
-      established: new Date(apiCollege.createdAt).getFullYear(),
+      established: apiCollege.established,
       type: "Full Time", // map affiliation/type properly
       highlights: apiCollege.highlights,
       cutoff: "N/A",
@@ -135,23 +168,23 @@ export default function CollegesPage() {
     if (searchQuery) {
       filtered = filtered.filter(
         (college) =>
-          college.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          college.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          college.shortName.toLowerCase().includes(searchQuery.toLowerCase()),
+          college?.name.toLowerCase().includes(searchQuery?.toLowerCase()) ||
+          college?.state?.toLowerCase().includes(searchQuery?.toLowerCase()) ||
+          college?.shortName?.toLowerCase().includes(searchQuery?.toLowerCase()),
       )
     }
 
     // Apply category filter (match against course names)
     if (filters.category && filters.category !== "all") {
-      const categoryLower = filters.category.toLowerCase()
+      const categoryLower = filters.category?.toLowerCase()
       filtered = filtered.filter((college) =>
         Array.isArray(college.courses) && college.courses.some((c) => c.name?.toLowerCase().includes(categoryLower)),
       )
     }
 
-    // Apply location filter
-    if (filters.location && filters.location !== "all") {
-      filtered = filtered.filter((college) => college.location.toLowerCase().includes(filters.location.toLowerCase()))
+    // Apply state filter
+    if (filters.state && filters.state !== "all") {
+      filtered = filtered?.filter((college) => college?.state?.toLowerCase().includes(filters?.state?.toLowerCase()))
     }
 
     // Apply type filter
@@ -167,7 +200,7 @@ export default function CollegesPage() {
     setVisibleCount(12);
     setFilteredColleges(filtered)
   }, [searchQuery, filters, colleges])
-  
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     // Search is handled by useEffect
@@ -175,7 +208,7 @@ export default function CollegesPage() {
 
   const clearFilters = () => {
     setFilters({
-      location: "",
+      state: "",
       category: "",
       type: "",
       fees: "",
@@ -201,7 +234,7 @@ export default function CollegesPage() {
             <form onSubmit={handleSearch} className="flex-1 relative">
               <Search className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
               <Input
-                placeholder="Search colleges by name, location, or course..."
+                placeholder="Search colleges by name, state, or course..."
                 className="pl-10 h-12"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -210,38 +243,38 @@ export default function CollegesPage() {
 
             <div className="flex gap-2">
               <Select
-                value={filters.location}
-                onValueChange={(value) => setFilters((prev) => ({ ...prev, location: value }))}
+                value={filters.state}
+                onValueChange={(value) => {console.log(value),setFilters((prev) => ({ ...prev, state: value }))}}
               >
-                <SelectTrigger className="w-40">
-                  <SelectValue placeholder="Location" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Locations</SelectItem>
-                  <SelectItem value="delhi">Delhi</SelectItem>
-                  <SelectItem value="mumbai">Mumbai</SelectItem>
-                  <SelectItem value="bangalore">Bangalore</SelectItem>
-                  <SelectItem value="chennai">Chennai</SelectItem>
-                  <SelectItem value="hyderabad">Hyderabad</SelectItem>
-                </SelectContent>
-              </Select>
+                  <SelectTrigger className="w-40">
+                    <SelectValue placeholder="All India" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All India</SelectItem>
+                    {indianStates.map((state) => (
+                      <SelectItem key={state} value={state}>
+                        {state}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
 
-              <Select
-                value={filters.category}
-                onValueChange={(value) => setFilters((prev) => ({ ...prev, category: value }))}
-              >
-                <SelectTrigger className="w-40">
-                  <SelectValue placeholder="Category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  <SelectItem value="MBA">MBA</SelectItem>
-                  <SelectItem value="PGDM">PGDM</SelectItem>
-                </SelectContent>
-              </Select>
+                <Select
+                  value={filters.category}
+                  onValueChange={(value) => setFilters((prev) => ({ ...prev, category: value }))}
+                >
+                  <SelectTrigger className="w-40">
+                    <SelectValue placeholder="Category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Categories</SelectItem>
+                    <SelectItem value="MBA">MBA</SelectItem>
+                    <SelectItem value="PGDM">PGDM</SelectItem>
+                  </SelectContent>
+                </Select>
 
-              {/* Mobile Filters */}
-              {/* <Sheet>
+                {/* Mobile Filters */}
+                {/* <Sheet>
                 <SheetTrigger asChild>
                   <Button variant="outline" className="lg:hidden bg-transparent">
                     <SlidersHorizontal className="w-4 h-4 mr-2" />
@@ -304,8 +337,8 @@ export default function CollegesPage() {
                 </SheetContent>
               </Sheet> */}
 
-              {/* Desktop More Filters */}
-              {/* <Button variant="outline" className="hidden lg:flex h-12 bg-transparent">
+                {/* Desktop More Filters */}
+                {/* <Button variant="outline" className="hidden lg:flex h-12 bg-transparent">
                 <Filter className="w-4 h-4 mr-2" />
                 More Filters
               </Button> */}
@@ -320,7 +353,7 @@ export default function CollegesPage() {
             Showing {filteredColleges.length} colleges
             {searchQuery && ` for "${searchQuery}"`}
             {filters.category !== "all" && ` in ${filters.category}`}
-            {filters.location !== "all" && ` in ${filters.location}`}
+            {filters.state !== "all" && ` in ${filters.state}`}
             {filters.type !== "all" && ` of type ${filters.type}`}
             {filters.rating !== "any" && ` with minimum rating ${filters.rating}`}
           </p>
