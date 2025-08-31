@@ -13,9 +13,21 @@ import ClientAnalytics from '@/components/ClientAnalytics';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Admission in MBA - Find Your Perfect MBA College in India',
+  title: 'Admission in MBA - Find Your Best MBA / PGDM College',
   description:
     "India's largest education platform helping millions of students make informed career decisions across PAN India",
+    keywords: [
+    'MBA Admission',
+    'PGDM Admission',
+    'Best MBA Colleges in India',
+    'Top PGDM Institutes',
+    'MBA Courses',
+    'Business Schools in India',
+    'Management Colleges Admission',
+    'MBA Entrance Exams',
+    'Distance MBA',
+    'Full-time MBA Programs'
+  ],
 };
 
 export default function RootLayout({

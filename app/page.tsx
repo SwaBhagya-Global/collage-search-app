@@ -72,21 +72,29 @@ interface CollegeCardProps {
 export default function HomePage() {
   const [topRatedColleges, setTopRatedColleges] = useState<ApiCollege[]>([]);
   const [featuredColleges, setfeaturedColleges] = useState<ApiCollege[]>([]);
+  const [ads, setAds] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchColleges() {
       try {
-        const res = await fetch(`${BASE_URL}/api/colleges`); // 🔹 replace with your API endpoint
+        const [collegeRes, adsRes] = await Promise.all([
+          fetch(`${BASE_URL}/api/colleges`),
+          fetch(`${BASE_URL}/api/ads`)
+        ]);
+        // const res = await fetch(`${BASE_URL}/api/colleges`); // 🔹 replace with your API endpoint
         // const data: ApiCollege[] = await res.json();
-        const data = await res.json();
+        // const data = await res.json();
+        const collegeData = await collegeRes.json();
+        const adsData = await adsRes.json();
         // 🔹 Filter top rated colleges (rating 4.5 or 5)
-        const topRated = data.data
+        const topRated = collegeData.data
           .filter((college: ApiCollege) => college.rating >= 4.5)
           .sort((a: ApiCollege, b: ApiCollege) => b?.rating - a?.rating); // Sort in descending order
 
         setTopRatedColleges(topRated);
-        setfeaturedColleges(data.data);
+        setfeaturedColleges(collegeData.data);
+        setAds(adsData.data);
       } catch (err) {
         console.error("Failed to fetch colleges", err);
       } finally {
@@ -96,6 +104,8 @@ export default function HomePage() {
 
     fetchColleges();
   }, []);
+
+  console.log("ads",ads);
 
   function mapApiToCard(apiCollege: ApiCollege, idx: number): CollegeCardProps["college"] {
     return {
