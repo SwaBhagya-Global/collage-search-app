@@ -197,7 +197,7 @@ export default function CollegeCard({ college }: CollegeCardProps) {
 
         {/* Action buttons */}
         <div className="flex gap-2">
-          <Link href={`/colleges/${college.id}`} className="flex-1">
+          <Link href={`/colleges/${college?.name.toLowerCase().replace(/\s+/g, '-')}-${college?.id}`} className="flex-1">
             <Button size="sm" className="w-full bg-blue-600 hover:bg-blue-700 text-xs">
               View Details
             </Button>

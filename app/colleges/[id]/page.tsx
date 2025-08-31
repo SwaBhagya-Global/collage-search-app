@@ -58,17 +58,19 @@ interface ApiCollege {
   updatedAt: string
   email?: string
   phone?: string
+  about:string
 }
 
 export default function CollegePage({ params }: { params: { id: string } }) {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
+  const id1 = id?.split('-').pop();
   const [college, setCollege] = useState<ApiCollege | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchColleges() {
       try {
-        const res = await fetch(`${BASE_URL}/api/colleges/${id}`); // 🔹 replace with your API endpoint
+        const res = await fetch(`${BASE_URL}/api/colleges/${id1}`); // 🔹 replace with your API endpoint
         // const data: ApiCollege[] = await res.json();
         const data = await res.json();
 
@@ -246,15 +248,15 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                     </Link>
                   </Button> */}
                   <Button
-        asChild
-        variant="outline"
-        className="w-full border-blue-600 text-blue-600 bg-transparent"
-        onClick={() => setIsOpen(true)}
-      >
-        <span>Apply Now</span>
-      </Button>
+                    asChild
+                    variant="outline"
+                    className="w-full border-blue-600 text-blue-600 bg-transparent"
+                    onClick={() => setIsOpen(true)}
+                  >
+                    <span>Apply Now</span>
+                  </Button>
 
-      <ApplyModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
+                  <ApplyModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
                 </div>
               </div>
             </div>
@@ -293,16 +295,11 @@ export default function CollegePage({ params }: { params: { id: string } }) {
               <TabsContent value="overview" className="space-y-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>About {college?.shortName}</CardTitle>
+                    <CardTitle>About {college?.name}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <p className="text-gray-700 leading-relaxed">
-                      Indian Institute of Technology Delhi is one of the premier engineering institutions in India.
-                      Established in 1961, IIT Delhi has been a leader in engineering education and research. The
-                      institute offers undergraduate, postgraduate, and doctoral programs in various fields of
-                      engineering, science, and technology. With world-class faculty, state-of-the-art infrastructure,
-                      and excellent placement records, IIT Delhi continues to be the dream destination for engineering
-                      aspirants.
+                      {college?.about}
                     </p>
                   </CardContent>
                 </Card>

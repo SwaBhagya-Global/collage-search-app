@@ -84,8 +84,8 @@ export default function SearchSection() {
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-5xl mx-auto text-center">
           {/* Simple Header */}
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">Find Your Perfect College</h1>
-          <p className="text-lg text-white/90 mb-8">Search from 40,000+ colleges across India</p>
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">Find Your Best MBA / PGDM College</h1>
+          <p className="text-lg text-white/90 mb-8">Search colleges across India</p>
 
           {/* Simple Search - Only Colleges and Courses */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
