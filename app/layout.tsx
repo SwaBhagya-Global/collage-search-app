@@ -40,7 +40,7 @@ export default function RootLayout({
       <body className={inter.className}>
         {/* Google Analytics scripts */}
         <Script
-          src="https://www.googletagmanager.com/gtag/js?id='G-S6BL2Z41Z6"
+          src="https://www.googletagmanager.com/gtag/js?id=G-S6BL2Z41Z6"
           strategy="afterInteractive"
         />
         <Script id="gtag-init" strategy="afterInteractive">
@@ -48,7 +48,7 @@ export default function RootLayout({
             window.dataLayer = window.dataLayer || [];
             function gtag(){window.dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', ''G-S6BL2Z41Z6', {
+            gtag('config', 'G-S6BL2Z41Z6', {
               page_path: window.location.pathname,
             });
           `}
