@@ -79,7 +79,7 @@ export default function HomePage() {
     async function fetchColleges() {
       try {
         const [collegeRes, adsRes] = await Promise.all([
-          fetch(`${BASE_URL}/api/colleges`),
+          fetch(`${BASE_URL}/api/colleges?view=home`),
           fetch(`${BASE_URL}/api/ads`)
         ]);
         // const res = await fetch(`${BASE_URL}/api/colleges`); // 🔹 replace with your API endpoint
@@ -88,12 +88,12 @@ export default function HomePage() {
         const collegeData = await collegeRes.json();
         const adsData = await adsRes.json();
         // 🔹 Filter top rated colleges (rating 4.5 or 5)
-        const topRated = collegeData.data
-          .filter((college: ApiCollege) => college.rating >= 4.5)
-          .sort((a: ApiCollege, b: ApiCollege) => b?.rating - a?.rating); // Sort in descending order
+        // const topRated = collegeData.data
+        //   .filter((college: ApiCollege) => college.rating >= 4.5)
+        //   .sort((a: ApiCollege, b: ApiCollege) => b?.rating - a?.rating); // Sort in descending order
 
-        setTopRatedColleges(topRated);
-        setfeaturedColleges(collegeData.data);
+        setTopRatedColleges(collegeData.data.topRated);
+        setfeaturedColleges(collegeData.data.trending);
         setAds(adsData.data);
       } catch (err) {
         console.error("Failed to fetch colleges", err);
