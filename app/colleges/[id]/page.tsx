@@ -63,14 +63,13 @@ interface ApiCollege {
 
 export default function CollegePage({ params }: { params: { id: string } }) {
   const { id } = useParams<{ id: string }>();
-  const id1 = id?.split('-').pop();
   const [college, setCollege] = useState<ApiCollege | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchColleges() {
       try {
-        const res = await fetch(`${BASE_URL}/api/colleges/${id1}`); // 🔹 replace with your API endpoint
+        const res = await fetch(`${BASE_URL}/api/colleges/name/${id}`); // 🔹 replace with your API endpoint
         // const data: ApiCollege[] = await res.json();
         const data = await res.json();
 
