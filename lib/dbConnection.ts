@@ -2,11 +2,11 @@
 
 import { MongoClient } from 'mongodb';
 
-if (!process.env.NEXT_PUBLIC_MONGODB_URI) {
+if (!process.env.MONGODB_URI) {
   throw new Error('Please add your Mongo URI to environment variables');
 }
 
-const uri: string = process.env.NEXT_PUBLIC_MONGODB_URI;
+const uri: string = process.env.MONGODB_URI;
 const options = {};
 
 let client: MongoClient;
