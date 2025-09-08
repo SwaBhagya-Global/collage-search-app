@@ -3,12 +3,10 @@
 import Link from "next/link"
 import { ChevronRight, TrendingUp, Award } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import Header from "@/components/header"
 import SearchSection from "@/components/search-section"
 import CollegeCard from "@/components/college-card"
 import { useEffect, useState } from "react"
 import Loader from "@/components/loader"
-import Image from "next/image"
 import AdBanner from "@/components/AdBanner"
 import BASE_URL from "./config/api"
 interface ApiCollege {
@@ -78,15 +76,15 @@ export default function HomePage() {
   useEffect(() => {
     async function fetchColleges() {
       try {
-        const [collegeRes, adsRes] = await Promise.all([
-          fetch(`${BASE_URL}/api/colleges?view=home`),
-          fetch(`${BASE_URL}/api/ads`)
+        const [collegeRes] = await Promise.all([
+          fetch(`/api/colleges?view=home`),
+          // fetch(`${BASE_URL}/api/ads`)
         ]);
         // const res = await fetch(`${BASE_URL}/api/colleges`); // 🔹 replace with your API endpoint
         // const data: ApiCollege[] = await res.json();
         // const data = await res.json();
         const collegeData = await collegeRes.json();
-        const adsData = await adsRes.json();
+        // const adsData = await adsRes.json();
         // 🔹 Filter top rated colleges (rating 4.5 or 5)
         // const topRated = collegeData.data
         //   .filter((college: ApiCollege) => college.rating >= 4.5)
@@ -94,7 +92,7 @@ export default function HomePage() {
 
         setTopRatedColleges(collegeData.data.topRated);
         setfeaturedColleges(collegeData.data.trending);
-        setAds(adsData.data);
+        // setAds(adsData.data);
       } catch (err) {
         console.error("Failed to fetch colleges", err);
       } finally {
@@ -104,8 +102,6 @@ export default function HomePage() {
 
     fetchColleges();
   }, []);
-
-  console.log("ads",ads);
 
   function mapApiToCard(apiCollege: ApiCollege, idx: number): CollegeCardProps["college"] {
     return {

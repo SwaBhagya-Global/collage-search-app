@@ -115,7 +115,14 @@ export default function CollegeCard({ college }: CollegeCardProps) {
 
         {/* Bottom info on image */}
         <div className="absolute bottom-3 left-3 right-3">
-          <h3 className="text-white font-bold text-sm mb-2 line-clamp-1">{college.name}</h3>
+          <Link
+            href={`/colleges/${college?.name.toLowerCase().replace(/\s+/g, '-')}`}
+            className="block"
+          >
+            <h3 className="text-white font-bold text-sm mb-2 line-clamp-1 hover:underline">
+              {college.name}
+            </h3>
+          </Link>
           <div className="flex items-center justify-between">
             <div className="flex items-center text-white/90 text-sm">
               <MapPin className="w-3 h-3 mr-1" />
@@ -210,11 +217,10 @@ export default function CollegeCard({ college }: CollegeCardProps) {
           <Button
             size="sm"
             variant="outline"
-            className={`px-3 text-xs ${
-              isCompared
+            className={`px-3 text-xs ${isCompared
                 ? "bg-orange-100 border-orange-500 text-orange-700"
                 : "bg-transparent border-gray-300 text-gray-700"
-            }`}
+              }`}
             onClick={handleCompare}
           >
             {isCompared ? "Added" : "Compare"}

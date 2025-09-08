@@ -103,6 +103,13 @@ export default function Header() {
             {/* Right Side Actions */}
             <div className="flex items-center space-x-3">
               {/* Compare Button */}
+              <Link
+                href="/blogs"
+                className="text-gray-700 hover:text-blue-600 font-medium transition-colors relative group py-2"
+               >
+                Blog
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all group-hover:w-full"></span>
+              </Link>
               <Button
                 variant="ghost"
                 size="sm"
