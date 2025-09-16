@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
+import FormModal from "./FormModal"
 
 interface CollegeCardProps {
   college: {
@@ -28,12 +29,14 @@ interface CollegeCardProps {
     averagePackage?: string
     highlights?: string[]
     cutoff?: string
+    category?: string[];
   }
 }
 
 export default function CollegeCard({ college }: CollegeCardProps) {
   const [isLiked, setIsLiked] = useState(false)
   const [isCompared, setIsCompared] = useState(false)
+  const [isApplyOpen, setIsApplyOpen] = useState(false);
 
   const handleCompare = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -151,9 +154,9 @@ export default function CollegeCard({ college }: CollegeCardProps) {
             <span className="font-medium">Courses:</span> {college.courses}
           </div> */}
 
-          {college.cutoff && (
+          {college.category && (
             <div className="text-sm text-gray-600 mb-2">
-              <span className="font-medium">Cutoff:</span> {college.cutoff}
+              <span className="font-medium">Category:</span> {college.category.join(', ')}
             </div>
           )}
         </div>
@@ -209,17 +212,32 @@ export default function CollegeCard({ college }: CollegeCardProps) {
               View Details
             </Button>
           </Link>
-          <Link href={`/colleges/${college.id}`} className="flex-1">
-            <Button size="sm" className="w-full bg-blue-600 hover:bg-blue-700 text-xs">
+          <div className="flex-1">
+            <Button
+              size="sm"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-xs text-white"
+              onClick={() => setIsApplyOpen(true)}
+            >
               Apply
             </Button>
-          </Link>
+
+            {/* Apply Modal */}
+            <FormModal
+              isOpen={isApplyOpen}
+              onClose={() => setIsApplyOpen(false)}
+              title="Apply Now"
+              subtitle="Please fill out the form to apply for admission."
+              buttonText="Submit Application"
+              showEmail={true}
+              flag={"apply_now"}
+            />
+          </div>
           <Button
             size="sm"
             variant="outline"
             className={`px-3 text-xs ${isCompared
-                ? "bg-orange-100 border-orange-500 text-orange-700"
-                : "bg-transparent border-gray-300 text-gray-700"
+              ? "bg-orange-100 border-orange-500 text-orange-700"
+              : "bg-transparent border-gray-300 text-gray-700"
               }`}
             onClick={handleCompare}
           >

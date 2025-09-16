@@ -22,6 +22,7 @@ interface ApiCollege {
   established:number
   intake?: string
   images: string[]
+  category?: string[];
   highlights: string[]
   courses: {
     name: string
@@ -66,6 +67,7 @@ interface CollegeCardProps {
     averagePackage?: string
     highlights?: string[]
     cutoff?: string
+    category?: string[];
   }
 }
 
@@ -78,15 +80,13 @@ export default function HomePage() {
   useEffect(() => {
     async function fetchColleges() {
       try {
-        const [collegeRes, adsRes] = await Promise.all([
+        const [collegeRes] = await Promise.all([
           fetch(`${BASE_URL}/api/colleges?view=home`),
-          fetch(`${BASE_URL}/api/ads`)
         ]);
         // const res = await fetch(`${BASE_URL}/api/colleges`); // 🔹 replace with your API endpoint
         // const data: ApiCollege[] = await res.json();
         // const data = await res.json();
         const collegeData = await collegeRes.json();
-        const adsData = await adsRes.json();
         // 🔹 Filter top rated colleges (rating 4.5 or 5)
         // const topRated = collegeData.data
         //   .filter((college: ApiCollege) => college.rating >= 4.5)
@@ -94,7 +94,6 @@ export default function HomePage() {
 
         setTopRatedColleges(collegeData.data.topRated);
         setfeaturedColleges(collegeData.data.trending);
-        setAds(adsData.data);
       } catch (err) {
         console.error("Failed to fetch colleges", err);
       } finally {
@@ -104,8 +103,6 @@ export default function HomePage() {
 
     fetchColleges();
   }, []);
-
-  console.log("ads",ads);
 
   function mapApiToCard(apiCollege: ApiCollege, idx: number): CollegeCardProps["college"] {
     return {
@@ -122,6 +119,7 @@ export default function HomePage() {
       highlights: apiCollege.highlights,
       averagePackage: apiCollege.averagePackage,
       cutoff: "N/A",
+      category: apiCollege.category || [],
     }
   }
 
