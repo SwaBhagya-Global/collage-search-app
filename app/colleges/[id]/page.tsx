@@ -15,9 +15,9 @@ import StarRating from "@/components/Star-Rating"
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import BASE_URL from "@/app/config/api";
-import BrochureDownload from "@/components/BrochureDownload";
-import ApplyModal from "@/components/ApplyModal";
+
 import Loader from "@/components/loader";
+import FormModal from "@/components/FormModal";
 
 interface ApiCollege {
   _id: string
@@ -58,13 +58,16 @@ interface ApiCollege {
   updatedAt: string
   email?: string
   phone?: string
-  about:string
+  about: string
+  category?: string[];
 }
 
 export default function CollegePage({ params }: { params: { id: string } }) {
   const { id } = useParams<{ id: string }>();
   const [college, setCollege] = useState<ApiCollege | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isBrochureOpen, setIsBrochureOpen] = useState(false);
+  const [isApplyOpen, setIsApplyOpen] = useState(false);
 
   useEffect(() => {
     async function fetchColleges() {
@@ -90,7 +93,7 @@ export default function CollegePage({ params }: { params: { id: string } }) {
   };
   const handleRatingSubmit = async (rating: number) => {
     try {
-      const response = await fetch(`${BASE_URL}/api/colleges/${id}/rating`, {
+      const response = await fetch(`${BASE_URL}/api/colleges/${college?._id}/rating`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -108,14 +111,12 @@ export default function CollegePage({ params }: { params: { id: string } }) {
     }
   };
 
-    const [isOpen, setIsOpen] = useState(false);
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Breadcrumb */}
       {loading && (
-              <Loader overlay={true} className="z-50" />
-          )
+        <Loader overlay={true} className="z-50" />
+      )
       }
 
       <div className="bg-white border-b">
@@ -231,31 +232,45 @@ export default function CollegePage({ params }: { params: { id: string } }) {
 
                 {/* Action Buttons */}
                 <div className="space-y-3">
-                  {/* <Button asChild className="w-full bg-blue-600 hover:bg-blue-700">
-                    <a href={college?.brochureLink} target="_blank" rel="noopener noreferrer">
-                      <Download className="w-4 h-4 mr-2" />
-                      Download Brochure
-                    </a>
-                  </Button> */}
-                  <Button asChild className="w-full bg-blue-600 hover:bg-blue-700">
-                    <BrochureDownload brochureLink={college?.brochureLink ?? ''} />
-                  </Button>
-
-                  {/* <Button asChild variant="outline" className="w-full border-blue-600 text-blue-600 bg-transparent">
-                    <Link href="/apply">
-                      Apply Now
-                    </Link>
-                  </Button> */}
+                  {/* Download Brochure Button */}
                   <Button
-                    asChild
-                    variant="outline"
-                    className="w-full border-blue-600 text-blue-600 bg-transparent"
-                    onClick={() => setIsOpen(true)}
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-3 rounded-md shadow-lg transition-colors duration-300"
+                    onClick={() => setIsBrochureOpen(true)}
                   >
-                    <span>Apply Now</span>
+                    <Download className="w-4 h-4 mr-2" />
+                    Download Brochure
                   </Button>
 
-                  <ApplyModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
+                  {/* Apply Now Button */}
+                  <Button
+                    className="w-full bg-white hover:bg-gray-100 text-black font-semibold px-5 py-3 rounded-md shadow-lg transition-colors duration-300w-full h-10 px-4 py-2 border border-blue-600 text-blue-600 bg-transparent hover:bg-accent hover:text-accent-foreground transition-colors duration-300"
+                    onClick={() => setIsApplyOpen(true)}
+                  >
+                    Apply Now
+                  </Button>
+
+                  {/* Brochure Modal */}
+                  <FormModal
+                    isOpen={isBrochureOpen}
+                    onClose={() => setIsBrochureOpen(false)}
+                    title="Download Brochure"
+                    subtitle="Please enter your details below to download the brochure."
+                    buttonText="Download Now"
+                    brochureLink={college?.brochureLink ?? ''}
+                    showEmail={false}
+                    flag={"download_brochure"}
+                  />
+
+                  {/* Apply Modal */}
+                  <FormModal
+                    isOpen={isApplyOpen}
+                    onClose={() => setIsApplyOpen(false)}
+                    title="Apply Now"
+                    subtitle="Please fill out the form to apply for admission."
+                    buttonText="Submit Application"
+                    showEmail={true}
+                    flag={"apply_now"}
+                  />
                 </div>
               </div>
             </div>

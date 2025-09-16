@@ -50,6 +50,7 @@ interface ApiCollege {
   updatedAt: string
   email:string
   phone:string
+  category?: string[];
 }
 
 interface CollegeCardProps {
@@ -70,6 +71,7 @@ interface CollegeCardProps {
     avgPackage?: string
     highlights?: string[]
     cutoff?: string
+    category?: string[];
   }
 }
 
@@ -156,6 +158,7 @@ console.log("filters",filters);
       type: "Full Time", // map affiliation/type properly
       highlights: apiCollege.highlights,
       cutoff: "N/A",
+      category: apiCollege.category || [],
     }
   }
 
