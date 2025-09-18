@@ -91,7 +91,7 @@ export default function DashboardPage() {
     try {
       const isEdit = Boolean(data._id);
       const url = isEdit
-        ? `${BASE_URL}/${data._id}` // match DELETE route style
+        ? `${BASE_URL}/api/colleges/${data._id}` // match DELETE route style
         : `${BASE_URL}/api/colleges`;
 
       const res = await fetch(url, {
