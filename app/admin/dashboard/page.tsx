@@ -41,7 +41,7 @@ export default function DashboardPage() {
     name: "",
     shortName: "",
     about: "",
-    location: "",
+    distric: "",
     address: "",
     mapUrl: "",
     brochureLink: "",

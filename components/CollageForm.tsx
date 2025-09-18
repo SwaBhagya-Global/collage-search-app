@@ -36,7 +36,7 @@ export interface College {
     name: string;
     shortName: string;
     about: string;
-    location: string;
+    distric: string;
     address: string;
     mapUrl: string;
     brochureLink: string;
@@ -123,11 +123,11 @@ export default function CollegeForm({ open, setOpen, initialData, onSave }: Coll
                         <InputField label="Name" value={formData.name} onChange={val => setFormData({ ...formData, name: val })} />
                         <InputField label="Short Name" value={formData.shortName} onChange={val => setFormData({ ...formData, shortName: val })} />
                         <TextAreaField label="About" value={formData.about} onChange={val => setFormData({ ...formData, about: val })} />
-                        <InputField label="Location" value={formData.location} onChange={val => setFormData({ ...formData, location: val })} />
+                        <InputField label="District" value={formData.distric} onChange={val => setFormData({ ...formData, distric: val })} />
                         <TextAreaField label="Address" value={formData.address} onChange={val => setFormData({ ...formData, address: val })} />
                         <InputField label="Map URL" value={formData.mapUrl} onChange={val => setFormData({ ...formData, mapUrl: val })} />
                         <InputField label="Brochure Link" value={formData.brochureLink} onChange={val => setFormData({ ...formData, brochureLink: val })} />
-                        <InputField label="Established" value={formData.established.toString()} onChange={val => setFormData({ ...formData, established: parseInt(val) || 0 })} />
+                        <InputField label="Established" value={formData?.established?.toString()} onChange={val => setFormData({ ...formData, established: parseInt(val) || 0 })} />
                         <div>
                             <Label>Type</Label>
                             <Select value={formData.type} onValueChange={val => setFormData({ ...formData, type: val })}>
@@ -137,8 +137,8 @@ export default function CollegeForm({ open, setOpen, initialData, onSave }: Coll
                         </div>
                         <InputField label="Affiliation" value={formData.affiliation} onChange={val => setFormData({ ...formData, affiliation: val })} />
                         <InputField label="State" value={formData.state} onChange={val => setFormData({ ...formData, state: val })} />
-                        <InputField label="Ranking" value={formData.ranking.toString()} onChange={val => setFormData({ ...formData, ranking: parseInt(val) || 0 })} />
-                        <InputField label="Rating" value={formData.rating.toString()} onChange={val => setFormData({ ...formData, rating: parseInt(val) || 0 })} disabled />
+                        <InputField label="Ranking" value={formData?.ranking?.toString()} onChange={val => setFormData({ ...formData, ranking: parseInt(val) || 0 })} />
+                        <InputField label="Rating" value={formData?.rating?.toString()} onChange={val => setFormData({ ...formData, rating: parseInt(val) || 0 })} disabled />
                         <InputField label="Intake" value={formData.intake} onChange={val => setFormData({ ...formData, intake: val })} />
                         <InputField label="Average Package" value={formData.averagePackage} onChange={val => setFormData({ ...formData, averagePackage: val })} />
                         <InputField label="Highest Package" value={formData.highestPackage} onChange={val => setFormData({ ...formData, highestPackage: val })} />
