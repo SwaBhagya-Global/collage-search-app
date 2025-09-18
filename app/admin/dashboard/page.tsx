@@ -41,7 +41,7 @@ export default function DashboardPage() {
     name: "",
     shortName: "",
     about: "",
-    location: "",
+    distric: "",
     address: "",
     mapUrl: "",
     brochureLink: "",
@@ -122,6 +122,7 @@ export default function DashboardPage() {
       }
     });
       if (res.ok) fetchColleges();
+      setDeleteCollegeId(null)
     } catch (err) {
       console.error(err);
     }
