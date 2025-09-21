@@ -28,6 +28,9 @@ export const metadata: Metadata = {
     'Distance MBA',
     'Full-time MBA Programs'
   ],
+  icons:{
+    icon:'/favicon_icon.png'
+  }
 };
 
 export default function RootLayout({

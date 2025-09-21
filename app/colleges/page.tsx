@@ -20,6 +20,7 @@ interface ApiCollege {
   name: string
   shortName: string
   state: string
+  distric:string
   affiliation?: string
   address?: string
   rating: number
@@ -59,6 +60,7 @@ interface CollegeCardProps {
     name: string
     shortName?: string
     state: string
+    distric:string
     rating: number
     fees: string
     courses: string
@@ -80,7 +82,7 @@ const indianStates = [
   "Arunachal Pradesh",
   "Assam",
   "Bihar",
-  "Chhattisgarh",
+  "Chhatisgarh",
   "Goa",
   "Gujarat",
   "Haryana",
@@ -150,6 +152,7 @@ console.log("filters",filters);
       name: apiCollege.name,
       shortName: apiCollege.shortName,
       state: apiCollege.state,
+      distric: apiCollege.distric,
       rating: apiCollege.rating,
       fees: apiCollege.courses?.[0]?.fees || "N/A",
       courses: apiCollege.courses.map(c => c.name).join(", "),
@@ -173,6 +176,7 @@ console.log("filters",filters);
         (college) =>
           college?.name.toLowerCase().includes(searchQuery?.toLowerCase()) ||
           college?.state?.toLowerCase().includes(searchQuery?.toLowerCase()) ||
+          college?.distric?.toLowerCase().includes(searchQuery?.toLowerCase()) ||
           college?.shortName?.toLowerCase().includes(searchQuery?.toLowerCase()),
       )
     }
@@ -237,7 +241,7 @@ console.log("filters",filters);
             <form onSubmit={handleSearch} className="flex-1 relative">
               <Search className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
               <Input
-                placeholder="Search colleges by name, state, or course..."
+                placeholder="Search colleges by name, state, or distric..."
                 className="pl-10 h-12"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}

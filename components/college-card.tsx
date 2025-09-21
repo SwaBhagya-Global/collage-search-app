@@ -17,6 +17,7 @@ interface CollegeCardProps {
     name: string
     shortName?: string
     state: string
+    distric:string
     rating: number
     fees: string
     courses: string
@@ -129,7 +130,7 @@ export default function CollegeCard({ college }: CollegeCardProps) {
           <div className="flex items-center justify-between">
             <div className="flex items-center text-white/90 text-sm">
               <MapPin className="w-3 h-3 mr-1" />
-              {college.state}
+              {`${college.distric}, ${college.state}`}
             </div>
             <div className="flex items-center bg-green-500 px-2 py-1 rounded-full text-white text-xs">
               <Star className="w-3 h-3 fill-white mr-1" />

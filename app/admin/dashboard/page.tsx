@@ -20,11 +20,13 @@ import {
   DialogActions,
   Button as MuiButton,
   Tooltip,
-  TextField
+  TextField,
+  Button
 } from "@mui/material";
 import { Edit2, Trash2, Plus, Delete, Edit } from "lucide-react";
 import CollegeForm, { College } from "@/components/CollageForm";
 import BASE_URL from "@/app/config/api";
+import { DialogTrigger } from "@radix-ui/react-dialog";
 
 export default function DashboardPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -45,7 +47,7 @@ export default function DashboardPage() {
     address: "",
     mapUrl: "",
     brochureLink: "",
-    established: new Date().getFullYear(),
+    established: "",
     type: "Full Time",
     affiliation: "",
     state: "",
@@ -115,12 +117,12 @@ export default function DashboardPage() {
     try {
       const token = localStorage.getItem('token');
       const res = await fetch(`${BASE_URL}/api/colleges/${id}`, {
-      method: "DELETE",
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`  // sending token here
-      }
-    });
+        method: "DELETE",
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`  // sending token here
+        }
+      });
       if (res.ok) fetchColleges();
       setDeleteCollegeId(null)
     } catch (err) {
@@ -158,8 +160,18 @@ export default function DashboardPage() {
               <h1 className="text-2xl font-bold">Manage Colleges</h1>
               <p className="text-gray-600">Add or edit colleges information</p>
             </div>
-
             {/* Add College Button */}
+
+            <button
+              type="button"
+              className="bg-blue-700 hover:bg-blue-800 text-white shadow font-medium rounded-lg px-5 py-2.5 me-2 mb-2 flex item-center"
+              onClick={() => {
+                setIsFormOpen(true);
+                setSelectedCollege(null);
+              }}
+            >
+              <Plus className="h-4 w-4 mr-2" /> Add College
+            </button>
             <CollegeForm
               open={isFormOpen}
               setOpen={setIsFormOpen}
@@ -263,7 +275,7 @@ export default function DashboardPage() {
           >
             <DialogTitle>Confirm Delete</DialogTitle>
             <DialogContent>
-              Are you sure you want to delete this college? This action cannot be undone.
+              <DialogTitle>Are you sure you want to delete this college? This action cannot be undone.</DialogTitle>
             </DialogContent>
             <DialogActions>
               <MuiButton onClick={() => setDeleteCollegeId(null)}>Cancel</MuiButton>

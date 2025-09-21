@@ -39,7 +39,7 @@ export default function SearchSection() {
     "Arunachal Pradesh",
     "Assam",
     "Bihar",
-    "Chhattisgarh",
+    "Chhatisgarh",
     "Goa",
     "Gujarat",
     "Haryana",
