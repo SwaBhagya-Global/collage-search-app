@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { useState, useEffect, useRef } from "react";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,10 +10,54 @@ import * as Icons from "lucide-react";
 import { Upload } from "lucide-react";
 import BASE_URL from "@/app/config/api";
 
+
 // Options
 const categoryOptions = ["MBA", "PGDM"];
-const specializationOptions = ["HR", "Marketing", "Finance"];
+// const specializationOptions = ["HR", "Marketing", "Finance"];
+const specializationOptions = [
+    "HR",
+    "Marketing",
+    "Finance",
+    "Operations & Supply Chain Management",
+    "International Business",
+    "Business Analytics / Data Analytics",
+    "Information Technology (IT) / Systems",
+    "Healthcare & Hospital Management",
+    "Retail & E-Commerce Management",
+    "Banking, Financial Services & Insurance (BFSI)",
+    "Agri-Business Management",
+    "Media & Communication Management",
+    "Tourism & Hospitality Management",
+    "Digital Marketing",
+    "Entrepreneurship & Startups",
+    "Artificial Intelligence & Machine Learning in Business",
+    "Sustainability & Environmental Management",
+    "Sports Management",
+    "Project Management",
+    "Logistics & Supply Chain Management",
+    "Aviation Management",
+    "Energy & Power Management",
+    "Pharmaceutical Management",
+    "Rural & Development Management",
+    "Public Policy & Administration",
+    "Event Management",
+    "Family Business Management",
+    "Infrastructure & Real Estate Management",
+    "Telecom Management",
+    "Defence Management",
+    "Hospitality & Leisure Management",
+    "Corporate Social Responsibility (CSR) & NGO Management",
+    "Economics & Public Policy",
+    "Innovation & Design Thinking",
+    "Risk Management",
+    "Insurance Management",
+    "Education Management",
+    "Fashion Management",
+    "Luxury Brand Management",
+    "Port & Shipping Management",
+];
 const typeOptions = ["Full Time", "Part Time", "Online", "Executive"];
+const courseTypes = ["MBA", "PGDM"];
 
 // Types
 export interface Course {
@@ -40,7 +84,7 @@ export interface College {
     address: string;
     mapUrl: string;
     brochureLink: string;
-    established: number;
+    established: string;
     type: string;
     affiliation: string;
     state: string;
@@ -73,6 +117,9 @@ interface CollegeFormProps {
 export default function CollegeForm({ open, setOpen, initialData, onSave }: CollegeFormProps) {
     const [formData, setFormData] = useState<College>(initialData);
     const [isUploading, setIsUploading] = useState(false);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
+    const dropdownRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         setFormData(initialData);
@@ -106,28 +153,51 @@ export default function CollegeForm({ open, setOpen, initialData, onSave }: Coll
         setIsUploading(false);
     };
 
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setDropdownOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    const toggleSpecialization = (val: string) => {
+        if (formData.specialization.includes(val)) {
+            setFormData({
+                ...formData,
+                specialization: formData.specialization.filter((v) => v !== val),
+            });
+        } else {
+            setFormData({
+                ...formData,
+                specialization: [...formData.specialization, val],
+            });
+        }
+    };
+
+    const filteredOptions = specializationOptions.filter((opt) =>
+        opt.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     const handleSubmit = () => onSave(formData);
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-                <Button className="bg-indigo-600 text-white shadow">
-                    <Icons.Plus className="h-4 w-4 mr-2" /> {formData._id ? "Edit College" : "Add College"}
-                </Button>
-            </DialogTrigger>
             <DialogContent className="max-w-6xl max-h-[90vh] overflow-auto">
+                <DialogTitle></DialogTitle>
                 <div className="space-y-6">
-
                     <h3 className="text-lg font-semibold text-green-700">Basic Information</h3>
                     <div className="grid grid-cols-2 gap-4">
-                        <InputField label="Name" value={formData.name} onChange={val => setFormData({ ...formData, name: val })} />
-                        <InputField label="Short Name" value={formData.shortName} onChange={val => setFormData({ ...formData, shortName: val })} />
+                        <InputField label="Name*" value={formData.name} onChange={val => setFormData({ ...formData, name: val })} />
+                        <InputField label="Short Name*" value={formData.shortName} onChange={val => setFormData({ ...formData, shortName: val })} />
                         <TextAreaField label="About" value={formData.about} onChange={val => setFormData({ ...formData, about: val })} />
-                        <InputField label="District" value={formData.distric} onChange={val => setFormData({ ...formData, distric: val })} />
-                        <TextAreaField label="Address" value={formData.address} onChange={val => setFormData({ ...formData, address: val })} />
+                        <InputField label="District*" value={formData.distric} onChange={val => setFormData({ ...formData, distric: val })} />
+                        <TextAreaField label="Address*" value={formData.address} onChange={val => setFormData({ ...formData, address: val })} />
                         <InputField label="Map URL" value={formData.mapUrl} onChange={val => setFormData({ ...formData, mapUrl: val })} />
                         <InputField label="Brochure Link" value={formData.brochureLink} onChange={val => setFormData({ ...formData, brochureLink: val })} />
-                        <InputField label="Established" value={formData?.established?.toString()} onChange={val => setFormData({ ...formData, established: parseInt(val) || 0 })} />
+                        <InputField label="Established" value={formData?.established} onChange={val => setFormData({ ...formData, established: val })} />
                         <div>
                             <Label>Type</Label>
                             <Select value={formData.type} onValueChange={val => setFormData({ ...formData, type: val })}>
@@ -136,18 +206,62 @@ export default function CollegeForm({ open, setOpen, initialData, onSave }: Coll
                             </Select>
                         </div>
                         <InputField label="Affiliation" value={formData.affiliation} onChange={val => setFormData({ ...formData, affiliation: val })} />
-                        <InputField label="State" value={formData.state} onChange={val => setFormData({ ...formData, state: val })} />
+                        <InputField label="State*" value={formData.state} onChange={val => setFormData({ ...formData, state: val })} />
                         <InputField label="Ranking" value={formData?.ranking?.toString()} onChange={val => setFormData({ ...formData, ranking: parseInt(val) || 0 })} />
                         <InputField label="Rating" value={formData?.rating?.toString()} onChange={val => setFormData({ ...formData, rating: parseInt(val) || 0 })} disabled />
-                        <InputField label="Intake" value={formData.intake} onChange={val => setFormData({ ...formData, intake: val })} />
                         <InputField label="Average Package" value={formData.averagePackage} onChange={val => setFormData({ ...formData, averagePackage: val })} />
                         <InputField label="Highest Package" value={formData.highestPackage} onChange={val => setFormData({ ...formData, highestPackage: val })} />
                         <InputField label="Phone" value={formData.phone} onChange={val => setFormData({ ...formData, phone: val })} />
                         <InputField label="Email" value={formData.email} onChange={val => setFormData({ ...formData, email: val })} />
+                        <CheckboxField label="Category" values={formData.category} onChange={vals => setFormData({ ...formData, category: vals })} options={categoryOptions} />
                     </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        {/* Specialization Multi-Select */}
+                        <div className="relative" ref={dropdownRef}>
+                            <label className="block mb-1 font-medium text-gray-700">Specializations*</label>
+                            <div
+                                className="border h-12 px-3 flex items-center justify-between rounded-lg bg-white border-gray-300 cursor-pointer"
+                                onClick={() => setDropdownOpen(!dropdownOpen)}
+                            >
+                                <span className="truncate">
+                                    {formData.specialization.length > 0
+                                        ? formData.specialization.join(", ")
+                                        : "Select Specializations"}
+                                </span>
+                                <span className="ml-2 text-gray-500">&#9662;</span>
+                            </div>
 
-                    <CheckboxField label="Category" values={formData.category} onChange={vals => setFormData({ ...formData, category: vals })} options={categoryOptions} />
-                    <CheckboxField label="Specialization" values={formData.specialization} onChange={vals => setFormData({ ...formData, specialization: vals })} options={specializationOptions} />
+                            {dropdownOpen && (
+                                <div className="absolute z-10 mt-1 w-full max-h-60 overflow-y-auto border bg-white shadow-md rounded-lg">
+                                    <div className="p-2">
+                                        <input
+                                            type="text"
+                                            placeholder="Search specialization..."
+                                            className="w-full border rounded-md px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                        />
+                                    </div>
+
+                                    {filteredOptions.length > 0 ? (
+                                        filteredOptions.map((opt) => (
+                                            <label key={opt} className="flex items-center px-3 py-2 hover:bg-gray-100 cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={formData.specialization.includes(opt)}
+                                                    onChange={() => toggleSpecialization(opt)}
+                                                    className="mr-2"
+                                                />
+                                                {opt}
+                                            </label>
+                                        ))
+                                    ) : (
+                                        <div className="px-3 py-2 text-gray-400">No results found</div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    </div>
 
                     <ArrayField label="Highlights" values={formData.highlights} onChange={vals => setFormData({ ...formData, highlights: vals })} />
                     <ArrayField label="Top Recruiters" values={formData.topRecruiters} onChange={vals => setFormData({ ...formData, topRecruiters: vals })} />
@@ -165,7 +279,7 @@ export default function CollegeForm({ open, setOpen, initialData, onSave }: Coll
 
                     <div className="space-y-2">
                         <Label htmlFor="main-image" className="text-gray-700 font-medium">
-                            Upload Main Image
+                            Upload Main Image*
                         </Label>
                         <div className="border-2 border-dashed border-blue-300 rounded-lg p-6 text-center bg-blue-50 hover:border-blue-500 hover:bg-blue-100 transition-colors">
                             <input
@@ -292,10 +406,40 @@ function CoursesField({ courses, onChange }: { courses: Course[]; onChange: (cou
 
     return (
         <div>
-            <h3 className="text-lg font-semibold text-green-700">Courses</h3>
+            <h3 className="text-lg font-semibold text-green-700">
+                Courses
+                <span className="ml-2 text-sm font-normal text-red-600">
+                    (at least one course is required)
+                </span>
+            </h3>
             {courses.map((course, i) => (
                 <div key={i} className="grid grid-cols-5 gap-2 mb-2 items-end">
-                    <Input value={course.name} placeholder="Name" onChange={e => updateCourse(i, "name", e.target.value)} />
+                    <Select
+                        value={course.name}
+                        onValueChange={val => updateCourse(i, "name", val)}
+                    >
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select Course" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="MBA">MBA</SelectItem>
+                            <SelectItem value="PGDM">PGDM</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    {/* <Select
+                        value={course.duration}
+                        onValueChange={val => updateCourse(i, "duration", val)}
+                    >
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select Duration" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="1-Year">1-Year</SelectItem>
+                            <SelectItem value="2-Year">2-Year</SelectItem>
+                            <SelectItem value="3-Year">3-Year</SelectItem>
+                            <SelectItem value="4-Year">4-Year</SelectItem>
+                        </SelectContent>
+                    </Select> */}
                     <Input value={course.duration} placeholder="Duration" onChange={e => updateCourse(i, "duration", e.target.value)} />
                     <Input value={course.fees} placeholder="Fees" onChange={e => updateCourse(i, "fees", e.target.value)} />
                     <Input value={course.eligibility} placeholder="Eligibility" onChange={e => updateCourse(i, "eligibility", e.target.value)} />

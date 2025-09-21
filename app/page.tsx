@@ -16,6 +16,7 @@ interface ApiCollege {
   name: string
   shortName: string
   state: string
+  distric:string
   affiliation?: string
   address?: string
   rating: number
@@ -55,6 +56,7 @@ interface CollegeCardProps {
     name: string
     shortName?: string
     state: string
+    distric:string
     rating: number
     fees: string
     courses: string
@@ -110,6 +112,7 @@ export default function HomePage() {
       name: apiCollege.name,
       shortName: apiCollege.shortName,
       state: apiCollege.state,
+      distric:apiCollege.distric,
       rating: apiCollege.rating,
       fees: apiCollege.courses?.[0]?.fees || "N/A",
       courses: apiCollege.courses.map(c => c.name).join(", "),
@@ -155,8 +158,8 @@ export default function HomePage() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredColleges.slice(0, 12).map((college, i) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+            {featuredColleges.slice(0, 10).map((college, i) => (
               <CollegeCard
                 key={college._id}
                 college={mapApiToCard(college, i)}

@@ -141,21 +141,30 @@ export default function BlogsManager() {
     setIsDialogOpen(false);
   };
 
-  const handleEdit = (blog: Blog) => {
-    setEditingBlog(blog);
-    setFormData({
-      title: blog.title,
-      author: blog.author || "Admin",
-      coverImage: blog.coverImage || "",
-      content: blog.content || "",
-    });
-    setIsDialogOpen(true);
-  };
+ const handleEdit = (blog: Blog) => {
+  setEditingBlog(blog);
+  setFormData({
+    title: blog.title,
+    author: blog.author || "Admin",
+    coverImage: blog.coverImage || "", // keep previous image URL
+    content: blog.content || "",
+  });
+  setSelectedFile(null); // reset file input
+  setIsDialogOpen(true);
+};
 
   const handleDelete = async (id?: string) => {
     if (!id) return;
     try {
-      const res = await fetch(`${BASE_URL}/api/blog/${id}`, { method: "DELETE" });
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${BASE_URL}/api/blog/${id}`, { 
+        method: "DELETE",
+        headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`  // sending token here
+      }
+       });
+      
       if (!res.ok) throw new Error("Delete failed");
       toast({ title: "Deleted", description: "Blog deleted successfully" });
       fetchBlogs();
