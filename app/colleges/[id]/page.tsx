@@ -259,6 +259,7 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                     brochureLink={college?.brochureLink ?? ''}
                     showEmail={false}
                     flag={"download_brochure"}
+                    collegeName={college?.name || ""}
                   />
 
                   {/* Apply Modal */}
@@ -270,6 +271,7 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                     buttonText="Submit Application"
                     showEmail={true}
                     flag={"apply_now"}
+                    collegeName={college?.name || ""}
                   />
                 </div>
               </div>
