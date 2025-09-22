@@ -30,6 +30,7 @@ interface ApiCollege {
   images: string[]
   brochureLink?: string
   highlights: string[]
+  averagePackage: string
   courses: {
     name: string
     duration: string
@@ -70,7 +71,7 @@ interface CollegeCardProps {
     type: string
     ranking?: number
     placement?: string
-    avgPackage?: string
+    averagePackage?: string
     highlights?: string[]
     cutoff?: string
     category?: string[];
@@ -123,7 +124,7 @@ export default function CollegesPage() {
     fees: "",
     rating: "",
   })
-  const [visibleCount, setVisibleCount] = useState(12);
+  const [visibleCount, setVisibleCount] = useState(15);
 console.log("filters",filters);
   const [colleges, setColleges] = useState<ApiCollege[]>([]);
   const [loading, setLoading] = useState(true);
@@ -160,6 +161,7 @@ console.log("filters",filters);
       established: apiCollege.established,
       type: "Full Time", // map affiliation/type properly
       highlights: apiCollege.highlights,
+      averagePackage: apiCollege.averagePackage,
       cutoff: "N/A",
       category: apiCollege.category || [],
     }
@@ -204,7 +206,7 @@ console.log("filters",filters);
       const minRating = Number.parseFloat(filters.rating)
       filtered = filtered.filter((college) => college.rating >= minRating)
     }
-    setVisibleCount(12);
+    setVisibleCount(15);
     setFilteredColleges(filtered)
   }, [searchQuery, filters, colleges])
 
@@ -379,7 +381,7 @@ console.log("filters",filters);
         </div>
 
         {/* College Grid - 4x4 layout */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
           {filteredColleges.slice(0, visibleCount).map((college, i) => (
             <CollegeCard key={college._id ?? i} college={mapApiToCard(college, i)} />
           ))}
@@ -399,7 +401,7 @@ console.log("filters",filters);
         {filteredColleges.length > 0 && (
           <div className="flex justify-center mt-12">
             <div className="flex gap-2">
-              <Button onClick={() => setVisibleCount(visibleCount + 12)}>
+              <Button onClick={() => setVisibleCount(visibleCount + 10)}>
                 Load More
               </Button>
             </div>

@@ -13,6 +13,7 @@ interface FormModalProps {
   brochureLink?: string;
   showEmail?: boolean;
   flag: string;
+  collegeName:string;
 }
 
 export default function FormModal({
@@ -23,9 +24,10 @@ export default function FormModal({
   buttonText,
   brochureLink,
   showEmail = false,
-  flag
+  flag,
+  collegeName
 }: FormModalProps) {
-  const [form, setForm] = useState({ name: '', phone: '', email: '', flag: flag });
+  const [form, setForm] = useState({ name: '', phone: '', email: '', flag: flag, CollegeName:collegeName });
   const [errors, setErrors] = useState<{ name?: string; phone?: string; email?: string }>({});
   const [responseMessage, setResponseMessage] = useState<string | null>(null);
 
@@ -94,7 +96,7 @@ export default function FormModal({
 
       if (res.ok) {
         setResponseMessage(data.message || 'Form submitted successfully!');
-        setForm({ name: '', phone: '', email: '', flag: flag }); // Reset form
+        setForm({ name: '', phone: '', email: '', flag: flag, CollegeName:collegeName }); // Reset form
         if (flag === 'download_brochure' && brochureLink) {
           const link = document.createElement('a');
           link.href = brochureLink;
@@ -112,7 +114,7 @@ export default function FormModal({
   };
 
   const onCancle = () => {
-    setForm({ name: '', phone: '', email: '', flag: flag });
+    setForm({ name: '', phone: '', email: '', flag: flag, CollegeName:collegeName });
     setResponseMessage(null);
     onClose();
   }

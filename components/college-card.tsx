@@ -123,12 +123,12 @@ export default function CollegeCard({ college }: CollegeCardProps) {
             href={`/colleges/${college?.name.toLowerCase().replace(/\s+/g, '-')}`}
             className="block"
           >
-            <h3 className="text-white font-bold text-sm mb-2 line-clamp-1 hover:underline">
+            <h3 className="text-white font-bold text-xs mb-2 line-clamp-1 hover:underline">
               {college.name}
             </h3>
           </Link>
           <div className="flex items-center justify-between">
-            <div className="flex items-center text-white/90 text-sm">
+            <div className="flex items-center text-white/90 text-xs">
               <MapPin className="w-3 h-3 mr-1" />
               {`${college.distric}, ${college.state}`}
             </div>
@@ -231,6 +231,7 @@ export default function CollegeCard({ college }: CollegeCardProps) {
               buttonText="Submit Application"
               showEmail={true}
               flag={"apply_now"}
+              collegeName={college?.name}
             />
           </div>
           <Button
