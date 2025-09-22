@@ -25,6 +25,7 @@ interface ApiCollege {
   address?: string
   rating: number
   established:number
+  ranking:number
   intake?: string
   type?: string
   images: string[]
@@ -125,7 +126,6 @@ export default function CollegesPage() {
     rating: "",
   })
   const [visibleCount, setVisibleCount] = useState(15);
-console.log("filters",filters);
   const [colleges, setColleges] = useState<ApiCollege[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -206,6 +206,22 @@ console.log("filters",filters);
       const minRating = Number.parseFloat(filters.rating)
       filtered = filtered.filter((college) => college.rating >= minRating)
     }
+
+    filtered = [...filtered].sort((a, b) => {
+  // Handle nulls last
+  if (a.ranking == null && b.ranking == null) return 0;
+  if (a.ranking == null) return 1;
+  if (b.ranking == null) return -1;
+
+  // Handle 0s after positive rankings
+  if (a.ranking === 0 && b.ranking === 0) return 0;
+  if (a.ranking === 0) return 1;
+  if (b.ranking === 0) return -1;
+
+  // Normal ascending order for positive rankings
+  return a.ranking - b.ranking;
+});
+
     setVisibleCount(15);
     setFilteredColleges(filtered)
   }, [searchQuery, filters, colleges])

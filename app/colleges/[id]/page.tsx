@@ -387,7 +387,7 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      {college?.admissionProcess?.map((step, index) => (
+                      {(college?.admissionProcess || []).filter(step => step.trim() !== "").map((step, index) => ( 
                         <div key={index} className="flex items-center gap-4">
                           <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold text-sm">
                             {index + 1}
