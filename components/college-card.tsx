@@ -38,7 +38,6 @@ export default function CollegeCard({ college }: CollegeCardProps) {
   const [isLiked, setIsLiked] = useState(false)
   const [isCompared, setIsCompared] = useState(false)
   const [isApplyOpen, setIsApplyOpen] = useState(false);
-
   const handleCompare = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
@@ -189,7 +188,7 @@ export default function CollegeCard({ college }: CollegeCardProps) {
         )}
 
         {/* Highlights */}
-        {college.highlights && college.highlights.length > 0 && (
+        {college.highlights && college.highlights.filter(h => h.trim() !== "").length > 0 && (
           <div className="mb-4">
             <div className="flex flex-wrap gap-1">
               {college.highlights.slice(0, 2).map((highlight, index) => (
@@ -197,7 +196,7 @@ export default function CollegeCard({ college }: CollegeCardProps) {
                   {highlight}
                 </Badge>
               ))}
-              {college.highlights.length > 2 && (
+              {college.highlights.filter(h => h.trim() !== "").length > 2 && (
                 <Badge variant="secondary" className="text-xs px-2 py-1">
                   +{college.highlights.length - 2} more
                 </Badge>
