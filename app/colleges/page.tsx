@@ -14,70 +14,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import CollegeCard from "@/components/college-card"
 import Loader from "@/components/loader"
 import BASE_URL from "@/app/config/api";
+import { ApiCollege, CollegeCardProps } from "@/lib/types"
 
-interface ApiCollege {
-  _id: string
-  name: string
-  shortName: string
-  state: string
-  distric:string
-  affiliation?: string
-  address?: string
-  rating: number
-  established:number
-  ranking:number
-  intake?: string
-  type?: string
-  images: string[]
-  brochureLink?: string
-  highlights: string[]
-  averagePackage: string
-  courses: {
-    name: string
-    duration: string
-    fees: string
-    eligibility: string
-    seats: number
-    _id: string
-  }[]
-  facilities?: string[]
-  admissionProcess?: string[]
-  links?: {
-    website?: string
-    facebook?: string
-    instagram?: string
-    linkedin?: string
-    _id: string
-  }
-  createdAt: string
-  updatedAt: string
-  email:string
-  phone:string
-  category?: string[];
-}
-
-interface CollegeCardProps {
-  college: {
-    id: string
-    name: string
-    shortName?: string
-    state: string
-    distric:string
-    rating: number
-    fees: string
-    courses: string
-    images: string
-    featured?: boolean
-    established: number
-    type: string
-    ranking?: number
-    placement?: string
-    averagePackage?: string
-    highlights?: string[]
-    cutoff?: string
-    category?: string[];
-  }
-}
 
 const indianStates = [
   "Andhra Pradesh",
@@ -121,13 +59,77 @@ export default function CollegesPage() {
   const [filters, setFilters] = useState({
     state: searchParams?.get("state")?.replace(/-/g, " ") || "",
     category: searchParams?.get("category") || "",
-    type: "",
-    fees: "",
-    rating: "",
+    type: searchParams?.get("type") || "",
+    fees: searchParams?.get("fees") || "",
   })
   const [visibleCount, setVisibleCount] = useState(15);
   const [colleges, setColleges] = useState<ApiCollege[]>([]);
   const [loading, setLoading] = useState(true);
+
+  //filter fees
+function parseFee(feeStr: string): number {
+  if (!feeStr) return 0;
+
+  const value = feeStr.trim().toUpperCase();
+
+  // Handle words like "26 Lakhs"
+  if (value.includes("LAKH") || value.includes("LAKHS") || value.endsWith("L")) {
+    const num = parseFloat(value);
+    return num * 100000; // 1 Lakh = 100000
+  }
+
+  // Handle Crores (1 Crore = 1 Cr = 10000000)
+  if (value.includes("CRORE") || value.includes("CR")) {
+    const num = parseFloat(value);
+    return num * 10000000;
+  }
+
+  // Handle "K"
+  if (value.endsWith("K")) {
+    return parseFloat(value) * 1000;
+  }
+
+  // Fallback: plain number (e.g. "2600000")
+  return parseFloat(value);
+}
+function getFeeRange(filterValue: string) {
+  switch (filterValue) {
+    case "any":
+      return { min: 0, max: Infinity };
+
+    case "free":
+      return { min: 0, max: 0 };
+
+    case "under-50K":
+      return { min: 0, max: 50000 };
+
+    case "50K-1L":
+      return { min: 50000, max: 100000 };
+
+    case "1L-2L":
+      return { min: 100000, max: 200000 };
+
+    case "2L-5L":
+      return { min: 200000, max: 500000 };
+
+    case "5L-10L":
+      return { min: 500000, max: 1000000 };
+
+    case "10L-20L":
+      return { min: 1000000, max: 2000000 };
+
+    case "above-20L":
+      return { min: 2000000, max: Infinity };
+
+    default:
+      // handle if user directly passes something like "2L-5L"
+      if (filterValue.includes("-")) {
+        const [minStr, maxStr] = filterValue.split("-");
+        return { min: parseFee(minStr), max: parseFee(maxStr) };
+      }
+      return { min: 0, max: Infinity };
+  }
+}
 
   useEffect(() => {
     async function fetchColleges() {
@@ -170,8 +172,8 @@ export default function CollegesPage() {
 
   useEffect(() => {
     let filtered = colleges
+    console.log(filters);
 
-    console.log("searchQuery", searchQuery);
     // Apply search filter
     if (searchQuery) {
       filtered = filtered.filter(
@@ -200,12 +202,18 @@ export default function CollegesPage() {
     if (filters.type && filters.type !== "all") {
       filtered = filtered.filter((college) => college.type === filters.type)
     }
+    if (filters.fees && filters.fees !== "any") {
+      console.log("h",colleges);
+  const { min, max } = getFeeRange(filters.fees);
+  filtered = filtered.filter((college) =>
+    Array.isArray(college.courses) &&
+    college.courses.some((course) => {
+      const courseFee = parseFee(course.fees); // "2L", "50K" etc
+      return courseFee >= min && courseFee <= max;
+    })
+  );
+}
 
-    // Apply rating filter
-    if (filters.rating && filters.rating !== "any") {
-      const minRating = Number.parseFloat(filters.rating)
-      filtered = filtered.filter((college) => college.rating >= minRating)
-    }
 
     filtered = [...filtered].sort((a, b) => {
   // Handle nulls last
@@ -237,7 +245,6 @@ export default function CollegesPage() {
       category: "",
       type: "",
       fees: "",
-      rating: "",
     })
     setSearchQuery("")
   }
@@ -380,7 +387,6 @@ export default function CollegesPage() {
             {filters.category !== "all" && ` in ${filters.category}`}
             {filters.state !== "all" && ` in ${filters.state}`}
             {filters.type !== "all" && ` of type ${filters.type}`}
-            {filters.rating !== "any" && ` with minimum rating ${filters.rating}`}
           </p>
           {/* <Select>
             <SelectTrigger className="w-48">

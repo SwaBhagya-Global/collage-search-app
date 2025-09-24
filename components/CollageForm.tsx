@@ -114,6 +114,40 @@ interface CollegeFormProps {
     onSave: (data: College) => void;
 }
 
+const indianStates = [
+  "Andhra Pradesh",
+  "Arunachal Pradesh",
+  "Assam",
+  "Bihar",
+  "Chhatisgarh",
+  "Goa",
+  "Gujarat",
+  "Haryana",
+  "Himachal Pradesh",
+  "Jharkhand",
+  "Karnataka",
+  "Kerala",
+  "Madhya Pradesh",
+  "Maharashtra",
+  "Manipur",
+  "Meghalaya",
+  "Mizoram",
+  "Nagaland",
+  "Odisha",
+  "Punjab",
+  "Rajasthan",
+  "Sikkim",
+  "Tamil Nadu",
+  "Telangana",
+  "Tripura",
+  "Uttar Pradesh",
+  "Uttarakhand",
+  "West Bengal",
+  "Delhi",
+  "Jammu and Kashmir",
+  "Ladakh",
+];
+
 export default function CollegeForm({ open, setOpen, initialData, onSave }: CollegeFormProps) {
     const [formData, setFormData] = useState<College>(initialData);
     const [isUploading, setIsUploading] = useState(false);
@@ -206,7 +240,25 @@ export default function CollegeForm({ open, setOpen, initialData, onSave }: Coll
                             </Select>
                         </div>
                         <InputField label="Affiliation" value={formData.affiliation} onChange={val => setFormData({ ...formData, affiliation: val })} />
-                        <InputField label="State*" value={formData.state} onChange={val => setFormData({ ...formData, state: val })} />
+                        {/* <InputField label="State*" value={formData.state} onChange={val => setFormData({ ...formData, state: val })} /> */}
+                       <div className="space-y-2">
+  <label className="text-sm font-medium text-gray-700">State*</label>
+  <Select
+    value={formData.state}
+    onValueChange={(val) => setFormData({ ...formData, state: val })}
+  >
+    <SelectTrigger className="h-12 w-full bg-white border border-gray-300">
+      <SelectValue placeholder="Select State" />
+    </SelectTrigger>
+    <SelectContent className="max-h-60 overflow-y-auto">
+      {indianStates.map((state) => (
+        <SelectItem key={state} value={state}>
+          {state}
+        </SelectItem>
+      ))}
+    </SelectContent>
+  </Select>
+</div>
                         <InputField label="Ranking" value={formData?.ranking?.toString()} onChange={val => setFormData({ ...formData, ranking: parseInt(val) || 0 })} />
                         <InputField label="Rating" value={formData?.rating?.toString()} onChange={val => setFormData({ ...formData, rating: parseInt(val) || 0 })} disabled />
                         <InputField label="Average Package" value={formData.averagePackage} onChange={val => setFormData({ ...formData, averagePackage: val })} />

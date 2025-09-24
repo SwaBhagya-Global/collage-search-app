@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import FormModal from "./FormModal"
 
-interface CollegeCardProps {
+interface CollegeCardProps { 
   college: {
     id: string
     name: string
@@ -227,7 +227,7 @@ export default function CollegeCard({ college }: CollegeCardProps) {
               onClose={() => setIsApplyOpen(false)}
               title="Apply Now"
               subtitle="Please fill out the form to apply for admission."
-              buttonText="Submit Application"
+              buttonText="Apply Now"
               showEmail={true}
               flag={"apply_now"}
               collegeName={college?.name}
