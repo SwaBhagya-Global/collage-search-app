@@ -96,8 +96,8 @@ export default function SearchSection() {
               <TabsTrigger value="courses" className="text-sm">
                 Courses
               </TabsTrigger>
-            </TabsList> */}  
- 
+            </TabsList> */}
+
             <TabsContent value="colleges">
               <Card className="bg-white/95 rounded-lg p-6 max-w-5xl mx-auto">
                 <CardContent className="p-0">
@@ -157,9 +157,46 @@ export default function SearchSection() {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="specialization">All Specialization</SelectItem>
-                          <SelectItem value="hr">HR</SelectItem>
-                          <SelectItem value="marketing">Marketing</SelectItem>
-                          <SelectItem value="finance">Finance</SelectItem>
+                          <SelectItem value="HR">HR</SelectItem>
+                          <SelectItem value="Marketing">Marketing</SelectItem>
+                          <SelectItem value="Finance">Finance</SelectItem>
+                          <SelectItem value="Operations & Supply Chain Management">Operations & Supply Chain Management</SelectItem>
+                          <SelectItem value="International Business">International Business</SelectItem>
+                          <SelectItem value="Business Analytics / Data Analytics">Business Analytics / Data Analytics</SelectItem>
+                          <SelectItem value="Information Technology (IT) / Systems">Information Technology (IT) / Systems</SelectItem>
+                          <SelectItem value="Healthcare & Hospital Management">Healthcare & Hospital Management</SelectItem>
+                          <SelectItem value="Retail & E-Commerce Management">Retail & E-Commerce Management</SelectItem>
+                          <SelectItem value="Banking, Financial Services & Insurance (BFSI)">Banking, Financial Services & Insurance (BFSI)</SelectItem>
+                          <SelectItem value="Agri-Business Management">Agri-Business Management</SelectItem>
+                          <SelectItem value="Media & Communication Management">Media & Communication Management</SelectItem>
+                          <SelectItem value="Tourism & Hospitality Management">Tourism & Hospitality Management</SelectItem>
+                          <SelectItem value="digital-marketing">Digital Marketing</SelectItem>
+                          <SelectItem value="entrepreneurship-startups">Entrepreneurship & Startups</SelectItem>
+                          <SelectItem value="ai-ml-business">Artificial Intelligence & Machine Learning in Business</SelectItem>
+                          <SelectItem value="sustainability">Sustainability & Environmental Management</SelectItem>
+                          <SelectItem value="sports-management">Sports Management</SelectItem>
+                          <SelectItem value="project-management">Project Management</SelectItem>
+                          <SelectItem value="logistics-supply-chain">Logistics & Supply Chain Management</SelectItem>
+                          <SelectItem value="aviation">Aviation Management</SelectItem>
+                          <SelectItem value="energy-power">Energy & Power Management</SelectItem>
+                          <SelectItem value="pharmaceutical">Pharmaceutical Management</SelectItem>
+                          <SelectItem value="rural-development">Rural & Development Management</SelectItem>
+                          <SelectItem value="public-policy">Public Policy & Administration</SelectItem>
+                          <SelectItem value="event-management">Event Management</SelectItem>
+                          <SelectItem value="family-business">Family Business Management</SelectItem>
+                          <SelectItem value="infrastructure-real-estate">Infrastructure & Real Estate Management</SelectItem>
+                          <SelectItem value="telecom">Telecom Management</SelectItem>
+                          <SelectItem value="defence">Defence Management</SelectItem>
+                          <SelectItem value="hospitality-leisure">Hospitality & Leisure Management</SelectItem>
+                          <SelectItem value="csr-ngo">Corporate Social Responsibility (CSR) & NGO Management</SelectItem>
+                          <SelectItem value="economics-policy">Economics & Public Policy</SelectItem>
+                          <SelectItem value="innovation-design">Innovation & Design Thinking</SelectItem>
+                          <SelectItem value="risk-management">Risk Management</SelectItem>
+                          <SelectItem value="insurance">Insurance Management</SelectItem>
+                          <SelectItem value="education">Education Management</SelectItem>
+                          <SelectItem value="fashion">Fashion Management</SelectItem>
+                          <SelectItem value="luxury-brand">Luxury Brand Management</SelectItem>
+                          <SelectItem value="port-shipping">Port & Shipping Management</SelectItem>
                         </SelectContent>
                       </Select>
 
@@ -183,13 +220,13 @@ export default function SearchSection() {
                         <SelectContent>
                           <SelectItem value="any">Any Fees</SelectItem>
                           <SelectItem value="free">Free</SelectItem>
-                          <SelectItem value="under-50k">Under ₹50K</SelectItem>
-                          <SelectItem value="50k-1l">₹50K - ₹1L</SelectItem>
-                          <SelectItem value="1l-2l">₹1L - ₹2L</SelectItem>
-                          <SelectItem value="2l-5l">₹2L - ₹5L</SelectItem>
-                          <SelectItem value="5l-10l">₹5L - ₹10L</SelectItem>
-                          <SelectItem value="10l-20l">₹10L - ₹20L</SelectItem>
-                          <SelectItem value="above-20l">Above ₹20L</SelectItem>
+                          <SelectItem value="under-50K">Under ₹50K</SelectItem>
+                          <SelectItem value="50K-1L">₹50K - ₹1L</SelectItem>
+                          <SelectItem value="1L-2L">₹1L - ₹2L</SelectItem>
+                          <SelectItem value="2L-5L">₹2L - ₹5L</SelectItem>
+                          <SelectItem value="5L-10L">₹5L - ₹10L</SelectItem>
+                          <SelectItem value="10L-20L">₹10L - ₹20L</SelectItem>
+                          <SelectItem value="above-20L">Above ₹20L</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>

@@ -97,12 +97,13 @@ export default function ContactsManager() {
                                     <TableHead>
                                         <TableRow>
                                             <TableCell>Sr.No</TableCell>
+                                            <TableCell>Date</TableCell>
                                             <TableCell>Name</TableCell>
                                             <TableCell>College Name</TableCell>
                                             <TableCell>Phone</TableCell>
                                             <TableCell>Email</TableCell>
                                             <TableCell>From</TableCell>
-                                            <TableCell>Date</TableCell>
+                                            
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
@@ -110,12 +111,13 @@ export default function ContactsManager() {
                                             .map((contact,index) => (
                                                 <TableRow key={contact._id}>
                                                     <TableCell>{index + 1}</TableCell>
+                                                     <TableCell>{contact.createdAt?.split('T')[0] || '-'}</TableCell>
                                                     <TableCell>{contact.name}</TableCell>
                                                     <TableCell>{contact.CollegeName}</TableCell>
                                                     <TableCell>{contact.phone}</TableCell>
                                                     <TableCell>{contact.email}</TableCell>
                                                      <TableCell>{contact.flag}</TableCell>
-                                                    <TableCell>{contact.createdAt?.split('T')[0] || '-'}</TableCell>
+                                                   
                                                 </TableRow>
                                             ))}
                                     </TableBody>

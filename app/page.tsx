@@ -11,67 +11,8 @@ import Loader from "@/components/loader"
 import Image from "next/image"
 import AdBanner from "@/components/AdBanner"
 import BASE_URL from "./config/api"
-interface ApiCollege {
-  _id: string
-  name: string
-  shortName: string
-  state: string
-  distric:string
-  affiliation?: string
-  address?: string
-  rating: number
-  established:number
-  intake?: string
-  images: string[]
-  category?: string[];
-  highlights: string[]
-  courses: {
-    name: string
-    duration: string
-    fees: string
-    eligibility: string
-    seats: number
-    _id: string
-  }[]
-  facilities?: string[]
-  admissionProcess?: string[]
-  links?: {
-    website?: string
-    _id: string
-  }
-  averagePackage: string
-  highestPackage: string
-  topRecruiters: string[]
-  createdAt: string
-  updatedAt: string
-  contact?: {
-    email?: string
-    _id: string
-  }
-}
+import { ApiCollege, CollegeCardProps } from "@/lib/types"
 
-interface CollegeCardProps {
-  college: {
-    id: string
-    name: string
-    shortName?: string
-    state: string
-    distric:string
-    rating: number
-    fees: string
-    courses: string
-    images: string
-    featured?: boolean
-    established: number
-    type: string
-    ranking?: number
-    placement?: string
-    averagePackage?: string
-    highlights?: string[]
-    cutoff?: string
-    category?: string[];
-  }
-}
 
 export default function HomePage() {
   const [topRatedColleges, setTopRatedColleges] = useState<ApiCollege[]>([]);
@@ -197,8 +138,8 @@ export default function HomePage() {
               <ChevronRight className="w-5 h-5 ml-1" />
             </Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {topRatedColleges.slice(0, 12).map((college, i) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+            {topRatedColleges.slice(0, 15).map((college, i) => (
               <CollegeCard key={college._id} college={mapApiToCard(college, i)} />
             ))}
           </div>
