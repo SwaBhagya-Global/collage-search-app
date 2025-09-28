@@ -11,13 +11,13 @@ import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import FormModal from "./FormModal"
 
-interface CollegeCardProps { 
+interface CollegeCardProps {
   college: {
     id: string
     name: string
     shortName?: string
     state: string
-    distric:string
+    distric: string
     rating: number
     fees: string
     courses: string
@@ -164,13 +164,25 @@ export default function CollegeCard({ college }: CollegeCardProps) {
         {/* Stats row */}
         <div className="grid grid-cols-2 gap-3 mb-3">
           <div className="text-center p-2 bg-blue-50 rounded-lg">
-            <div className="font-bold text-blue-600 text-sm">{college.fees}</div>
+            <div className="font-bold text-blue-600 text-sm">{college.fees
+                ? college.fees.toString().includes("Lakhs")
+                  ? college.fees
+                  : `${college.fees} Lakhs`
+                : ""}</div>
             <div className="text-xs text-gray-600">Total Fees</div>
           </div>
           <div className="text-center p-2 bg-green-50 rounded-lg">
-            <div className="font-bold text-green-600 text-sm">{college.averagePackage}</div>
+            <div className="font-bold text-green-600 text-sm">
+              {college.averagePackage
+                ? college.averagePackage.toString().includes("LPA")
+                  ? college.averagePackage
+                  : `${college.averagePackage} LPA`
+                : ""}
+            </div>
             <div className="text-xs text-gray-600">Avg Package</div>
           </div>
+
+
         </div>
 
         {/* Placement info */}

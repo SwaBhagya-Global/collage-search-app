@@ -11,6 +11,7 @@ interface FormModalProps {
   subtitle: string;
   buttonText: string;
   brochureLink?: string;
+  applyLink?: string;
   showEmail?: boolean;
   flag: string;
   collegeName:string;
@@ -23,15 +24,18 @@ export default function FormModal({
   subtitle,
   buttonText,
   brochureLink,
+  applyLink,
   showEmail = false,
   flag,
   collegeName
 }: FormModalProps) {
-  const [form, setForm] = useState({ name: '', phone: '', email: '', flag: flag, CollegeName:collegeName });
+  const [form, setForm] = useState({ name: '', phone: '', email: '', flag: flag, CollegeName: collegeName });
   const [errors, setErrors] = useState<{ name?: string; phone?: string; email?: string }>({});
   const [responseMessage, setResponseMessage] = useState<string | null>(null);
 
+  console.log("form",form)
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("handle",form);
     const { name, value } = e.target;
 
     if (name === 'phone') {
@@ -73,6 +77,10 @@ export default function FormModal({
     }
   };
 
+  useEffect(() => {
+  setForm(prev => ({ ...prev, CollegeName: collegeName }));
+}, [collegeName]);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -96,7 +104,7 @@ export default function FormModal({
 
       if (res.ok) {
         setResponseMessage(data.message || 'Form submitted successfully!');
-        setForm({ name: '', phone: '', email: '', flag: flag, CollegeName:collegeName }); // Reset form
+        setForm({ name: '', phone: '', email: '', flag: flag, CollegeName: collegeName }); // Reset form
         if (flag === 'download_brochure' && brochureLink) {
           const link = document.createElement('a');
           link.href = brochureLink;
@@ -104,6 +112,8 @@ export default function FormModal({
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
+        }else{
+          window.open(applyLink, "_blank");
         }
       } else {
         setResponseMessage(data.message || 'Submission failed.');
@@ -114,7 +124,7 @@ export default function FormModal({
   };
 
   const onCancle = () => {
-    setForm({ name: '', phone: '', email: '', flag: flag, CollegeName:collegeName });
+    setForm({ name: '', phone: '', email: '', flag: flag, CollegeName: collegeName });
     setResponseMessage(null);
     onClose();
   }

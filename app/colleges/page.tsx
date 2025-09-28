@@ -53,83 +53,84 @@ const indianStates = [
 
 export default function CollegesPage() {
   const searchParams = useSearchParams()
-  console.log("searchParams",searchParams);
   const [searchQuery, setSearchQuery] = useState(searchParams?.get("search") || "")
   const [filteredColleges, setFilteredColleges] = useState<any[]>([])
   const [filters, setFilters] = useState({
     state: searchParams?.get("state")?.replace(/-/g, " ") || "",
     category: searchParams?.get("category") || "",
-    type: searchParams?.get("type") || "",
+    specialization: searchParams?.get("specialization") || "",
+    type: searchParams?.get("type")?.replace(/-/g, " ") || "",
     fees: searchParams?.get("fees") || "",
   })
+  console.log("filters",filters)
   const [visibleCount, setVisibleCount] = useState(15);
   const [colleges, setColleges] = useState<ApiCollege[]>([]);
   const [loading, setLoading] = useState(true);
 
   //filter fees
-function parseFee(feeStr: string): number {
-  if (!feeStr) return 0;
+  function parseFee(feeStr: string): number {
+    if (!feeStr) return 0;
 
-  const value = feeStr.trim().toUpperCase();
+    const value = feeStr.trim().toUpperCase();
 
-  // Handle words like "26 Lakhs"
-  if (value.includes("LAKH") || value.includes("LAKHS") || value.endsWith("L")) {
-    const num = parseFloat(value);
-    return num * 100000; // 1 Lakh = 100000
+    // Handle words like "26 Lakhs"
+    if (value.includes("LAKH") || value.includes("LAKHS") || value.endsWith("L")) {
+      const num = parseFloat(value);
+      return num * 100000; // 1 Lakh = 100000
+    }
+
+    // Handle Crores (1 Crore = 1 Cr = 10000000)
+    if (value.includes("CRORE") || value.includes("CR")) {
+      const num = parseFloat(value);
+      return num * 10000000;
+    }
+
+    // Handle "K"
+    if (value.endsWith("K")) {
+      return parseFloat(value) * 1000;
+    }
+
+    // Fallback: plain number (e.g. "2600000")
+    return parseFloat(value);
   }
+  function getFeeRange(filterValue: string) {
+    switch (filterValue) {
+      case "any":
+        return { min: 0, max: Infinity };
 
-  // Handle Crores (1 Crore = 1 Cr = 10000000)
-  if (value.includes("CRORE") || value.includes("CR")) {
-    const num = parseFloat(value);
-    return num * 10000000;
+      case "free":
+        return { min: 0, max: 0 };
+
+      case "under-50K":
+        return { min: 0, max: 50000 };
+
+      case "50K-1L":
+        return { min: 50000, max: 100000 };
+
+      case "1L-2L":
+        return { min: 100000, max: 200000 };
+
+      case "2L-5L":
+        return { min: 200000, max: 500000 };
+
+      case "5L-10L":
+        return { min: 500000, max: 1000000 };
+
+      case "10L-20L":
+        return { min: 1000000, max: 2000000 };
+
+      case "above-20L":
+        return { min: 2000000, max: Infinity };
+
+      default:
+        // handle if user directly passes something like "2L-5L"
+        if (filterValue.includes("-")) {
+          const [minStr, maxStr] = filterValue.split("-");
+          return { min: parseFee(minStr), max: parseFee(maxStr) };
+        }
+        return { min: 0, max: Infinity };
+    }
   }
-
-  // Handle "K"
-  if (value.endsWith("K")) {
-    return parseFloat(value) * 1000;
-  }
-
-  // Fallback: plain number (e.g. "2600000")
-  return parseFloat(value);
-}
-function getFeeRange(filterValue: string) {
-  switch (filterValue) {
-    case "any":
-      return { min: 0, max: Infinity };
-
-    case "free":
-      return { min: 0, max: 0 };
-
-    case "under-50K":
-      return { min: 0, max: 50000 };
-
-    case "50K-1L":
-      return { min: 50000, max: 100000 };
-
-    case "1L-2L":
-      return { min: 100000, max: 200000 };
-
-    case "2L-5L":
-      return { min: 200000, max: 500000 };
-
-    case "5L-10L":
-      return { min: 500000, max: 1000000 };
-
-    case "10L-20L":
-      return { min: 1000000, max: 2000000 };
-
-    case "above-20L":
-      return { min: 2000000, max: Infinity };
-
-    default:
-      // handle if user directly passes something like "2L-5L"
-      if (filterValue.includes("-")) {
-        const [minStr, maxStr] = filterValue.split("-");
-        return { min: parseFee(minStr), max: parseFee(maxStr) };
-      }
-      return { min: 0, max: Infinity };
-  }
-}
 
   useEffect(() => {
     async function fetchColleges() {
@@ -172,7 +173,6 @@ function getFeeRange(filterValue: string) {
 
   useEffect(() => {
     let filtered = colleges
-    console.log(filters);
 
     // Apply search filter
     if (searchQuery) {
@@ -198,37 +198,52 @@ function getFeeRange(filterValue: string) {
       filtered = filtered?.filter((college) => college?.state?.toLowerCase().includes(filters?.state?.toLowerCase()))
     }
 
-    // Apply type filter
-    if (filters.type && filters.type !== "all") {
-      filtered = filtered.filter((college) => college.type === filters.type)
-    }
-    if (filters.fees && filters.fees !== "any") {
-      console.log("h",colleges);
-  const { min, max } = getFeeRange(filters.fees);
-  filtered = filtered.filter((college) =>
-    Array.isArray(college.courses) &&
-    college.courses.some((course) => {
-      const courseFee = parseFee(course.fees); // "2L", "50K" etc
-      return courseFee >= min && courseFee <= max;
-    })
+        //Apply specialization filter
+    if (filters.specialization && filters.specialization !== "all") {
+      filtered = filtered?.filter((college) =>
+    Array.isArray(college?.specialization) &&
+    college.specialization.some((t) =>
+      t.toLowerCase().includes(filters.specialization.toLowerCase())
+    )
   );
-}
+    }
+
+    //Apply type filter
+    if (filters.type && filters.type !== "all") {
+      filtered = filtered?.filter((college) =>
+    Array.isArray(college?.type) &&
+    college.type.some((t) =>
+      t.toLowerCase().includes(filters.type.toLowerCase())
+    )
+  );
+    }
+
+    if (filters.fees && filters.fees !== "any") {
+      const { min, max } = getFeeRange(filters.fees);
+      filtered = filtered.filter((college) =>
+        Array.isArray(college.courses) &&
+        college.courses.some((course) => {
+          const courseFee = parseFee(course.fees); // "2L", "50K" etc
+          return courseFee >= min && courseFee <= max;
+        })
+      );
+    }
 
 
     filtered = [...filtered].sort((a, b) => {
-  // Handle nulls last
-  if (a.ranking == null && b.ranking == null) return 0;
-  if (a.ranking == null) return 1;
-  if (b.ranking == null) return -1;
+      // Handle nulls last
+      if (a.ranking == null && b.ranking == null) return 0;
+      if (a.ranking == null) return 1;
+      if (b.ranking == null) return -1;
 
-  // Handle 0s after positive rankings
-  if (a.ranking === 0 && b.ranking === 0) return 0;
-  if (a.ranking === 0) return 1;
-  if (b.ranking === 0) return -1;
+      // Handle 0s after positive rankings
+      if (a.ranking === 0 && b.ranking === 0) return 0;
+      if (a.ranking === 0) return 1;
+      if (b.ranking === 0) return -1;
 
-  // Normal ascending order for positive rankings
-  return a.ranking - b.ranking;
-});
+      // Normal ascending order for positive rankings
+      return a.ranking - b.ranking;
+    });
 
     setVisibleCount(15);
     setFilteredColleges(filtered)
@@ -243,8 +258,10 @@ function getFeeRange(filterValue: string) {
     setFilters({
       state: "",
       category: "",
+      specialization:"",
       type: "",
       fees: "",
+
     })
     setSearchQuery("")
   }
@@ -276,37 +293,37 @@ function getFeeRange(filterValue: string) {
             <div className="flex gap-2">
               <Select
                 value={filters.state}
-                onValueChange={(value) => {console.log(value),setFilters((prev) => ({ ...prev, state: value }))}}
+                onValueChange={(value) => {setFilters((prev) => ({ ...prev, state: value })) }}
               >
-                  <SelectTrigger className="w-40">
-                    <SelectValue placeholder="All India" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All India</SelectItem>
-                    {indianStates.map((state) => (
-                      <SelectItem key={state} value={state}>
-                        {state}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <SelectTrigger className="w-40">
+                  <SelectValue placeholder="All India" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All India</SelectItem>
+                  {indianStates.map((state) => (
+                    <SelectItem key={state} value={state}>
+                      {state}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
 
-                <Select
-                  value={filters.category}
-                  onValueChange={(value) => setFilters((prev) => ({ ...prev, category: value }))}
-                >
-                  <SelectTrigger className="w-40">
-                    <SelectValue placeholder="Category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Categories</SelectItem>
-                    <SelectItem value="MBA">MBA</SelectItem>
-                    <SelectItem value="PGDM">PGDM</SelectItem>
-                  </SelectContent>
-                </Select>
+              <Select
+                value={filters.category}
+                onValueChange={(value) => setFilters((prev) => ({ ...prev, category: value }))}
+              >
+                <SelectTrigger className="w-40">
+                  <SelectValue placeholder="Category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Categories</SelectItem>
+                  <SelectItem value="MBA">MBA</SelectItem>
+                  <SelectItem value="PGDM">PGDM</SelectItem>
+                </SelectContent>
+              </Select>
 
-                {/* Mobile Filters */}
-                {/* <Sheet>
+              {/* Mobile Filters */}
+              {/* <Sheet>
                 <SheetTrigger asChild>
                   <Button variant="outline" className="lg:hidden bg-transparent">
                     <SlidersHorizontal className="w-4 h-4 mr-2" />
@@ -369,8 +386,8 @@ function getFeeRange(filterValue: string) {
                 </SheetContent>
               </Sheet> */}
 
-                {/* Desktop More Filters */}
-                {/* <Button variant="outline" className="hidden lg:flex h-12 bg-transparent">
+              {/* Desktop More Filters */}
+              {/* <Button variant="outline" className="hidden lg:flex h-12 bg-transparent">
                 <Filter className="w-4 h-4 mr-2" />
                 More Filters
               </Button> */}
@@ -403,7 +420,7 @@ function getFeeRange(filterValue: string) {
         </div>
 
         {/* College Grid - 4x4 layout */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {filteredColleges.slice(0, visibleCount).map((college, i) => (
             <CollegeCard key={college._id ?? i} college={mapApiToCard(college, i)} />
           ))}

@@ -7,6 +7,7 @@ import Footer from '@/components/footer';
 import { FaWhatsapp } from 'react-icons/fa';
 import './globals.css';
 import ClientAnalytics from '@/components/ClientAnalytics';
+import ScrollToTop from '@/components/ScrollToTop';
 
 
 
@@ -61,7 +62,8 @@ export default function RootLayout({
 
         <Header />
         {children}
-
+          
+          <ScrollToTop />
         <a
           href="https://wa.me/917338235806"
           target="_blank"

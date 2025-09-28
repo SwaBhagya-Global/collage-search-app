@@ -10,6 +10,7 @@ export interface ApiCollege {
   established:number
   ranking:number
   type:string
+  specialization:string
   intake?: string
   images: string[]
   category?: string[];
@@ -26,13 +27,22 @@ export interface ApiCollege {
   admissionProcess?: string[]
   links?: {
     website?: string
+    facebook?: string
+    instagram?: string
+    linkedin?: string
     _id: string
   }
+  applyLink?: string
   averagePackage: string
   highestPackage: string
   topRecruiters: string[]
   createdAt: string
   updatedAt: string
+  email?: string
+  phone?: string
+  mapUrl: string
+  about: string
+  brochureLink?: string
   contact?: {
     email?: string
     _id: string

@@ -99,9 +99,10 @@ export default function ContactsManager() {
                                             <TableCell>Sr.No</TableCell>
                                             <TableCell>Date</TableCell>
                                             <TableCell>Name</TableCell>
+                                            
+                                            <TableCell>Phone Number</TableCell>
+                                            <TableCell>Email id</TableCell>
                                             <TableCell>College Name</TableCell>
-                                            <TableCell>Phone</TableCell>
-                                            <TableCell>Email</TableCell>
                                             <TableCell>From</TableCell>
                                             
                                         </TableRow>
@@ -113,9 +114,10 @@ export default function ContactsManager() {
                                                     <TableCell>{index + 1}</TableCell>
                                                      <TableCell>{contact.createdAt?.split('T')[0] || '-'}</TableCell>
                                                     <TableCell>{contact.name}</TableCell>
-                                                    <TableCell>{contact.CollegeName}</TableCell>
+                                                    
                                                     <TableCell>{contact.phone}</TableCell>
                                                     <TableCell>{contact.email}</TableCell>
+                                                    <TableCell>{contact.CollegeName}</TableCell>
                                                      <TableCell>{contact.flag}</TableCell>
                                                    
                                                 </TableRow>
