@@ -162,7 +162,7 @@ export default function SearchSection() {
                           <SelectItem value="Finance">Finance</SelectItem>
                           <SelectItem value="Operations & Supply Chain Management">Operations & Supply Chain Management</SelectItem>
                           <SelectItem value="International Business">International Business</SelectItem>
-                          <SelectItem value="Business Analytics / Data Analytics">Business Analytics / Data Analytics</SelectItem>
+                          <SelectItem value="Business Analytics Data Analytics">Business Analytics / Data Analytics</SelectItem>
                           <SelectItem value="Information Technology (IT) / Systems">Information Technology (IT) / Systems</SelectItem>
                           <SelectItem value="Healthcare & Hospital Management">Healthcare & Hospital Management</SelectItem>
                           <SelectItem value="Retail & E-Commerce Management">Retail & E-Commerce Management</SelectItem>
@@ -170,33 +170,33 @@ export default function SearchSection() {
                           <SelectItem value="Agri-Business Management">Agri-Business Management</SelectItem>
                           <SelectItem value="Media & Communication Management">Media & Communication Management</SelectItem>
                           <SelectItem value="Tourism & Hospitality Management">Tourism & Hospitality Management</SelectItem>
-                          <SelectItem value="digital-marketing">Digital Marketing</SelectItem>
-                          <SelectItem value="entrepreneurship-startups">Entrepreneurship & Startups</SelectItem>
-                          <SelectItem value="ai-ml-business">Artificial Intelligence & Machine Learning in Business</SelectItem>
-                          <SelectItem value="sustainability">Sustainability & Environmental Management</SelectItem>
-                          <SelectItem value="sports-management">Sports Management</SelectItem>
-                          <SelectItem value="project-management">Project Management</SelectItem>
-                          <SelectItem value="logistics-supply-chain">Logistics & Supply Chain Management</SelectItem>
-                          <SelectItem value="aviation">Aviation Management</SelectItem>
-                          <SelectItem value="energy-power">Energy & Power Management</SelectItem>
-                          <SelectItem value="pharmaceutical">Pharmaceutical Management</SelectItem>
-                          <SelectItem value="rural-development">Rural & Development Management</SelectItem>
-                          <SelectItem value="public-policy">Public Policy & Administration</SelectItem>
-                          <SelectItem value="event-management">Event Management</SelectItem>
-                          <SelectItem value="family-business">Family Business Management</SelectItem>
-                          <SelectItem value="infrastructure-real-estate">Infrastructure & Real Estate Management</SelectItem>
-                          <SelectItem value="telecom">Telecom Management</SelectItem>
-                          <SelectItem value="defence">Defence Management</SelectItem>
-                          <SelectItem value="hospitality-leisure">Hospitality & Leisure Management</SelectItem>
-                          <SelectItem value="csr-ngo">Corporate Social Responsibility (CSR) & NGO Management</SelectItem>
-                          <SelectItem value="economics-policy">Economics & Public Policy</SelectItem>
-                          <SelectItem value="innovation-design">Innovation & Design Thinking</SelectItem>
-                          <SelectItem value="risk-management">Risk Management</SelectItem>
-                          <SelectItem value="insurance">Insurance Management</SelectItem>
-                          <SelectItem value="education">Education Management</SelectItem>
-                          <SelectItem value="fashion">Fashion Management</SelectItem>
-                          <SelectItem value="luxury-brand">Luxury Brand Management</SelectItem>
-                          <SelectItem value="port-shipping">Port & Shipping Management</SelectItem>
+                          <SelectItem value="Digital Marketing">Digital Marketing</SelectItem>
+                          <SelectItem value="Entrepreneurship & Startups">Entrepreneurship & Startups</SelectItem>
+                          <SelectItem value="Artificial Intelligence & Machine Learning in Business">Artificial Intelligence & Machine Learning in Business</SelectItem>
+                          <SelectItem value="Sustainability & Environmental Management">Sustainability & Environmental Management</SelectItem>
+                          <SelectItem value="Sports Management">Sports Management</SelectItem>
+                          <SelectItem value="Project Management">Project Management</SelectItem>
+                          <SelectItem value="Logistics & Supply Chain Management">Logistics & Supply Chain Management</SelectItem>
+                          <SelectItem value="Aviation Management">Aviation Management</SelectItem>
+                          <SelectItem value="Energy & Power Management">Energy & Power Management</SelectItem>
+                          <SelectItem value="Pharmaceutical Management">Pharmaceutical Management</SelectItem>
+                          <SelectItem value="Rural & Development Management">Rural & Development Management</SelectItem>
+                          <SelectItem value="Public Policy & Administration">Public Policy & Administration</SelectItem>
+                          <SelectItem value="Event Management">Event Management</SelectItem>
+                          <SelectItem value="Family Business Management">Family Business Management</SelectItem>
+                          <SelectItem value="Infrastructure & Real Estate Management">Infrastructure & Real Estate Management</SelectItem>
+                          <SelectItem value="Telecom Management">Telecom Management</SelectItem>
+                          <SelectItem value="Defence Management">Defence Management</SelectItem>
+                          <SelectItem value="Hospitality & Leisure Management">Hospitality & Leisure Management</SelectItem>
+                          <SelectItem value="Corporate Social Responsibility (CSR) & NGO Management">Corporate Social Responsibility (CSR) & NGO Management</SelectItem>
+                          <SelectItem value="Economics & Public Policy">Economics & Public Policy</SelectItem>
+                          <SelectItem value="Innovation & Design Thinking">Innovation & Design Thinking</SelectItem>
+                          <SelectItem value="Risk Management">Risk Management</SelectItem>
+                          <SelectItem value="Insurance Management">Insurance Management</SelectItem>
+                          <SelectItem value="Education Management">Education Management</SelectItem>
+                          <SelectItem value="Fashion Management">Fashion Management</SelectItem>
+                          <SelectItem value="Luxury Brand Management">Luxury Brand Management</SelectItem>
+                          <SelectItem value="Port & Shipping Management">Port & Shipping Management</SelectItem>
                         </SelectContent>
                       </Select>
 
@@ -206,10 +206,10 @@ export default function SearchSection() {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="all-types">All Types</SelectItem>
-                          <SelectItem value="full-time">Full Time</SelectItem>
-                          <SelectItem value="part-time">Part Time</SelectItem>
-                          <SelectItem value="executive">Executive</SelectItem>
-                          <SelectItem value="online">Online</SelectItem>
+                          <SelectItem value="Full-Time">Full Time</SelectItem>
+                          <SelectItem value="Part-Time">Part Time</SelectItem>
+                          <SelectItem value="Executive">Executive</SelectItem>
+                          <SelectItem value="Online">Online</SelectItem>
                         </SelectContent>
                       </Select>
 

@@ -18,49 +18,7 @@ import BASE_URL from "@/app/config/api";
 
 import Loader from "@/components/loader";
 import FormModal from "@/components/FormModal";
-
-interface ApiCollege {
-  _id: string
-  name: string
-  shortName: string
-  state: string
-  affiliation?: string
-  address?: string
-  rating: number
-  intake?: string
-  type?: string
-  images: string[]
-  brochureLink?: string
-  highlights: string[]
-  established: number
-  courses: {
-    name: string
-    duration: string
-    fees: string
-    eligibility: string
-    seats: number
-    _id: string
-  }[]
-  facilities?: string[]
-  admissionProcess?: string[]
-  links?: {
-    website?: string
-    facebook?: string
-    instagram?: string
-    linkedin?: string
-    _id: string
-  }
-  averagePackage: string
-  highestPackage: string
-  topRecruiters: string[]
-  mapUrl: string
-  createdAt: string
-  updatedAt: string
-  email?: string
-  phone?: string
-  about: string
-  category?: string[];
-}
+import { ApiCollege } from "@/lib/types"
 
 export default function CollegePage({ params }: { params: { id: string } }) {
   const { id } = useParams<{ id: string }>();
@@ -256,7 +214,7 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                     title="Download Brochure"
                     subtitle="Please enter your details below to download the brochure."
                     buttonText="Download Now"
-                    brochureLink={college?.brochureLink ?? ''}
+                    brochureLink={college?.brochureLink || ''}
                     showEmail={false}
                     flag={"download_brochure"}
                     collegeName={college?.name || ""}
@@ -271,6 +229,7 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                     buttonText="Submit Application"
                     showEmail={true}
                     flag={"apply_now"}
+                    applyLink={college?.applyLink || college?.links?.website}
                     collegeName={college?.name || ""}
                   />
                 </div>
@@ -360,15 +319,29 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                             <div>
                               <h3 className="font-semibold text-lg">{course.name}</h3>
                               <div className="flex items-center gap-4 text-sm text-gray-600 mt-1">
-                                <span>Duration: {course.duration}</span>
+                                <span>
+                                  Duration: {course.duration
+                                    ? course.duration.toString().toLowerCase().includes("year")
+                                      ? course.duration
+                                      : `${course.duration} Years`
+                                    : ""}
+                                </span>
+
                                 <span>•</span>
                                 <span>Seats: {course.seats}</span>
                               </div>
                             </div>
                             <div className="text-right">
-                              <div className="font-bold text-blue-600">{course.fees}</div>
-                              <div className="text-sm text-gray-600">Total Fee</div>
-                            </div>
+  <div className="font-bold text-blue-600">
+    {course.fees
+      ? course.fees.toString().toLowerCase().includes("lakh")
+        ? course.fees
+        : `${course.fees} Lakhs`
+      : ""}
+  </div>
+  <div className="text-sm text-gray-600">Total Fee</div>
+</div>
+
                           </div>
                           <div className="flex justify-between items-center">
                             <Badge variant="outline">{course.eligibility}</Badge>
@@ -387,7 +360,7 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      {(college?.admissionProcess || []).filter(step => step.trim() !== "").map((step, index) => ( 
+                      {(college?.admissionProcess || []).filter(step => step.trim() !== "").map((step, index) => (
                         <div key={index} className="flex items-center gap-4">
                           <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold text-sm">
                             {index + 1}
@@ -434,7 +407,9 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                       {college?.averagePackage && (
                         <div className="text-center p-4 bg-green-50 rounded-lg">
                           <div className="text-2xl font-bold text-green-600">
-                            {college.averagePackage}
+                            {college.averagePackage.toString().includes("LPA")
+                              ? college.averagePackage
+                              : `${college.averagePackage} LPA`}
                           </div>
                           <div className="text-sm text-gray-600">Average Package</div>
                         </div>
@@ -443,12 +418,15 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                       {college?.highestPackage && (
                         <div className="text-center p-4 bg-blue-50 rounded-lg">
                           <div className="text-2xl font-bold text-blue-600">
-                            {college.highestPackage}
+                            {college.highestPackage.toString().includes("LPA")
+                              ? college.highestPackage
+                              : `${college.highestPackage} LPA`}
                           </div>
                           <div className="text-sm text-gray-600">Highest Package</div>
                         </div>
                       )}
                     </div>
+
 
                     <div>
                       <h4 className="font-semibold mb-3">Top Recruiters</h4>

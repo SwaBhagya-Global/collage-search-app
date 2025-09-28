@@ -15,7 +15,7 @@ import { ApiCollege, CollegeCardProps } from "@/lib/types"
 
 
 export default function HomePage() {
-  const [topRatedColleges, setTopRatedColleges] = useState<ApiCollege[]>([]);
+  const [topCities, setTopCities] = useState<any>({});
   const [featuredColleges, setfeaturedColleges] = useState<ApiCollege[]>([]);
   const [ads, setAds] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -26,16 +26,10 @@ export default function HomePage() {
         const [collegeRes] = await Promise.all([
           fetch(`${BASE_URL}/api/colleges?view=home`),
         ]);
-        // const res = await fetch(`${BASE_URL}/api/colleges`); // 🔹 replace with your API endpoint
-        // const data: ApiCollege[] = await res.json();
-        // const data = await res.json();
+        
         const collegeData = await collegeRes.json();
-        // 🔹 Filter top rated colleges (rating 4.5 or 5)
-        // const topRated = collegeData.data
-        //   .filter((college: ApiCollege) => college.rating >= 4.5)
-        //   .sort((a: ApiCollege, b: ApiCollege) => b?.rating - a?.rating); // Sort in descending order
 
-        setTopRatedColleges(collegeData.data.topRated);
+        setTopCities(collegeData.data.topCities);
         setfeaturedColleges(collegeData.data.trending);
       } catch (err) {
         console.error("Failed to fetch colleges", err);
@@ -55,7 +49,7 @@ export default function HomePage() {
       state: apiCollege.state,
       distric:apiCollege.distric,
       rating: apiCollege.rating,
-      fees: apiCollege.courses?.[0]?.fees || "N/A",
+      fees: apiCollege.courses?.[0]?.fees || "",
       courses: apiCollege.courses.map(c => c.name).join(", "),
       images: apiCollege.images?.[0] || "/placeholder.svg", // fallback
       established: apiCollege.established,
@@ -99,8 +93,8 @@ export default function HomePage() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-            {featuredColleges.slice(0, 10).map((college, i) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {featuredColleges.slice(0, 8).map((college, i) => (
               <CollegeCard
                 key={college._id}
                 college={mapApiToCard(college, i)}
@@ -119,27 +113,123 @@ export default function HomePage() {
         /> */}
         <AdBanner />
       </section>
-      {/* Top Rated Colleges */}
+      {/* Top Colleges In Bangalore */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-8">
           <div className="flex justify-between items-center mb-10">
             <div>
               <h2 className="text-3xl font-bold mb-2 flex items-center">
-                <Award className="w-6 h-6 mr-2 text-yellow-500" />
-                Top Rated Colleges
+                Top Colleges in Bangalore
               </h2>
-              <p className="text-gray-600">Highest rated by students and alumni</p>
             </div>
-            <Link
+            {/* <Link
               href="/colleges?sort=rating"
               className="flex items-center text-blue-600 hover:text-blue-700 font-semibold"
             >
               View All
               <ChevronRight className="w-5 h-5 ml-1" />
-            </Link>
+            </Link> */}
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-            {topRatedColleges.slice(0, 15).map((college, i) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {topCities?.Bangalore?.map((college:any, i:number) => (
+              <CollegeCard key={college._id} college={mapApiToCard(college, i)} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Top Colleges In Pune */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-8">
+          <div className="flex justify-between items-center mb-10">
+            <div>
+              <h2 className="text-3xl font-bold mb-2 flex items-center">
+                Top Colleges in Pune
+              </h2>
+            </div>
+            {/* <Link
+              href="/colleges?sort=rating"
+              className="flex items-center text-blue-600 hover:text-blue-700 font-semibold"
+            >
+              View All
+              <ChevronRight className="w-5 h-5 ml-1" />
+            </Link> */}
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {topCities?.Pune?.map((college:any, i:number) => (
+              <CollegeCard key={college._id} college={mapApiToCard(college, i)} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Top Colleges In Delhi */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-8">
+          <div className="flex justify-between items-center mb-10">
+            <div>
+              <h2 className="text-3xl font-bold mb-2 flex items-center">
+                Top Colleges in Delhi
+              </h2>
+            </div>
+            {/* <Link
+              href="/colleges?sort=rating"
+              className="flex items-center text-blue-600 hover:text-blue-700 font-semibold"
+            >
+              View All
+              <ChevronRight className="w-5 h-5 ml-1" />
+            </Link> */}
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {topCities?.Delhi?.map((college:any, i:number) => (
+              <CollegeCard key={college._id} college={mapApiToCard(college, i)} />
+            ))}
+          </div>
+        </div>
+      </section>
+      {/* Top Colleges In Mumbai */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-8">
+          <div className="flex justify-between items-center mb-10">
+            <div>
+              <h2 className="text-3xl font-bold mb-2 flex items-center">
+                Top Colleges in Mumbai
+              </h2>
+            </div>
+            {/* <Link
+              href="/colleges?sort=rating"
+              className="flex items-center text-blue-600 hover:text-blue-700 font-semibold"
+            >
+              View All
+              <ChevronRight className="w-5 h-5 ml-1" />
+            </Link> */}
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {topCities?.Mumbai?.map((college:any, i:number) => (
+              <CollegeCard key={college._id} college={mapApiToCard(college, i)} />
+            ))}
+          </div>
+        </div>
+      </section>
+      {/* Top Colleges In Hyderabad */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-8">
+          <div className="flex justify-between items-center mb-10">
+            <div>
+              <h2 className="text-3xl font-bold mb-2 flex items-center">
+                Top Colleges in Hyderabad
+              </h2>
+            </div>
+            {/* <Link
+              href="/colleges?sort=rating"
+              className="flex items-center text-blue-600 hover:text-blue-700 font-semibold"
+            >
+              View All
+              <ChevronRight className="w-5 h-5 ml-1" />
+            </Link> */}
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {topCities?.Hyderabad?.map((college:any, i:number) => (
               <CollegeCard key={college._id} college={mapApiToCard(college, i)} />
             ))}
           </div>

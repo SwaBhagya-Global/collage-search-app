@@ -84,8 +84,9 @@ export interface College {
     address: string;
     mapUrl: string;
     brochureLink: string;
+    applyLink: string;
     established: string;
-    type: string;
+    type: string[];
     affiliation: string;
     state: string;
     ranking: number;
@@ -115,37 +116,37 @@ interface CollegeFormProps {
 }
 
 const indianStates = [
-  "Andhra Pradesh",
-  "Arunachal Pradesh",
-  "Assam",
-  "Bihar",
-  "Chhatisgarh",
-  "Goa",
-  "Gujarat",
-  "Haryana",
-  "Himachal Pradesh",
-  "Jharkhand",
-  "Karnataka",
-  "Kerala",
-  "Madhya Pradesh",
-  "Maharashtra",
-  "Manipur",
-  "Meghalaya",
-  "Mizoram",
-  "Nagaland",
-  "Odisha",
-  "Punjab",
-  "Rajasthan",
-  "Sikkim",
-  "Tamil Nadu",
-  "Telangana",
-  "Tripura",
-  "Uttar Pradesh",
-  "Uttarakhand",
-  "West Bengal",
-  "Delhi",
-  "Jammu and Kashmir",
-  "Ladakh",
+    "Andhra Pradesh",
+    "Arunachal Pradesh",
+    "Assam",
+    "Bihar",
+    "Chhatisgarh",
+    "Goa",
+    "Gujarat",
+    "Haryana",
+    "Himachal Pradesh",
+    "Jharkhand",
+    "Karnataka",
+    "Kerala",
+    "Madhya Pradesh",
+    "Maharashtra",
+    "Manipur",
+    "Meghalaya",
+    "Mizoram",
+    "Nagaland",
+    "Odisha",
+    "Punjab",
+    "Rajasthan",
+    "Sikkim",
+    "Tamil Nadu",
+    "Telangana",
+    "Tripura",
+    "Uttar Pradesh",
+    "Uttarakhand",
+    "West Bengal",
+    "Delhi",
+    "Jammu and Kashmir",
+    "Ladakh",
 ];
 
 export default function CollegeForm({ open, setOpen, initialData, onSave }: CollegeFormProps) {
@@ -154,6 +155,7 @@ export default function CollegeForm({ open, setOpen, initialData, onSave }: Coll
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const [typeOpen, setTypeOpen] = useState(false);
 
     useEffect(() => {
         setFormData(initialData);
@@ -177,6 +179,36 @@ export default function CollegeForm({ open, setOpen, initialData, onSave }: Coll
             if (res.ok) {
                 const data = await res.json();
                 setFormData(prev => ({ ...prev, images: [data.imageUrl] }));
+            } else {
+                console.error("Upload failed:", await res.text());
+            }
+        } catch (error) {
+            console.error("Upload error:", error);
+        }
+
+        setIsUploading(false);
+    };
+
+    //pdf upload
+
+    const handlePdfUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        setIsUploading(true);
+
+        const uploadForm = new FormData();
+        uploadForm.append("brochureLink", file);
+
+        try {
+            const res = await fetch(`${BASE_URL}/upload`, {
+                method: "POST",
+                body: uploadForm
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                setFormData(prev => ({ ...prev, brochureLink: data.imageUrl }));
             } else {
                 console.error("Upload failed:", await res.text());
             }
@@ -217,6 +249,22 @@ export default function CollegeForm({ open, setOpen, initialData, onSave }: Coll
 
     const handleSubmit = () => onSave(formData);
 
+    const toggleType = (val: string) => {
+        if (formData.type.includes(val)) {
+            setFormData({
+                ...formData,
+                type: formData.type.filter((v) => v !== val),
+            });
+        } else {
+            setFormData({
+                ...formData,
+                type: [...formData.type, val],
+            });
+        }
+    };
+
+
+
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogContent className="max-w-6xl max-h-[90vh] overflow-auto">
@@ -232,33 +280,65 @@ export default function CollegeForm({ open, setOpen, initialData, onSave }: Coll
                         <InputField label="Map URL" value={formData.mapUrl} onChange={val => setFormData({ ...formData, mapUrl: val })} />
                         <InputField label="Brochure Link" value={formData.brochureLink} onChange={val => setFormData({ ...formData, brochureLink: val })} />
                         <InputField label="Established" value={formData?.established} onChange={val => setFormData({ ...formData, established: val })} />
-                        <div>
-                            <Label>Type</Label>
-                            <Select value={formData.type} onValueChange={val => setFormData({ ...formData, type: val })}>
-                                <SelectTrigger><SelectValue placeholder="Select Type" /></SelectTrigger>
-                                <SelectContent>{typeOptions.map(opt => <SelectItem key={opt} value={opt}>{opt}</SelectItem>)}</SelectContent>
-                            </Select>
+                        <div className="relative">
+                            <label className="block mb-1 font-medium text-gray-700">Type*</label>
+                            <div
+                                className="border h-12 px-3 flex items-center justify-between rounded-lg bg-white border-gray-300 cursor-pointer"
+                                onClick={() => setTypeOpen(!typeOpen)}
+                            >
+                                <span className="truncate">
+                                    {Array.isArray(formData.type) && formData.type.length > 0
+                                        ? formData.type.join(", ")
+                                        : typeof formData.type === "string" && formData.type
+                                            ? formData.type
+                                            : "Select Type"}
+                                </span>
+
+
+                                <span className="ml-2 text-gray-500">&#9662;</span>
+                            </div>
+
+                            {typeOpen && (
+                                <div className="absolute z-10 mt-1 w-full max-h-60 overflow-y-auto border bg-white shadow-md rounded-lg">
+                                    {typeOptions.map((opt) => (
+                                        <label
+                                            key={opt}
+                                            className="flex items-center px-3 py-2 hover:bg-gray-100 cursor-pointer"
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                checked={formData.type.includes(opt)}
+                                                onChange={() => toggleType(opt)}
+                                                className="mr-2"
+                                            />
+                                            {opt}
+                                        </label>
+                                    ))}
+                                </div>
+                            )}
                         </div>
+
+
                         <InputField label="Affiliation" value={formData.affiliation} onChange={val => setFormData({ ...formData, affiliation: val })} />
                         {/* <InputField label="State*" value={formData.state} onChange={val => setFormData({ ...formData, state: val })} /> */}
-                       <div className="space-y-2">
-  <label className="text-sm font-medium text-gray-700">State*</label>
-  <Select
-    value={formData.state}
-    onValueChange={(val) => setFormData({ ...formData, state: val })}
-  >
-    <SelectTrigger className="h-12 w-full bg-white border border-gray-300">
-      <SelectValue placeholder="Select State" />
-    </SelectTrigger>
-    <SelectContent className="max-h-60 overflow-y-auto">
-      {indianStates.map((state) => (
-        <SelectItem key={state} value={state}>
-          {state}
-        </SelectItem>
-      ))}
-    </SelectContent>
-  </Select>
-</div>
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-gray-700">State*</label>
+                            <Select
+                                value={formData.state}
+                                onValueChange={(val) => setFormData({ ...formData, state: val })}
+                            >
+                                <SelectTrigger className="h-12 w-full bg-white border border-gray-300">
+                                    <SelectValue placeholder="Select State" />
+                                </SelectTrigger>
+                                <SelectContent className="max-h-60 overflow-y-auto">
+                                    {indianStates.map((state) => (
+                                        <SelectItem key={state} value={state}>
+                                            {state}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
                         <InputField label="Ranking" value={formData?.ranking?.toString()} onChange={val => setFormData({ ...formData, ranking: parseInt(val) || 0 })} />
                         <InputField label="Rating" value={formData?.rating?.toString()} onChange={val => setFormData({ ...formData, rating: parseInt(val) || 0 })} disabled />
                         <InputField label="Average Package" value={formData.averagePackage} onChange={val => setFormData({ ...formData, averagePackage: val })} />
@@ -313,7 +393,9 @@ export default function CollegeForm({ open, setOpen, initialData, onSave }: Coll
                                 </div>
                             )}
                         </div>
+                        <InputField label="Apply Now Link" value={formData.applyLink} onChange={val => setFormData({ ...formData, applyLink: val })} />
                     </div>
+
 
                     <ArrayField label="Highlights" values={formData.highlights} onChange={vals => setFormData({ ...formData, highlights: vals })} />
                     <ArrayField label="Top Recruiters" values={formData.topRecruiters} onChange={vals => setFormData({ ...formData, topRecruiters: vals })} />
@@ -329,31 +411,54 @@ export default function CollegeForm({ open, setOpen, initialData, onSave }: Coll
                         <InputField label="LinkedIn" value={formData.links.linkedin} onChange={val => setFormData({ ...formData, links: { ...formData.links, linkedin: val } })} />
                     </div>
 
-                    <div className="space-y-2">
-                        <Label htmlFor="main-image" className="text-gray-700 font-medium">
-                            Upload Main Image*
-                        </Label>
-                        <div className="border-2 border-dashed border-blue-300 rounded-lg p-6 text-center bg-blue-50 hover:border-blue-500 hover:bg-blue-100 transition-colors">
-                            <input
-                                id="main-image"
-                                type="file"
-                                className="hidden"
-                                accept="image/*"
-                                onChange={handleImageUpload}
-                            />
-                            <label htmlFor="main-image" className="cursor-pointer">
-                                <Upload className="h-8 w-8 mx-auto mb-2 text-blue-600" />
-                                <p className="text-sm text-blue-700">
-                                    {formData.images.length > 0 ? "Image selected" : "Click to upload main image or drag and drop"}
-                                </p>
-                            </label>
-                        </div>
-                        {isUploading && <p className="text-sm text-gray-500">Uploading image...</p>}
-                        {formData.images.length > 0 && (
-                            <div className="mt-2 w-32 h-32 mx-auto">
-                                <img src={formData.images[0]} alt="Uploaded" className="w-full h-full object-cover rounded" />
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="main-image" className="text-gray-700 font-medium">
+                                Upload Main Image*
+                            </Label>
+                            <div className="border-2 border-dashed border-blue-300 rounded-lg p-6 text-center bg-blue-50 hover:border-blue-500 hover:bg-blue-100 transition-colors">
+                                <input
+                                    id="main-image"
+                                    type="file"
+                                    className="hidden"
+                                    accept="image/*"
+                                    onChange={handleImageUpload}
+                                />
+                                <label htmlFor="main-image" className="cursor-pointer">
+                                    <Upload className="h-8 w-8 mx-auto mb-2 text-blue-600" />
+                                    <p className="text-sm text-blue-700">
+                                        {formData.images.length > 0 ? "Image selected" : "Click to upload main image or drag and drop"}
+                                    </p>
+                                </label>
                             </div>
-                        )}
+                            {isUploading && <p className="text-sm text-gray-500">Uploading image...</p>}
+                            {formData.images.length > 0 && (
+                                <div className="mt-2 w-32 h-32 mx-auto">
+                                    <img src={formData.images[0]} alt="Uploaded" className="w-full h-full object-cover rounded" />
+                                </div>
+                            )}
+                        </div>
+                        {/* <div className="space-y-2">
+                            <Label htmlFor="main-image" className="text-gray-700 font-medium">
+                                Upload Brochure PDF
+                            </Label>
+                            <div className="border-2 border-dashed border-blue-300 rounded-lg p-6 text-center bg-blue-50 hover:border-blue-500 hover:bg-blue-100 transition-colors">
+                                <input
+                                    id="main-image"
+                                    type="file"
+                                    className="hidden"
+                                    accept="image/*"
+                                    onChange={handlePdfUpload}
+                                />
+                                <label htmlFor="main-image" className="cursor-pointer">
+                                    <Upload className="h-8 w-8 mx-auto mb-2 text-blue-600" />
+                                    <p className="text-sm text-blue-700">
+                                        {formData.brochureLink.length > 0 ? "PDF link selected" : "Click to upload pdf or drag and drop"}
+                                    </p>
+                                </label>
+                            </div>
+                        </div> */}
+
                     </div>
 
                     <Button onClick={handleSubmit} className="w-full bg-green-600 text-white hover:bg-green-700">
