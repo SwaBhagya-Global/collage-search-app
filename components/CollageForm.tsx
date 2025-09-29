@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import * as Icons from "lucide-react";
 import { Upload } from "lucide-react";
 import BASE_URL from "@/app/config/api";
+import { College, Course } from "@/lib/types";
 
 
 // Options
@@ -60,52 +61,6 @@ const typeOptions = ["Full Time", "Part Time", "Online", "Executive"];
 const courseTypes = ["MBA", "PGDM"];
 
 // Types
-export interface Course {
-    name: string;
-    duration: string;
-    fees: string;
-    eligibility: string;
-    seats: number;
-}
-
-export interface Links {
-    website: string;
-    facebook: string;
-    instagram: string;
-    linkedin: string;
-}
-
-export interface College {
-    _id?: string;
-    name: string;
-    shortName: string;
-    about: string;
-    distric: string;
-    address: string;
-    mapUrl: string;
-    brochureLink: string;
-    applyLink: string;
-    established: string;
-    type: string[];
-    affiliation: string;
-    state: string;
-    ranking: number;
-    rating: number;
-    intake: string;
-    images: string[];
-    category: string[];
-    specialization: string[];
-    averagePackage: string;
-    highestPackage: string;
-    topRecruiters: string[];
-    phone: string;
-    email: string;
-    highlights: string[];
-    courses: Course[];
-    facilities: string[];
-    admissionProcess: string[];
-    links: Links;
-}
 
 // Props
 interface CollegeFormProps {

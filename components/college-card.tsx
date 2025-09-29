@@ -10,29 +10,8 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import FormModal from "./FormModal"
+import { CollegeCardProps } from "@/lib/types"
 
-interface CollegeCardProps {
-  college: {
-    id: string
-    name: string
-    shortName?: string
-    state: string
-    distric: string
-    rating: number
-    fees: string
-    courses: string
-    images: string
-    featured?: boolean
-    established: number
-    type: string
-    ranking?: number
-    placement?: string
-    averagePackage?: string
-    highlights?: string[]
-    cutoff?: string
-    category?: string[];
-  }
-}
 
 export default function CollegeCard({ college }: CollegeCardProps) {
   const [isLiked, setIsLiked] = useState(false)
@@ -242,6 +221,7 @@ export default function CollegeCard({ college }: CollegeCardProps) {
               buttonText="Apply Now"
               showEmail={true}
               flag={"apply_now"}
+              applyLink={college?.applyLink || college?.website}
               collegeName={college?.name}
             />
           </div>

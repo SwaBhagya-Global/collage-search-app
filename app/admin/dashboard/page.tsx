@@ -24,9 +24,10 @@ import {
   Button
 } from "@mui/material";
 import { Edit2, Trash2, Plus, Delete, Edit } from "lucide-react";
-import CollegeForm, { College } from "@/components/CollageForm";
+import CollegeForm from "@/components/CollageForm";
 import BASE_URL from "@/app/config/api";
 import { DialogTrigger } from "@radix-ui/react-dialog";
+import { College } from "@/lib/types";
 
 export default function DashboardPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);

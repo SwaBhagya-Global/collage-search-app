@@ -167,6 +167,8 @@ export default function CollegesPage() {
       averagePackage: apiCollege.averagePackage,
       cutoff: "N/A",
       category: apiCollege.category || [],
+      applyLink: apiCollege.applyLink || "",
+      website:apiCollege?.links?.website || ""
     }
   }
 
