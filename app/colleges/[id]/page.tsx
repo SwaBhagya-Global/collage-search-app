@@ -226,7 +226,7 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                     onClose={() => setIsApplyOpen(false)}
                     title="Apply Now"
                     subtitle="Please fill out the form to apply for admission."
-                    buttonText="Submit Application"
+                    buttonText="Apply Now"
                     showEmail={true}
                     flag={"apply_now"}
                     applyLink={college?.applyLink || college?.links?.website}
