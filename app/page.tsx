@@ -124,13 +124,13 @@ export default function HomePage() {
                 Top Colleges in Bangalore
               </h2>
             </div>
-            {/* <Link
-              href="/colleges?sort=rating"
+            <Link
+              href="/colleges?distric=Bangalore"
               className="flex items-center text-blue-600 hover:text-blue-700 font-semibold"
             >
               View All
               <ChevronRight className="w-5 h-5 ml-1" />
-            </Link> */}
+            </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {topCities?.Bangalore?.map((college:any, i:number) => (
@@ -149,13 +149,13 @@ export default function HomePage() {
                 Top Colleges in Pune
               </h2>
             </div>
-            {/* <Link
-              href="/colleges?sort=rating"
+            <Link
+              href="/colleges?distric=Pune"
               className="flex items-center text-blue-600 hover:text-blue-700 font-semibold"
             >
               View All
               <ChevronRight className="w-5 h-5 ml-1" />
-            </Link> */}
+            </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {topCities?.Pune?.map((college:any, i:number) => (
@@ -174,13 +174,13 @@ export default function HomePage() {
                 Top Colleges in Delhi
               </h2>
             </div>
-            {/* <Link
-              href="/colleges?sort=rating"
+            <Link
+              href="/colleges?distric=Delhi"
               className="flex items-center text-blue-600 hover:text-blue-700 font-semibold"
             >
               View All
               <ChevronRight className="w-5 h-5 ml-1" />
-            </Link> */}
+            </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {topCities?.Delhi?.map((college:any, i:number) => (
@@ -198,13 +198,13 @@ export default function HomePage() {
                 Top Colleges in Mumbai
               </h2>
             </div>
-            {/* <Link
-              href="/colleges?sort=rating"
+            <Link
+              href="/colleges?distric=Mumbai"
               className="flex items-center text-blue-600 hover:text-blue-700 font-semibold"
             >
               View All
               <ChevronRight className="w-5 h-5 ml-1" />
-            </Link> */}
+            </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {topCities?.Mumbai?.map((college:any, i:number) => (
@@ -222,13 +222,13 @@ export default function HomePage() {
                 Top Colleges in Hyderabad
               </h2>
             </div>
-            {/* <Link
-              href="/colleges?sort=rating"
+            <Link
+              href="/colleges?distric=Hyderabad"
               className="flex items-center text-blue-600 hover:text-blue-700 font-semibold"
             >
               View All
               <ChevronRight className="w-5 h-5 ml-1" />
-            </Link> */}
+            </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {topCities?.Hyderabad?.map((college:any, i:number) => (

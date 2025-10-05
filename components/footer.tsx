@@ -21,7 +21,7 @@ export default function Footer() {
             <div className="col-span-12 md:col-span-6 text-center md:text-left">
               <h3 className="font-semibold text-lg mb-3">About Us</h3>
               <p className="text-gray-400 text-sm leading-relaxed max-w-2xl">
-                Admission in MBA is your trusted platform to explore and apply to the *best MBA and PGDM colleges in India*. 
+                Admission in MBA is your trusted platform to explore and apply to the <b>Best MBA and PGDM colleges in India</b>. 
                 With thousands of institutes listed, we make it easy to compare courses, fees, placements, rankings, and specialisations so you can make the right choice for your career. 
                 Our student reviews, expert counselling, and transparent process ensure that you have all the guidance needed from search to admission. 
                 Whether you are looking for top private universities, affordable colleges, or UGC-approved programs, Admission in MBA helps you find it all in one place.

@@ -82,7 +82,7 @@ export default function CollegeCard({ college }: CollegeCardProps) {
             {college.featured && <Badge className="bg-orange-500 text-white text-xs px-2 py-1">⭐ Featured</Badge>}
             {college.ranking && college.ranking <= 10 && (
               <Badge className="bg-yellow-500 text-white text-xs px-2 py-1">
-                <Award className="w-3 h-3 mr-1" />#{college.ranking}
+                <Award className="w-3 h-3 mr-1" />#{1}
               </Badge>
             )}
           </div>

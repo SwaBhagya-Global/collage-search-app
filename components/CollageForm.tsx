@@ -10,6 +10,7 @@ import * as Icons from "lucide-react";
 import { Upload } from "lucide-react";
 import BASE_URL from "@/app/config/api";
 import { College, Course } from "@/lib/types";
+import InputField from "./form/InputField";
 
 
 // Options
@@ -402,7 +403,7 @@ export default function CollegeForm({ open, setOpen, initialData, onSave }: Coll
                                     id="main-image"
                                     type="file"
                                     className="hidden"
-                                    accept="image/*"
+                                    accept="application/pdf"
                                     onChange={handlePdfUpload}
                                 />
                                 <label htmlFor="main-image" className="cursor-pointer">
@@ -426,14 +427,14 @@ export default function CollegeForm({ open, setOpen, initialData, onSave }: Coll
 }
 
 // Reusable Input Components
-function InputField({ label, value, onChange, disabled = false }: { label: string; value: string; onChange: (val: string) => void; disabled?: boolean }) {
-    return (
-        <div>
-            <Label>{label}</Label>
-            <Input value={value} disabled={disabled} onChange={e => onChange(e.target.value)} />
-        </div>
-    );
-}
+// function InputField({ label, value, onChange, disabled = false }: { label: string; value: string; onChange: (val: string) => void; disabled?: boolean }) {
+//     return (
+//         <div>
+//             <Label>{label}</Label>
+//             <Input value={value} disabled={disabled} onChange={e => onChange(e.target.value)} />
+//         </div>
+//     );
+// }
 
 function TextAreaField({ label, value, onChange }: { label: string; value: string; onChange: (val: string) => void }) {
     return (
