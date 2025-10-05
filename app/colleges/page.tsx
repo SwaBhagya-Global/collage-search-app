@@ -61,6 +61,7 @@ export default function CollegesPage() {
     specialization: searchParams?.get("specialization") || "",
     type: searchParams?.get("type")?.replace(/-/g, " ") || "",
     fees: searchParams?.get("fees") || "",
+    distric: searchParams?.get("distric") || "",
   })
   console.log("filters",filters)
   const [visibleCount, setVisibleCount] = useState(15);
@@ -200,6 +201,11 @@ export default function CollegesPage() {
       filtered = filtered?.filter((college) => college?.state?.toLowerCase().includes(filters?.state?.toLowerCase()))
     }
 
+     // Apply distric filter
+    if (filters.distric && filters.distric !== "all") {
+      filtered = filtered?.filter((college) => college?.distric?.toLowerCase().includes(filters?.distric?.toLowerCase()))
+    }
+
         //Apply specialization filter
     if (filters.specialization && filters.specialization !== "all") {
       filtered = filtered?.filter((college) =>
@@ -263,7 +269,7 @@ export default function CollegesPage() {
       specialization:"",
       type: "",
       fees: "",
-
+      distric: "",
     })
     setSearchQuery("")
   }

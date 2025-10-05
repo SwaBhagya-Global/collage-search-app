@@ -33,9 +33,7 @@ export default function FormModal({
   const [errors, setErrors] = useState<{ name?: string; phone?: string; email?: string }>({});
   const [responseMessage, setResponseMessage] = useState<string | null>(null);
 
-  console.log("form",form)
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("handle",form);
     const { name, value } = e.target;
 
     if (name === 'phone') {
