@@ -108,6 +108,9 @@ const indianStates = [
 export default function CollegeForm({ open, setOpen, initialData, onSave }: CollegeFormProps) {
     const [formData, setFormData] = useState<College>(initialData);
     const [isUploading, setIsUploading] = useState(false);
+    const [pdfFile, setPdfFile] = useState<File | null>(null);
+    const [pdfUploading, setPdfUploading] = useState(false);
+    const [pdfPreview, setPdfPreview] = useState<string | null>(null); // image preview for PDF
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -146,15 +149,15 @@ export default function CollegeForm({ open, setOpen, initialData, onSave }: Coll
     };
 
     //pdf upload
-
-    const handlePdfUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handlePdfFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (!file) return;
 
-        setIsUploading(true);
+        setPdfFile(file);
+        setPdfUploading(true);
 
         const uploadForm = new FormData();
-        uploadForm.append("brochureLink", file);
+        uploadForm.append("image", file); // match backend multer field
 
         try {
             const res = await fetch(`${BASE_URL}/upload`, {
@@ -164,6 +167,7 @@ export default function CollegeForm({ open, setOpen, initialData, onSave }: Coll
 
             if (res.ok) {
                 const data = await res.json();
+                // Save the URL into your main formData
                 setFormData(prev => ({ ...prev, brochureLink: data.imageUrl }));
             } else {
                 console.error("Upload failed:", await res.text());
@@ -172,8 +176,9 @@ export default function CollegeForm({ open, setOpen, initialData, onSave }: Coll
             console.error("Upload error:", error);
         }
 
-        setIsUploading(false);
+        setPdfUploading(false);
     };
+
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -218,7 +223,6 @@ export default function CollegeForm({ open, setOpen, initialData, onSave }: Coll
             });
         }
     };
-
 
 
     return (
@@ -394,26 +398,29 @@ export default function CollegeForm({ open, setOpen, initialData, onSave }: Coll
                                 </div>
                             )}
                         </div>
-                        {/* <div className="space-y-2">
-                            <Label htmlFor="main-image" className="text-gray-700 font-medium">
-                                Upload Brochure PDF
-                            </Label>
+                        <div className="space-y-2">
+                            <Label className="text-gray-700 font-medium">Brochure PDF</Label>
+
+                            {/* PDF Upload */}
                             <div className="border-2 border-dashed border-blue-300 rounded-lg p-6 text-center bg-blue-50 hover:border-blue-500 hover:bg-blue-100 transition-colors">
                                 <input
-                                    id="main-image"
+                                    id="brochure-pdf-upload"
                                     type="file"
                                     className="hidden"
                                     accept="application/pdf"
-                                    onChange={handlePdfUpload}
+                                    onChange={handlePdfFileUpload}
                                 />
-                                <label htmlFor="main-image" className="cursor-pointer">
+                                <label htmlFor="brochure-pdf-upload" className="cursor-pointer">
                                     <Upload className="h-8 w-8 mx-auto mb-2 text-blue-600" />
                                     <p className="text-sm text-blue-700">
-                                        {formData.brochureLink.length > 0 ? "PDF link selected" : "Click to upload pdf or drag and drop"}
+                                        {formData.brochureLink
+                                            ? "PDF uploaded successfully"
+                                            : "Click to upload PDF or drag and drop"}
                                     </p>
                                 </label>
                             </div>
-                        </div> */}
+                            {isUploading && <p className="text-sm text-gray-500">Uploading PDF...</p>}
+                        </div>
 
                     </div>
 
