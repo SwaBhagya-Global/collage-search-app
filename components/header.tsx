@@ -46,22 +46,22 @@ export default function Header() {
             </Link>
 
             {/* Desktop Navigation */}
-            {/* <nav className="hidden lg:flex items-center space-x-8">
+            <nav className="hidden lg:flex items-center space-x-8">
               <Link
-                href="/colleges"
+                href="/blogs"
                 className="text-gray-700 hover:text-blue-600 font-medium transition-colors relative group py-2"
               >
-                Colleges
+                Blogs
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all group-hover:w-full"></span>
               </Link>
               <Link
-                href="/courses"
+                href="/faqs"
                 className="text-gray-700 hover:text-blue-600 font-medium transition-colors relative group py-2"
               >
-                Courses
+                FAQs
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all group-hover:w-full"></span>
               </Link>
-              <Link
+              {/* <Link
                 href="/exams"
                 className="text-gray-700 hover:text-blue-600 font-medium transition-colors relative group py-2"
               >
@@ -88,19 +88,26 @@ export default function Header() {
               >
                 Q&A
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all group-hover:w-full"></span>
-              </Link>
-            </nav> */}
+              </Link> */}
+            </nav>
 
             {/* Right Side Actions */}
             <div className="flex items-center space-x-3">
               {/* Compare Button */}
-              <Link
+              {/* <Link
                 href="/blogs"
                 className="text-gray-700 hover:text-blue-600 font-medium transition-colors relative group py-2"
                >
                 Blog
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all group-hover:w-full"></span>
               </Link>
+              <Link
+                href="/faqs"
+                className="text-gray-700 hover:text-blue-600 font-medium transition-colors relative group py-2"
+               >
+                FAQs
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all group-hover:w-full"></span>
+              </Link> */}
               <Button
                 variant="ghost"
                 size="sm"
@@ -152,21 +159,21 @@ export default function Header() {
 
                     {/* Mobile Navigation */}
                     <div className="flex flex-col space-y-2 mt-6 flex-1">
+                      <Link
+                        href="/blogs"
+                        className="flex items-center text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium py-3 px-4 rounded-lg transition-colors"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        📰 Blogs
+                      </Link>
+                      <Link
+                        href="/faqs"
+                        className="flex items-center text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium py-3 px-4 rounded-lg transition-colors"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        ❓ FAQs
+                      </Link>
                       {/* <Link
-                        href="/colleges"
-                        className="flex items-center text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium py-3 px-4 rounded-lg transition-colors"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        🏫 Colleges
-                      </Link>
-                      <Link
-                        href="/courses"
-                        className="flex items-center text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium py-3 px-4 rounded-lg transition-colors"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        📚 Courses
-                      </Link>
-                      <Link
                         href="/exams"
                         className="flex items-center text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium py-3 px-4 rounded-lg transition-colors"
                         onClick={() => setIsMenuOpen(false)}
