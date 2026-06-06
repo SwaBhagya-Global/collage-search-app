@@ -228,10 +228,10 @@ function FAQSection({
 export default function FAQPage() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
-      <div className="mb-10 rounded-2xl bg-gradient-to-r from-teal-700 to-teal-900 p-8 text-white">
+      <div className="mb-10 rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 p-8 text-white">
         {/* Badge */}
-        <div className="mb-6 inline-flex items-center rounded-full bg-teal-100 px-5 py-2">
-          <span className="text-sm font-semibold text-teal-900">
+        <div className="mb-6 inline-flex items-center rounded-full bg-[#409fcf] px-5 py-2">
+          <span className="text-sm font-semibold text-white">
             MBA / PGDM FAQ Hub
           </span>
         </div>
@@ -251,7 +251,7 @@ export default function FAQPage() {
           <a
             key={item.id}
             href={`#${item.id}`}
-            className="rounded-xl border bg-white p-5 text-lg font-semibold shadow-sm transition-all hover:border-teal-600 hover:bg-teal-50 hover:text-teal-700"
+            className="rounded-xl border bg-white p-5 text-lg font-semibold shadow-sm transition-all hover:border-teal-600 hover:bg-[#2563eb] hover:text-white"
           >
             {item.label}
           </a>
