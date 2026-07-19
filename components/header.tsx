@@ -124,7 +124,7 @@ export default function Header() {
               </Button>
 
               {/* Desktop Auth Buttons */}
-              {/* <div className="hidden md:flex items-center space-x-3">
+              <div className="hidden md:flex items-center space-x-3">
                 <Button
                   variant="outline"
                   size="sm"
@@ -141,7 +141,7 @@ export default function Header() {
                 >
                   Sign Up
                 </Button>
-              </div> */}
+              </div>
 
               {/* Mobile Menu Button */}
               <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
@@ -217,7 +217,7 @@ export default function Header() {
                       </Button>
 
                       {/* Mobile Auth Buttons */}
-                      {/* <div className="border-t pt-6 mt-auto space-y-3">
+                      <div className="border-t pt-6 mt-auto space-y-3">
                         <Button
                           variant="outline"
                           className="w-full border-blue-600 text-blue-600 hover:bg-blue-50 bg-transparent"
@@ -238,7 +238,7 @@ export default function Header() {
                         >
                           Sign Up
                         </Button>
-                      </div> */}
+                      </div>
                     </div>
                   </div>
                 </SheetContent>

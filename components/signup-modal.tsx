@@ -41,7 +41,7 @@ export default function SignupModal({ open, onClose }: SignupModalProps) {
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-center text-2xl font-bold text-blue-600">Join EduFinder</DialogTitle>
+          <DialogTitle className="text-center text-2xl font-bold text-blue-600">Registration Form</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSignup} className="space-y-4">
