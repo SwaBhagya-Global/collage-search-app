@@ -9,6 +9,7 @@ import ScrollToTop from '@/components/ScrollToTop';
 
 
 
+
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
@@ -57,7 +58,6 @@ export default function RootLayout({
         </Script>
 
         <ClientAnalytics />
-
         <PublicChrome>{children}</PublicChrome>
         <ScrollToTop />
       </body>
