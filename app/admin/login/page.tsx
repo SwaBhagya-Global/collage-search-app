@@ -34,14 +34,14 @@ export default function LoginPage() {
     setIsLoading(true)
 
       try {
-        const response = await fetch(`${BASE_URL}/admin/login`, {
+        const response = await fetch(`${BASE_URL}/auth/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            username: email,
-            password: password
+            email: email.trim(),
+            password,
           })
         });
 

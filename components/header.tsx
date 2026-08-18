@@ -27,6 +27,23 @@ export default function Header() {
   const [compareCount, setCompareCount] = useState(0)
   const [user, setUser] = useState<any>(null)
 
+  // Prompt guests to sign up after they have had time to browse the site.
+  // Authentication is checked when the timer fires so logging in during the
+  // two-minute window also prevents the prompt from being shown.
+  useEffect(() => {
+    const signupTimer = window.setTimeout(() => {
+      const isAuthenticated = Boolean(
+        localStorage.getItem("token") || localStorage.getItem("user")
+      )
+
+      if (!isAuthenticated) {
+        setShowSignup(true)
+      }
+    }, 60 * 1000)
+
+    return () => window.clearTimeout(signupTimer)
+  })
+
 useEffect(() => {
   const compareList = JSON.parse(
     localStorage.getItem("compareColleges") || "[]"
@@ -52,6 +69,9 @@ useEffect(() => {
     } else {
       setUser(null);
     }
+
+    // A guest may have the timed sign-up prompt open when they log in.
+    setShowSignup(false)
   };
 
   window.addEventListener("compareUpdated", handleCompareUpdate);
