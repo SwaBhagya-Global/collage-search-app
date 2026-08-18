@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button"
 import FormModal from "./FormModal"
 import { CollegeCardProps } from "@/lib/types"
 import { trackAction } from "@/lib/tracking";
+import { isCollegeFavourited, toggleFavouriteCollege } from "@/lib/favourites";
 import { useEffect, useState } from "react";
 
 
@@ -59,16 +60,26 @@ export default function CollegeCard({ college }: CollegeCardProps) {
   // }
 
   useEffect(() => {
-  const compareList = JSON.parse(
-    localStorage.getItem("compareColleges") || "[]"
-  );
+    const compareList = JSON.parse(
+      localStorage.getItem("compareColleges") || "[]"
+    );
 
-  const alreadyCompared = compareList.some(
-    (c: any) => c.id === college.id
-  );
+    const alreadyCompared = compareList.some(
+      (c: any) => c.id === college.id
+    );
 
-  setIsCompared(alreadyCompared);
-}, [college.id]);
+    setIsCompared(alreadyCompared);
+    setIsLiked(isCollegeFavourited(college.id));
+
+    const handleFavouritesUpdate = () => {
+      setIsLiked(isCollegeFavourited(college.id));
+    };
+
+    window.addEventListener("favouritesUpdated", handleFavouritesUpdate);
+    return () => {
+      window.removeEventListener("favouritesUpdated", handleFavouritesUpdate);
+    };
+  }, [college.id]);
 
 const handleCompare = async (e: React.MouseEvent) => {
   e.preventDefault();
@@ -136,10 +147,11 @@ const handleCompare = async (e: React.MouseEvent) => {
   }
 };
   const handleLike = (e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setIsLiked(!isLiked)
-  }
+    e.preventDefault();
+    e.stopPropagation();
+    const newStatus = toggleFavouriteCollege(college);
+    setIsLiked(newStatus);
+  };
 
 const handleViewDetails = async () => {
   try {
@@ -195,9 +207,15 @@ const handleApply = async () => {
 
           <button
             onClick={handleLike}
-            className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
+            aria-label={isLiked ? "Remove from favourite colleges" : "Add to favourite colleges"}
+            title={isLiked ? "Remove from favourites" : "Add to favourites"}
+            className="w-8 h-8 bg-white/25 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/40 transition-all hover:scale-110 active:scale-95 shadow-sm"
           >
-            <Heart className={`w-4 h-4 ${isLiked ? "fill-red-500 text-red-500" : "text-white"}`} />
+            <Heart
+              className={`w-4 h-4 transition-all duration-200 ${
+                isLiked ? "fill-red-500 text-red-500 scale-110" : "text-white"
+              }`}
+            />
           </button>
         </div>
 

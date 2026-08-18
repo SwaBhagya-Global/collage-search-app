@@ -17,14 +17,16 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
 
-import { LogOut, Settings, UserCircle, LayoutDashboard } from "lucide-react"
+import { LogOut, Settings, UserCircle, LayoutDashboard, KeyRound } from "lucide-react"
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [showLogin, setShowLogin] = useState(false)
+  const [loginModalMode, setLoginModalMode] = useState<"login" | "forgot-password" | "change-password">("login")
   const [showSignup, setShowSignup] = useState(false)
   const [showCompare, setShowCompare] = useState(false)
   const [compareCount, setCompareCount] = useState(0)
+  const [favouriteCount, setFavouriteCount] = useState(0)
   const [user, setUser] = useState<any>(null)
 
   // Prompt guests to sign up after they have had time to browse the site.
@@ -51,6 +53,17 @@ useEffect(() => {
 
   setCompareCount(compareList.length);
 
+  try {
+    const favList = JSON.parse(
+      localStorage.getItem("favouriteColleges") ||
+      localStorage.getItem("favoriteColleges") ||
+      "[]"
+    );
+    setFavouriteCount(Array.isArray(favList) ? favList.length : 0);
+  } catch {
+    setFavouriteCount(0);
+  }
+
   const storedUser = localStorage.getItem("user");
 
   if (storedUser) {
@@ -59,6 +72,14 @@ useEffect(() => {
 
   const handleCompareUpdate = (event: any) => {
     setCompareCount(event.detail.count);
+  };
+
+  const handleFavouritesUpdate = (event: any) => {
+    if (typeof event.detail?.count === "number") {
+      setFavouriteCount(event.detail.count);
+    } else if (Array.isArray(event.detail?.favourites)) {
+      setFavouriteCount(event.detail.favourites.length);
+    }
   };
 
   const handleUserLogin = () => {
@@ -75,10 +96,12 @@ useEffect(() => {
   };
 
   window.addEventListener("compareUpdated", handleCompareUpdate);
+  window.addEventListener("favouritesUpdated", handleFavouritesUpdate);
   window.addEventListener("userLogin", handleUserLogin);
 
   return () => {
     window.removeEventListener("compareUpdated", handleCompareUpdate);
+    window.removeEventListener("favouritesUpdated", handleFavouritesUpdate);
     window.removeEventListener("userLogin", handleUserLogin);
   };
 }, []);
@@ -221,8 +244,19 @@ useEffect(() => {
                       </DropdownMenuItem> */}
 
                       <DropdownMenuItem asChild>
-                        <Link href="/saved-colleges">
-                          ❤️ Saved Colleges
+                        <Link
+                          href="/favourite-colleges"
+                          className="flex items-center justify-between cursor-pointer w-full"
+                        >
+                          <div className="flex items-center">
+                            <Heart className="mr-2 h-4 w-4 text-red-500 fill-red-500" />
+                            <span>Favourite Colleges</span>
+                          </div>
+                          {favouriteCount > 0 && (
+                            <Badge className="bg-red-50 text-red-600 border border-red-200 text-xs px-2 py-0.5">
+                              {favouriteCount}
+                            </Badge>
+                          )}
                         </Link>
                       </DropdownMenuItem>
 
@@ -238,6 +272,17 @@ useEffect(() => {
                           Settings
                         </Link>
                       </DropdownMenuItem> */}
+
+                      <DropdownMenuItem
+                        onClick={() => {
+                          setLoginModalMode("change-password")
+                          setShowLogin(true)
+                        }}
+                        className="cursor-pointer"
+                      >
+                        <KeyRound className="mr-2 h-4 w-4 text-blue-600" />
+                        <span>Change Password</span>
+                      </DropdownMenuItem>
 
                       <DropdownMenuSeparator />
 
@@ -259,7 +304,10 @@ useEffect(() => {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setShowLogin(true)}
+                      onClick={() => {
+                        setLoginModalMode("login")
+                        setShowLogin(true)
+                      }}
                       className="border-blue-600 text-blue-600 hover:bg-blue-50"
                     >
                       <User className="w-4 h-4 mr-2" />
@@ -373,19 +421,46 @@ useEffect(() => {
 
                               <Button
                                 variant="ghost"
-                                className="w-full justify-start mt-4"
+                                className="w-full justify-between mt-4 text-gray-700 hover:text-blue-600 hover:bg-blue-50"
                                 asChild
                               >
-                                <Link href="/saved-colleges">❤️ Saved Colleges</Link>
+                                <Link
+                                  href="/favourite-colleges"
+                                  className="flex items-center justify-between w-full"
+                                  onClick={() => setIsMenuOpen(false)}
+                                >
+                                  <div className="flex items-center">
+                                    <Heart className="w-4 h-4 mr-3 text-red-500 fill-red-500" />
+                                    <span>Favourite Colleges</span>
+                                  </div>
+                                  {favouriteCount > 0 && (
+                                    <Badge className="bg-red-500 text-white text-xs px-2 py-0.5">
+                                      {favouriteCount}
+                                    </Badge>
+                                  )}
+                                </Link>
                               </Button>
-                              
 
                               <Button
                                 variant="ghost"
-                                className="w-full justify-start"
+                                className="w-full justify-start text-gray-700 hover:text-blue-600 hover:bg-blue-50"
+                                onClick={() => {
+                                  setIsMenuOpen(false)
+                                  setLoginModalMode("change-password")
+                                  setShowLogin(true)
+                                }}
+                              >
+                                <KeyRound className="w-4 h-4 mr-3 text-blue-600" />
+                                <span>Change Password</span>
+                              </Button>
+
+                              <Button
+                                variant="ghost"
+                                className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
                                 onClick={handleLogout}
                               >
-                                Logout
+                                <LogOut className="w-4 h-4 mr-3" />
+                                <span>Logout</span>
                               </Button>
                             </div>
                           </>
@@ -395,6 +470,7 @@ useEffect(() => {
                               variant="outline"
                               className="w-full border-blue-600 text-blue-600 hover:bg-blue-50 bg-transparent"
                               onClick={() => {
+                                setLoginModalMode("login")
                                 setShowLogin(true)
                                 setIsMenuOpen(false)
                               }}
@@ -424,6 +500,7 @@ useEffect(() => {
 
       <LoginModal
         open={showLogin}
+        initialMode={loginModalMode}
         onClose={() => setShowLogin(false)}
         onOpenSignup={() => {
           setShowLogin(false)
