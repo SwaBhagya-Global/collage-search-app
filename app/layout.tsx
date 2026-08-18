@@ -2,9 +2,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import Script from 'next/script';
-import Header from '@/components/header';
-import Footer from '@/components/footer';
-import { FaWhatsapp } from 'react-icons/fa';
+import PublicChrome from '@/components/public-chrome';
 import './globals.css';
 import ClientAnalytics from '@/components/ClientAnalytics';
 import ScrollToTop from '@/components/ScrollToTop';
@@ -60,21 +58,8 @@ export default function RootLayout({
 
         <ClientAnalytics />
 
-        <Header />
-        {children}
-          
-          <ScrollToTop />
-        <a
-          href="https://wa.me/917338235806"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="whatsapp-float"
-        >
-          <span className="tooltip">Chat on WhatsApp</span>
-          <FaWhatsapp size={32} />
-        </a>
-
-        <Footer />
+        <PublicChrome>{children}</PublicChrome>
+        <ScrollToTop />
       </body>
     </html>
   );

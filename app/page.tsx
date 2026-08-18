@@ -24,7 +24,7 @@ export default function HomePage() {
     async function fetchColleges() {
       try {
         const [collegeRes] = await Promise.all([
-          fetch(`${BASE_URL}/api/colleges?view=home`),
+          fetch(`${BASE_URL}/colleges?view=home`),
         ]);
         
         const collegeData = await collegeRes.json();

@@ -136,7 +136,7 @@ export default function CollegesPage() {
   useEffect(() => {
     async function fetchColleges() {
       try {
-        const res = await fetch(`${BASE_URL}/api/colleges`); // 🔹 replace with your API endpoint
+        const res = await fetch(`${BASE_URL}/colleges`); // 🔹 replace with your API endpoint
         // const data: ApiCollege[] = await res.json();
         const data = await res.json();
 

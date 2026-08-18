@@ -6,7 +6,7 @@ export default function AdBanner() {
   // Sample data (replace/add as many URLs as you want)
   const ads = [
     {
-      src: "../logo-mba.png",
+      src: "../banner-logo.png",
       alt: "Ad 1",
     },
   ];
@@ -18,7 +18,7 @@ export default function AdBanner() {
           key={index}
           src={ad.src}
           alt={ad.alt}
-          width={800}
+          width={900}
           height={200}
           className="object-cover rounded-lg w-full max-w-[800px]"
         />

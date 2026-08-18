@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent } from "@/components/ui/card"
 import { useRouter } from "next/navigation"
+import { trackAction } from "@/lib/tracking"
 
 export default function SearchSection() {
   const [searchQuery, setSearchQuery] = useState("")
@@ -21,15 +22,67 @@ export default function SearchSection() {
   const [feesRange, setFeesRange] = useState("any")
   const router = useRouter()
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
-    const params = new URLSearchParams()
-    if (searchQuery.trim()) params.set("search", searchQuery.trim())
-    if (state !== "all-india") params.set("state", state)
-    if (category !== "all-categories") params.set("category", category)
-    if (collegeType !== "all-types") params.set("type", collegeType)
-    if (specialization !== "specialization") params.set("specialization", specialization)
-    if (feesRange !== "any") params.set("fees", feesRange)
+     const params = new URLSearchParams();
+
+  if (searchQuery.trim()) {
+    params.set("search", searchQuery.trim());
+  }
+
+  if (state !== "all-india") {
+    params.set("state", state);
+  }
+
+  if (category !== "all-categories") {
+    params.set("category", category);
+  }
+
+  if (collegeType !== "all-types") {
+    params.set("type", collegeType);
+  }
+
+  if (specialization !== "specialization") {
+    params.set("specialization", specialization);
+  }
+
+  if (feesRange !== "any") {
+    params.set("fees", feesRange);
+  }
+
+      await trackAction({
+  action: "search",
+  searchFilters: {
+    searchText: searchQuery.trim() || undefined,
+
+    location:
+      state !== "all-india"
+        ? state
+        : undefined,
+
+    category:
+      category !== "all-categories"
+        ? category
+        : undefined,
+
+    specialization:
+      specialization !== "specialization"
+        ? specialization
+        : undefined,
+
+    type:
+      collegeType !== "all-types"
+        ? collegeType
+        : undefined,
+
+    fees:
+      feesRange !== "any"
+        ? feesRange
+        : undefined,
+
+    searchType: activeTab,
+  },
+});
 
     router.push(`/${activeTab}?${params.toString()}`)
   }

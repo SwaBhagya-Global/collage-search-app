@@ -23,8 +23,18 @@ export default function LoginPage() {
     // ✅ Check token on mount
   useEffect(() => {
     const token = localStorage.getItem("token")
-    if (token) {
+    let user: { role?: string } | null = null
+
+    try {
+      user = JSON.parse(localStorage.getItem("user") || "null")
+    } catch {
+      user = null
+    }
+
+    if (token && user?.role === "admin") {
       router.replace("/admin/dashboard")
+    } else if (token) {
+      setError("Unauthorized. You do not have admin access.")
     }
   }, [router])
 
@@ -34,14 +44,14 @@ export default function LoginPage() {
     setIsLoading(true)
 
       try {
-        const response = await fetch(`${BASE_URL}/admin/login`, {
+        const response = await fetch(`${BASE_URL}/auth/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            username: email,
-            password: password
+            email: email.trim(),
+            password,
           })
         });
 
@@ -51,9 +61,19 @@ export default function LoginPage() {
 
         const data = await response.json();
 
-        if (data.token) {
+        const role = data.user?.role ?? data.role
+
+        if (data.token && role === "admin") {
           localStorage.setItem("token", data.token);
-          router.push("/admin/dashboard");
+          localStorage.setItem(
+            "user",
+            JSON.stringify(data.user ?? { role })
+          );
+          router.replace("/admin/dashboard");
+        } else if (data.token) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          setError("Unauthorized. You do not have admin access.");
         } else {
           throw new Error("Invalid response from server");
         }

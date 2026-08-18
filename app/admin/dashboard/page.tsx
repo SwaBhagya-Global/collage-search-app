@@ -75,7 +75,7 @@ export default function DashboardPage() {
   const fetchColleges = async () => {
     setIsLoading(true); // start loader
     try {
-      const res = await fetch(`${BASE_URL}/api/colleges`);
+      const res = await fetch(`${BASE_URL}/colleges`);
       const data = await res.json();
       setColleges(Array.isArray(data.data) ? data.data : []);
     } catch (err) {
@@ -95,8 +95,8 @@ export default function DashboardPage() {
     try {
       const isEdit = Boolean(data._id);
       const url = isEdit
-        ? `${BASE_URL}/api/colleges/${data._id}` // match DELETE route style
-        : `${BASE_URL}/api/colleges`;
+        ? `${BASE_URL}/colleges/${data._id}` // match DELETE route style
+        : `${BASE_URL}/colleges`;
 
       const res = await fetch(url, {
         method: isEdit ? "PUT" : "POST",
@@ -118,7 +118,7 @@ export default function DashboardPage() {
   const handleDelete = async (id: string) => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`${BASE_URL}/api/colleges/${id}`, {
+      const res = await fetch(`${BASE_URL}/colleges/${id}`, {
         method: "DELETE",
         headers: {
           'Content-Type': 'application/json',

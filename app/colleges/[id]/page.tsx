@@ -19,8 +19,9 @@ import BASE_URL from "@/app/config/api";
 import Loader from "@/components/loader";
 import FormModal from "@/components/FormModal";
 import { ApiCollege } from "@/lib/types"
+import { trackAction } from "@/lib/tracking";
 
-export default function CollegePage({ params }: { params: { id: string } }) {
+export default function CollegePage() {
   const { id } = useParams<{ id: string }>();
   const [college, setCollege] = useState<ApiCollege | null>(null);
   const [loading, setLoading] = useState(true);
@@ -30,7 +31,7 @@ export default function CollegePage({ params }: { params: { id: string } }) {
   useEffect(() => {
     async function fetchColleges() {
       try {
-        const res = await fetch(`${BASE_URL}/api/colleges/name/${id}`); // 🔹 replace with your API endpoint
+        const res = await fetch(`${BASE_URL}/colleges/name/${id}`); // 🔹 replace with your API endpoint
         // const data: ApiCollege[] = await res.json();
         const data = await res.json();
 
@@ -51,7 +52,7 @@ export default function CollegePage({ params }: { params: { id: string } }) {
   };
   const handleRatingSubmit = async (rating: number) => {
     try {
-      const response = await fetch(`${BASE_URL}/api/colleges/${college?._id}/rating`, {
+      const response = await fetch(`${BASE_URL}/colleges/${college?._id}/rating`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -68,6 +69,27 @@ export default function CollegePage({ params }: { params: { id: string } }) {
       console.error('Error updating rating:', error);
     }
   };
+
+  const handleApply = async () => {
+    try {
+      await trackAction({
+        collegeId: college?._id,
+        action: "apply_now",
+      });
+    } finally {
+      setIsApplyOpen(true);
+    }
+  }
+    const handleDownloadBrochure = async () => {
+    try {
+      await trackAction({
+        collegeId: college?._id,
+        action: "download_brochure",
+      });
+    } finally {
+      setIsBrochureOpen(true);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -193,7 +215,7 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                   {/* Download Brochure Button */}
                   <Button
                     className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-3 rounded-md shadow-lg transition-colors duration-300"
-                    onClick={() => setIsBrochureOpen(true)}
+                    onClick={handleDownloadBrochure}
                   >
                     <Download className="w-4 h-4 mr-2" />
                     Download Brochure
@@ -202,7 +224,7 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                   {/* Apply Now Button */}
                   <Button
                     className="w-full bg-white hover:bg-gray-100 text-black font-semibold px-5 py-3 rounded-md shadow-lg transition-colors duration-300w-full h-10 px-4 py-2 border border-blue-600 text-blue-600 bg-transparent hover:bg-accent hover:text-accent-foreground transition-colors duration-300"
-                    onClick={() => setIsApplyOpen(true)}
+                    onClick={handleApply}
                   >
                     Apply Now
                   </Button>
@@ -243,12 +265,18 @@ export default function CollegePage({ params }: { params: { id: string } }) {
       <div className="bg-white border-t">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-wrap gap-4">
-            {college?.highlights.map((highlight, index) => (
-              <Badge key={index} variant="secondary" className="bg-green-100 text-green-700 px-3 py-1">
-                <CheckCircle className="w-3 h-3 mr-1" />
-                {highlight}
-              </Badge>
-            ))}
+            {college?.highlights
+              ?.filter((highlight: string) => highlight.trim().length > 0)
+              .map((highlight: string, index: number) => (
+                <Badge
+                  key={index}
+                  variant="secondary"
+                  className="bg-green-100 text-green-700 px-3 py-1"
+                >
+                  <CheckCircle className="w-3 h-3 mr-1" />
+                  {highlight}
+                </Badge>
+              ))}
           </div>
         </div>
       </div>
@@ -332,15 +360,15 @@ export default function CollegePage({ params }: { params: { id: string } }) {
                               </div>
                             </div>
                             <div className="text-right">
-  <div className="font-bold text-blue-600">
-    {course.fees
-      ? course.fees.toString().toLowerCase().includes("lakh")
-        ? course.fees
-        : `${course.fees} Lakhs`
-      : ""}
-  </div>
-  <div className="text-sm text-gray-600">Total Fee</div>
-</div>
+                              <div className="font-bold text-blue-600">
+                                {course.fees
+                                  ? course.fees.toString().toLowerCase().includes("lakh")
+                                    ? course.fees
+                                    : `${course.fees} Lakhs`
+                                  : ""}
+                              </div>
+                              <div className="text-sm text-gray-600">Total Fee</div>
+                            </div>
 
                           </div>
                           <div className="flex justify-between items-center">

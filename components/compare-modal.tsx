@@ -186,13 +186,20 @@ export default function CompareModal({ open, onClose }: CompareModalProps) {
                 </div>
 
                 {/* Highlights */}
-                {college.highlights && (
+                {college.highlights?.filter((highlight: any) => highlight.trim()).length > 0 && (
                   <div className="flex flex-wrap gap-2">
-                    {college.highlights.slice(0, 3).map((highlight: string, index: number) => (
-                      <Badge key={index} variant="secondary" className="text-xs">
-                        {highlight}
-                      </Badge>
-                    ))}
+                    {college.highlights
+                      .filter((highlight: any) => highlight.trim())
+                      .slice(0, 3)
+                      .map((highlight: string, index: number) => (
+                        <Badge
+                          key={index}
+                          variant="secondary"
+                          className="text-xs"
+                        >
+                          {highlight}
+                        </Badge>
+                      ))}
                   </div>
                 )}
               </CardContent>

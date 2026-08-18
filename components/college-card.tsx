@@ -4,62 +4,168 @@ import type React from "react"
 
 import Image from "next/image"
 import Link from "next/link"
+import { useRouter } from "next/navigation";
 import { Star, MapPin, Heart, Users, TrendingUp, Award } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { useState } from "react"
 import FormModal from "./FormModal"
 import { CollegeCardProps } from "@/lib/types"
+import { trackAction } from "@/lib/tracking";
+import { useEffect, useState } from "react";
 
 
 export default function CollegeCard({ college }: CollegeCardProps) {
+  const router = useRouter();
   const [isLiked, setIsLiked] = useState(false)
   const [isCompared, setIsCompared] = useState(false)
   const [isApplyOpen, setIsApplyOpen] = useState(false);
-  const handleCompare = (e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setIsCompared(!isCompared)
+  // const handleCompare = (e: React.MouseEvent) => {
+  //   e.preventDefault()
+  //   e.stopPropagation()
+  //   setIsCompared(!isCompared)
 
-    // Get existing compare list from localStorage
-    const compareList = JSON.parse(localStorage.getItem("compareColleges") || "[]")
+  //   // Get existing compare list from localStorage
+  //   const compareList = JSON.parse(localStorage.getItem("compareColleges") || "[]")
 
-    if (!isCompared) {
-      // Add to compare list
-      if (compareList.length < 3) {
-        const newCompareList = [...compareList, college]
-        localStorage.setItem("compareColleges", JSON.stringify(newCompareList))
+  //   if (!isCompared) {
+  //     // Add to compare list
+  //     if (compareList.length < 3) {
+  //       const newCompareList = [...compareList, college]
+  //       localStorage.setItem("compareColleges", JSON.stringify(newCompareList))
 
-        // Dispatch custom event to update header
-        window.dispatchEvent(
-          new CustomEvent("compareUpdated", {
-            detail: { count: newCompareList.length },
-          }),
-        )
-      } else {
-        alert("You can compare maximum 3 colleges at a time")
-        return
-      }
-    } else {
-      // Remove from compare list
-      const newCompareList = compareList.filter((c: any) => c.id !== college.id)
-      localStorage.setItem("compareColleges", JSON.stringify(newCompareList))
+  //       // Dispatch custom event to update header
+  //       window.dispatchEvent(
+  //         new CustomEvent("compareUpdated", {
+  //           detail: { count: newCompareList.length },
+  //         }),
+  //       )
+  //     } else {
+  //       alert("You can compare maximum 3 colleges at a time")
+  //       return
+  //     }
+  //   } else {
+  //     // Remove from compare list
+  //     const newCompareList = compareList.filter((c: any) => c.id !== college.id)
+  //     localStorage.setItem("compareColleges", JSON.stringify(newCompareList))
+
+  //     // Dispatch custom event to update header
+  //     window.dispatchEvent(
+  //       new CustomEvent("compareUpdated", {
+  //         detail: { count: newCompareList.length },
+  //       }),
+  //     )
+  //   }
+  // }
+
+  useEffect(() => {
+  const compareList = JSON.parse(
+    localStorage.getItem("compareColleges") || "[]"
+  );
+
+  const alreadyCompared = compareList.some(
+    (c: any) => c.id === college.id
+  );
+
+  setIsCompared(alreadyCompared);
+}, [college.id]);
+
+const handleCompare = async (e: React.MouseEvent) => {
+  e.preventDefault();
+  e.stopPropagation();
+
+  const compareList = JSON.parse(
+    localStorage.getItem("compareColleges") || "[]"
+  );
+
+  if (!isCompared) {
+    // Add to compare list
+    if (compareList.length < 3) {
+      const newCompareList = [...compareList, college];
+
+      localStorage.setItem(
+        "compareColleges",
+        JSON.stringify(newCompareList)
+      );
+
+      // Update UI state
+      setIsCompared(true);
+
+      // Track compare action
+      await trackAction({
+        collegeId: college.id,
+        action: "compare",
+      });
 
       // Dispatch custom event to update header
       window.dispatchEvent(
         new CustomEvent("compareUpdated", {
           detail: { count: newCompareList.length },
-        }),
-      )
+        })
+      );
+    } else {
+      alert("You can compare maximum 3 colleges at a time");
+      return;
     }
-  }
+  } else {
+    // Remove from compare list
+    const newCompareList = compareList.filter(
+      (c: any) => c.id !== college.id
+    );
 
+    localStorage.setItem(
+      "compareColleges",
+      JSON.stringify(newCompareList)
+    );
+
+    // Update UI state
+    setIsCompared(false);
+
+    // Track removal from compare
+    await trackAction({
+      collegeId: college.id,
+      action: "remove_compare",
+    });
+
+    // Dispatch custom event to update header
+    window.dispatchEvent(
+      new CustomEvent("compareUpdated", {
+        detail: { count: newCompareList.length },
+      })
+    );
+  }
+};
   const handleLike = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
     setIsLiked(!isLiked)
   }
+
+const handleViewDetails = async () => {
+  try {
+    await trackAction({
+      collegeId: college.id,
+      action: "view_detail",
+    });
+  } finally {
+    router.push(
+      `/colleges/${college?.name
+        .toLowerCase()
+        .replace(/\s+/g, "-")}`
+    );
+  }
+}
+
+const handleApply = async () => {
+  try {
+    await trackAction({
+      collegeId: college.id,
+      action: "apply_now",
+    });
+  } finally {
+    setIsApplyOpen(true);
+  }
+}
 
   return (
     <Card className="group cursor-pointer bg-white rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 border-0 shadow-sm">
@@ -198,16 +304,18 @@ export default function CollegeCard({ college }: CollegeCardProps) {
 
         {/* Action buttons */}
         <div className="flex gap-2">
-          <Link href={`/colleges/${college?.name.toLowerCase().replace(/\s+/g, '-')}`} className="flex-1">
-            <Button size="sm" className="w-full bg-blue-600 hover:bg-blue-700 text-xs">
-              View Details
-            </Button>
-          </Link>
+          <Button
+            size="sm"
+            className="flex-1 w-full bg-blue-600 hover:bg-blue-700 text-xs"
+            onClick={handleViewDetails}
+          >
+            View Details
+          </Button>
           <div className="flex-1">
             <Button
               size="sm"
               className="w-full bg-blue-600 hover:bg-blue-700 text-xs text-white"
-              onClick={() => setIsApplyOpen(true)}
+              onClick={handleApply}
             >
               Apply
             </Button>

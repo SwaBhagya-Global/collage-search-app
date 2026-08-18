@@ -10,7 +10,7 @@ export default function Footer() {
     <>
       <footer className="bg-gray-900 text-white py-12">
         <div className="container mx-auto px-6 lg:px-12">
-          <div className="grid grid-cols-12 gap-8 items-start">
+          <div className="grid grid-cols-12 items-start">
             
             {/* Column 1: Logo (span 2) */}
             <div className="col-span-12 md:col-span-2 flex justify-center md:justify-start">
@@ -57,7 +57,7 @@ export default function Footer() {
 
           {/* Bottom Line */}
           <div className="mt-10 pt-6 border-t border-gray-800 text-gray-500 text-sm text-center">
-            © 2025 Admission In MBA. Made with ❤️ for students
+            © 2026 Admission In MBA. Made with ❤️ for students
           </div>
         </div>
       </footer>

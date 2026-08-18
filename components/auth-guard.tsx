@@ -13,10 +13,19 @@ export function AuthGuard({ children }: AuthGuardProps) {
 
   useEffect(() => {
     const token = localStorage.getItem("token")
-    if (token) {
+    let storedUser: { role?: string } | null = null
+
+    try {
+      storedUser = JSON.parse(localStorage.getItem("user") || "null")
+    } catch {
+      storedUser = null
+    }
+
+    if (token && storedUser?.role === "admin") {
       setIsAuthenticated(true)
     } else {
-      router.push("/admin/login")
+      setIsAuthenticated(false)
+      router.replace("/admin/login")
     }
   }, [router])
 

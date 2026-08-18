@@ -1,3 +1,3 @@
-// const BASE_URL = "https://mba-college-api-zgzx.onrender.com"
-const BASE_URL = "https://mba-college-api-production-b074.up.railway.app"
+// const BASE_URL = "http://localhost:5001/api/v1"
+const BASE_URL = "https://8sopa5yr6i.execute-api.us-east-1.amazonaws.com/dev/api/v1"
 export default BASE_URL;

@@ -6,7 +6,7 @@ import Image from 'next/image';
 import DOMPurify from 'dompurify';
 import BASE_URL from '@/app/config/api';
 
-export function formatDate(dbDate: string): string {
+function formatDate(dbDate: string): string {
   const date = new Date(dbDate);
   if (isNaN(date.getTime())) return dbDate;
 
@@ -38,7 +38,7 @@ export default function BlogDetailPage() {
 
     const fetchBlog = async () => {
       try {
-        const res = await fetch(`${BASE_URL}/api/blog/name/${id}`);
+        const res = await fetch(`${BASE_URL}/blog/name/${id}`);
         if (!res.ok) throw new Error('Failed to fetch blog');
         const result = await res.json();
         setBlog(result.data);
