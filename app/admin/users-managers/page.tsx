@@ -108,10 +108,10 @@ export default function UsersManagerPage() {
       const userData: UserItem[] = Array.isArray(data.data)
         ? data.data
         : Array.isArray(data.users)
-        ? data.users
-        : Array.isArray(data)
-        ? data
-        : [];
+          ? data.users
+          : Array.isArray(data)
+            ? data
+            : [];
 
       setUsers(userData);
     } catch (err: any) {
@@ -141,8 +141,7 @@ export default function UsersManagerPage() {
   const getUserPhone = (user: UserItem): string => user.phone || user.phoneNumber || 'N/A';
   const getUserRole = (user: UserItem): string => user.role || 'user';
   const isUserVerified = (user: UserItem): boolean => {
-    if (typeof user.isVerified === 'boolean') return user.isVerified;
-    if (typeof user.verified === 'boolean') return user.verified;
+    if (typeof user.isEmailVerified === 'boolean') return user.isEmailVerified;
     return false;
   };
   const getUserId = (user: UserItem): string => user._id || user.id || '';
@@ -292,14 +291,14 @@ export default function UsersManagerPage() {
                 Refresh
               </button>
 
-              <button
+              {/* <button
                 type="button"
                 onClick={() => setIsAddUserOpen(true)}
                 className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-colors"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Add User
-              </button>
+              </button> */}
             </div>
           </div>
 
@@ -485,22 +484,20 @@ export default function UsersManagerPage() {
                               </TableCell>
                               <TableCell>
                                 <span
-                                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider ${
-                                    role.toLowerCase() === 'admin'
-                                      ? 'bg-purple-100 text-purple-800'
-                                      : 'bg-blue-50 text-blue-700'
-                                  }`}
+                                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider ${role.toLowerCase() === 'admin'
+                                    ? 'bg-purple-100 text-purple-800'
+                                    : 'bg-blue-50 text-blue-700'
+                                    }`}
                                 >
                                   {role}
                                 </span>
                               </TableCell>
                               <TableCell>
                                 <span
-                                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                    verified
-                                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                                      : 'bg-amber-50 text-amber-700 border border-amber-200'
-                                  }`}
+                                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${verified
+                                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                    : 'bg-amber-50 text-amber-700 border border-amber-200'
+                                    }`}
                                 >
                                   {verified ? 'Verified' : 'Pending / Active'}
                                 </span>

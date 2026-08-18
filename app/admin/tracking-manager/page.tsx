@@ -39,38 +39,52 @@ import {
   Send,
   GitCompare,
   User,
-  ExternalLink,
+  GraduationCap,
+  Building2,
   X,
+  Phone,
+  Mail,
   Filter,
+  UserCheck,
+  UserX,
 } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import BASE_URL from '@/app/config/api';
 
+export interface StudentInfo {
+  _id?: string;
+  name?: string;
+  phone?: string;
+  email?: string;
+}
+
+export interface CollegeInfo {
+  _id?: string;
+  name?: string;
+  shortName?: string;
+}
+
 export interface SearchFiltersData {
-  searchText?: string;
-  location?: string;
-  category?: string;
-  specialization?: string;
-  type?: string;
-  fees?: string;
-  searchType?: string;
+  searchText?: string | null;
+  location?: string | null;
+  category?: string | null;
+  specialization?: string | null;
+  type?: string | null;
+  fees?: string | null;
+  searchType?: string | null;
   [key: string]: any;
 }
 
 export interface TrackingItem {
-  _id?: string;
-  id?: string;
+  _id: string;
   action: string;
-  collegeId?: string | { _id?: string; name?: string; shortName?: string };
-  collegeName?: string;
-  visitorId?: string;
-  userId?: string | { _id?: string; name?: string; email?: string };
-  searchFilters?: SearchFiltersData;
-  ip?: string;
-  userAgent?: string;
-  createdAt?: string;
+  student?: StudentInfo | null;
+  visitorId: string;
+  college?: CollegeInfo | string | null;
+  searchFilters?: SearchFiltersData | null;
+  createdAt: string;
   updatedAt?: string;
-  timestamp?: string;
+  __v?: number;
   [key: string]: any;
 }
 
@@ -82,6 +96,7 @@ export default function TrackingManagerPage() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchQuery, setSearchQuery] = useState('');
   const [actionFilter, setActionFilter] = useState('all');
+  const [userTypeFilter, setUserTypeFilter] = useState('all'); // all, registered, anonymous
 
   // Modals state
   const [selectedEvent, setSelectedEvent] = useState<TrackingItem | null>(null);
@@ -115,10 +130,10 @@ export default function TrackingManagerPage() {
         ? data
         : [];
 
-      // Sort newest first if dates are present
+      // Sort newest first
       const sorted = [...trackingData].sort((a, b) => {
-        const dateA = new Date(a.createdAt || a.timestamp || 0).getTime();
-        const dateB = new Date(b.createdAt || b.timestamp || 0).getTime();
+        const dateA = new Date(a.createdAt || 0).getTime();
+        const dateB = new Date(b.createdAt || 0).getTime();
         return dateB - dateA;
       });
 
@@ -141,46 +156,33 @@ export default function TrackingManagerPage() {
   }, []);
 
   // Helpers
-  const getEventId = (item: TrackingItem): string => item._id || item.id || '';
-
-  const getCollegeDisplay = (item: TrackingItem): string => {
-    if (item.collegeName) return item.collegeName;
-    if (typeof item.collegeId === 'object' && item.collegeId !== null) {
-      return item.collegeId.name || item.collegeId.shortName || item.collegeId._id || 'N/A';
+  const getCollegeName = (item: TrackingItem): string => {
+    if (!item.college) return '';
+    if (typeof item.college === 'object') {
+      return item.college.name || item.college.shortName || item.college._id || '';
     }
-    if (typeof item.collegeId === 'string') {
-      return item.collegeId;
-    }
-    return '-';
+    return String(item.college);
   };
 
-  const getVisitorDisplay = (item: TrackingItem): string => item.visitorId || 'Anonymous';
-
-  const getUserDisplay = (item: TrackingItem): string => {
-    if (typeof item.userId === 'object' && item.userId !== null) {
-      return item.userId.name || item.userId.email || item.userId._id || '';
+  const getCollegeId = (item: TrackingItem): string => {
+    if (!item.college) return '';
+    if (typeof item.college === 'object') {
+      return item.college._id || '';
     }
-    if (typeof item.userId === 'string') {
-      return item.userId;
-    }
-    if (typeof item.user === 'object' && item.user !== null) {
-      return item.user.name || item.user.email || '';
-    }
-    return '';
+    return String(item.college);
   };
 
-  const getFormattedDate = (item: TrackingItem): { date: string; time: string } => {
-    const raw = item.createdAt || item.timestamp || item.updatedAt;
-    if (!raw) return { date: '-', time: '-' };
+  const getFormattedDate = (dateString?: string): { date: string; time: string } => {
+    if (!dateString) return { date: '-', time: '-' };
     try {
-      const d = new Date(raw);
-      if (isNaN(d.getTime())) return { date: String(raw), time: '' };
+      const d = new Date(dateString);
+      if (isNaN(d.getTime())) return { date: dateString, time: '' };
       return {
         date: d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
         time: d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }),
       };
     } catch {
-      return { date: String(raw), time: '' };
+      return { date: dateString, time: '' };
     }
   };
 
@@ -188,10 +190,10 @@ export default function TrackingManagerPage() {
     navigator.clipboard.writeText(text);
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2000);
-    toast({ title: 'Copied', description: 'Visitor ID copied to clipboard' });
+    toast({ title: 'Copied', description: 'Copied to clipboard' });
   };
 
-  // Action styling and labels
+  // Action badge configurations
   const getActionBadge = (action: string) => {
     const lower = (action || '').toLowerCase();
     switch (lower) {
@@ -244,54 +246,68 @@ export default function TrackingManagerPage() {
     }
   };
 
-  // Filtering
+  // Active non-null search filters helper
+  const getActiveFilters = (filters?: SearchFiltersData | null) => {
+    if (!filters) return [];
+    return Object.entries(filters).filter(([_, val]) => val !== null && val !== undefined && val !== '');
+  };
+
+  // Filtered List
   const filteredList = useMemo(() => {
     const query = searchQuery.toLowerCase().trim();
 
     return trackingList.filter((item) => {
       const action = (item.action || '').toLowerCase();
-      const college = getCollegeDisplay(item).toLowerCase();
-      const visitor = getVisitorDisplay(item).toLowerCase();
-      const user = getUserDisplay(item).toLowerCase();
-      const searchTerms = item.searchFilters
+      const collegeName = getCollegeName(item).toLowerCase();
+      const studentName = (item.student?.name || '').toLowerCase();
+      const studentEmail = (item.student?.email || '').toLowerCase();
+      const studentPhone = (item.student?.phone || '').toLowerCase();
+      const visitorId = (item.visitorId || '').toLowerCase();
+      const dateStr = (item.createdAt || '').toLowerCase();
+
+      // Search filters values
+      const filterValues = item.searchFilters
         ? Object.values(item.searchFilters).filter(Boolean).join(' ').toLowerCase()
         : '';
-      const dateStr = (item.createdAt || item.timestamp || '').toLowerCase();
 
       const matchesQuery =
         !query ||
         action.includes(query) ||
-        college.includes(query) ||
-        visitor.includes(query) ||
-        user.includes(query) ||
-        searchTerms.includes(query) ||
+        collegeName.includes(query) ||
+        studentName.includes(query) ||
+        studentEmail.includes(query) ||
+        studentPhone.includes(query) ||
+        visitorId.includes(query) ||
+        filterValues.includes(query) ||
         dateStr.includes(query);
 
       const matchesAction =
         actionFilter === 'all' || action === actionFilter.toLowerCase();
 
-      return matchesQuery && matchesAction;
-    });
-  }, [trackingList, searchQuery, actionFilter]);
+      const isRegistered = Boolean(item.student && item.student.name);
+      const matchesUserType =
+        userTypeFilter === 'all' ||
+        (userTypeFilter === 'registered' && isRegistered) ||
+        (userTypeFilter === 'anonymous' && !isRegistered);
 
-  // KPI Statistics
+      return matchesQuery && matchesAction && matchesUserType;
+    });
+  }, [trackingList, searchQuery, actionFilter, userTypeFilter]);
+
+  // Statistics calculation
   const stats = useMemo(() => {
     const total = trackingList.length;
+    const registeredStudentEvents = trackingList.filter((i) => Boolean(i.student && i.student.name)).length;
+    const anonymousVisitorEvents = trackingList.filter((i) => !i.student).length;
     const uniqueVisitors = new Set(
-      trackingList.map((i) => i.visitorId).filter(Boolean)
+      trackingList.filter((i) => !i.student).map((i) => i.visitorId).filter(Boolean)
     ).size;
-    const searches = trackingList.filter(
-      (i) => (i.action || '').toLowerCase() === 'search'
-    ).length;
-    const conversions = trackingList.filter((i) => {
-      const act = (i.action || '').toLowerCase();
-      return act === 'apply_now' || act === 'download_brochure';
-    }).length;
+    const searchEvents = trackingList.filter((i) => (i.action || '').toLowerCase() === 'search').length;
 
-    return { total, uniqueVisitors, searches, conversions };
+    return { total, registeredStudentEvents, anonymousVisitorEvents, uniqueVisitors, searchEvents };
   }, [trackingList]);
 
-  // Handle Delete Event
+  // Handle Delete Record
   const handleDeleteEvent = async (id: string) => {
     const token = localStorage.getItem('token');
     try {
@@ -308,7 +324,7 @@ export default function TrackingManagerPage() {
       }
 
       toast({ title: 'Success', description: 'Tracking record deleted' });
-      setTrackingList((prev) => prev.filter((i) => getEventId(i) !== id));
+      setTrackingList((prev) => prev.filter((i) => i._id !== id));
       setDeleteEventId(null);
     } catch (err: any) {
       console.error(err);
@@ -334,7 +350,7 @@ export default function TrackingManagerPage() {
                 <h1 className="text-2xl font-bold text-gray-900">Tracking Manager</h1>
               </div>
               <p className="text-sm text-gray-500 mt-1">
-                Monitor user activity, college views, searches, applications, brochure downloads, and visitor analytics.
+                Real-time tracking of student interactions, college views, searches, applications, and anonymous visitor traffic.
               </p>
             </div>
 
@@ -365,31 +381,32 @@ export default function TrackingManagerPage() {
 
             <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm flex items-center justify-between">
               <div>
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Unique Visitors</p>
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Student Events</p>
+                <h3 className="text-2xl font-bold text-emerald-600 mt-1">{stats.registeredStudentEvents}</h3>
+              </div>
+              <div className="h-12 w-12 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-600">
+                <UserCheck className="h-6 w-6" />
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm flex items-center justify-between">
+              <div>
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Anonymous Visitors</p>
                 <h3 className="text-2xl font-bold text-teal-600 mt-1">{stats.uniqueVisitors}</h3>
+                <span className="text-xs text-gray-400">({stats.anonymousVisitorEvents} events)</span>
               </div>
               <div className="h-12 w-12 bg-teal-50 rounded-lg flex items-center justify-center text-teal-600">
-                <User className="h-6 w-6" />
+                <UserX className="h-6 w-6" />
               </div>
             </div>
 
             <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm flex items-center justify-between">
               <div>
                 <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Search Queries</p>
-                <h3 className="text-2xl font-bold text-amber-600 mt-1">{stats.searches}</h3>
+                <h3 className="text-2xl font-bold text-amber-600 mt-1">{stats.searchEvents}</h3>
               </div>
               <div className="h-12 w-12 bg-amber-50 rounded-lg flex items-center justify-center text-amber-600">
                 <Search className="h-6 w-6" />
-              </div>
-            </div>
-
-            <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm flex items-center justify-between">
-              <div>
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">High Intent Actions</p>
-                <h3 className="text-2xl font-bold text-emerald-600 mt-1">{stats.conversions}</h3>
-              </div>
-              <div className="h-12 w-12 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-600">
-                <Send className="h-6 w-6" />
               </div>
             </div>
           </div>
@@ -398,7 +415,7 @@ export default function TrackingManagerPage() {
           <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
             <div className="w-full md:max-w-md">
               <TextField
-                label="Search by Action, College, Visitor ID, or Keyword"
+                label="Search by Student, College, Visitor ID, or Keyword"
                 variant="outlined"
                 size="small"
                 fullWidth
@@ -411,7 +428,21 @@ export default function TrackingManagerPage() {
             </div>
 
             <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-              <FormControl size="small" sx={{ minWidth: 180 }}>
+              <FormControl size="small" sx={{ minWidth: 160 }}>
+                <InputLabel id="user-type-filter-label">User Type</InputLabel>
+                <Select
+                  labelId="user-type-filter-label"
+                  value={userTypeFilter}
+                  label="User Type"
+                  onChange={(e) => setUserTypeFilter(e.target.value)}
+                >
+                  <MenuItem value="all">All Traffic</MenuItem>
+                  <MenuItem value="registered">Registered Students</MenuItem>
+                  <MenuItem value="anonymous">Anonymous Visitors</MenuItem>
+                </Select>
+              </FormControl>
+
+              <FormControl size="small" sx={{ minWidth: 170 }}>
                 <InputLabel id="action-filter-label">Action Type</InputLabel>
                 <Select
                   labelId="action-filter-label"
@@ -420,7 +451,7 @@ export default function TrackingManagerPage() {
                   onChange={(e) => setActionFilter(e.target.value)}
                 >
                   <MenuItem value="all">All Actions</MenuItem>
-                  <MenuItem value="view_detail">View Details</MenuItem>
+                  <MenuItem value="view_detail">View Detail</MenuItem>
                   <MenuItem value="apply_now">Apply Now</MenuItem>
                   <MenuItem value="download_brochure">Download Brochure</MenuItem>
                   <MenuItem value="search">Search</MenuItem>
@@ -429,11 +460,12 @@ export default function TrackingManagerPage() {
                 </Select>
               </FormControl>
 
-              {(searchQuery || actionFilter !== 'all') && (
+              {(searchQuery || actionFilter !== 'all' || userTypeFilter !== 'all') && (
                 <button
                   onClick={() => {
                     setSearchQuery('');
                     setActionFilter('all');
+                    setUserTypeFilter('all');
                   }}
                   className="text-xs text-blue-600 hover:text-blue-800 font-medium px-2 py-1 underline"
                 >
@@ -455,7 +487,7 @@ export default function TrackingManagerPage() {
                 <Activity className="h-12 w-12 text-gray-300 mb-3" />
                 <h3 className="text-base font-semibold text-gray-700">No tracking records found</h3>
                 <p className="text-sm text-gray-500 mt-1 max-w-sm">
-                  {searchQuery || actionFilter !== 'all'
+                  {searchQuery || actionFilter !== 'all' || userTypeFilter !== 'all'
                     ? 'No tracking events match the current filter criteria.'
                     : 'No tracking interactions recorded yet.'}
                 </p>
@@ -466,12 +498,12 @@ export default function TrackingManagerPage() {
                   <Table stickyHeader aria-label="tracking details table">
                     <TableHead>
                       <TableRow sx={{ '& th': { backgroundColor: '#f9fafb', fontWeight: 600, color: '#374151' } }}>
-                        <TableCell width={70}>Sr.No</TableCell>
+                        <TableCell width={60}>Sr.No</TableCell>
                         <TableCell width={160}>Date & Time</TableCell>
-                        <TableCell width={180}>Action</TableCell>
-                        <TableCell>Target College / Info</TableCell>
-                        <TableCell>Visitor / User ID</TableCell>
-                        <TableCell>Parameters / Details</TableCell>
+                        <TableCell width={160}>Action</TableCell>
+                        <TableCell>Student / User</TableCell>
+                        <TableCell>College / Target</TableCell>
+                        <TableCell>Search / Filters</TableCell>
                         <TableCell align="right" width={110}>Actions</TableCell>
                       </TableRow>
                     </TableHead>
@@ -479,23 +511,26 @@ export default function TrackingManagerPage() {
                       {filteredList
                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                         .map((item, index) => {
-                          const eventId = getEventId(item);
-                          const { date, time } = getFormattedDate(item);
+                          const { date, time } = getFormattedDate(item.createdAt);
                           const badge = getActionBadge(item.action);
                           const IconComponent = badge.icon;
-                          const collegeText = getCollegeDisplay(item);
-                          const visitorText = getVisitorDisplay(item);
-                          const userText = getUserDisplay(item);
+                          const collegeName = getCollegeName(item);
+                          const student = item.student;
+                          const activeFilters = getActiveFilters(item.searchFilters);
 
                           return (
-                            <TableRow key={eventId || index} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                            <TableRow key={item._id || index} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                               <TableCell className="text-gray-500 font-medium">
                                 {page * rowsPerPage + index + 1}
                               </TableCell>
+
+                              {/* Date & Time */}
                               <TableCell>
                                 <div className="text-xs font-semibold text-gray-900">{date}</div>
                                 {time && <div className="text-xs text-gray-500">{time}</div>}
                               </TableCell>
+
+                              {/* Action Badge */}
                               <TableCell>
                                 <span
                                   className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${badge.classes}`}
@@ -504,56 +539,80 @@ export default function TrackingManagerPage() {
                                   {badge.label}
                                 </span>
                               </TableCell>
+
+                              {/* Student / User info */}
                               <TableCell>
-                                <div className="text-sm font-medium text-gray-900">
-                                  {collegeText !== '-' ? collegeText : (
-                                    <span className="text-gray-400 italic">None / Search Event</span>
-                                  )}
-                                </div>
-                              </TableCell>
-                              <TableCell>
-                                <div className="flex items-center space-x-2">
-                                  <span className="font-mono text-xs text-gray-600 bg-gray-100 px-2 py-0.5 rounded max-w-[140px] truncate" title={visitorText}>
-                                    {visitorText}
-                                  </span>
-                                  {visitorText !== 'Anonymous' && (
-                                    <button
-                                      type="button"
-                                      onClick={() => handleCopy(visitorText, eventId || String(index))}
-                                      className="text-gray-400 hover:text-gray-700 p-0.5 rounded transition-colors"
-                                      title="Copy Visitor ID"
-                                    >
-                                      {copiedId === (eventId || String(index)) ? (
-                                        <Check className="h-3.5 w-3.5 text-emerald-600" />
-                                      ) : (
-                                        <Copy className="h-3.5 w-3.5" />
+                                {student && student.name ? (
+                                  <div>
+                                    <div className="font-semibold text-gray-900 flex items-center gap-1.5">
+                                      <GraduationCap className="h-4 w-4 text-emerald-600 flex-shrink-0" />
+                                      <span>{student.name}</span>
+                                    </div>
+                                    <div className="text-xs text-gray-500 mt-0.5">
+                                      {student.email || student.phone || 'Registered User'}
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div>
+                                    <div className="flex items-center space-x-1.5">
+                                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600">
+                                        Anonymous Visitor
+                                      </span>
+                                    </div>
+                                    <div className="flex items-center space-x-1 mt-1 text-xs text-gray-400 font-mono">
+                                      <span className="max-w-[130px] truncate" title={item.visitorId}>
+                                        {item.visitorId ? item.visitorId.slice(0, 13) + '...' : '-'}
+                                      </span>
+                                      {item.visitorId && (
+                                        <button
+                                          type="button"
+                                          onClick={() => handleCopy(item.visitorId, item._id)}
+                                          className="text-gray-400 hover:text-gray-700 p-0.5 rounded"
+                                          title="Copy Visitor ID"
+                                        >
+                                          {copiedId === item._id ? (
+                                            <Check className="h-3 w-3 text-emerald-600" />
+                                          ) : (
+                                            <Copy className="h-3 w-3" />
+                                          )}
+                                        </button>
                                       )}
-                                    </button>
-                                  )}
-                                </div>
-                                {userText && (
-                                  <div className="text-xs text-blue-600 mt-0.5 flex items-center gap-1">
-                                    <User className="h-3 w-3" />
-                                    <span>{userText}</span>
+                                    </div>
                                   </div>
                                 )}
                               </TableCell>
+
+                              {/* College / Target */}
                               <TableCell>
-                                {item.searchFilters && Object.keys(item.searchFilters).length > 0 ? (
+                                {collegeName ? (
+                                  <div className="flex items-start space-x-1.5">
+                                    <Building2 className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
+                                    <span className="text-sm font-medium text-gray-900 leading-tight">
+                                      {collegeName}
+                                    </span>
+                                  </div>
+                                ) : (
+                                  <span className="text-xs text-gray-400 italic">
+                                    {activeFilters.length > 0 ? 'Search Platform' : 'General Platform'}
+                                  </span>
+                                )}
+                              </TableCell>
+
+                              {/* Search Filters */}
+                              <TableCell>
+                                {activeFilters.length > 0 ? (
                                   <div className="flex flex-wrap gap-1 max-w-xs">
-                                    {item.searchFilters.searchText && (
-                                      <span className="text-xs bg-amber-50 text-amber-800 border border-amber-200 px-2 py-0.5 rounded">
-                                        Query: "{item.searchFilters.searchText}"
+                                    {activeFilters.slice(0, 2).map(([key, val]) => (
+                                      <span
+                                        key={key}
+                                        className="text-xs bg-amber-50 text-amber-800 border border-amber-200 px-2 py-0.5 rounded"
+                                      >
+                                        <strong className="capitalize">{key}:</strong> {String(val)}
                                       </span>
-                                    )}
-                                    {item.searchFilters.location && (
-                                      <span className="text-xs bg-slate-100 text-slate-700 px-2 py-0.5 rounded">
-                                        Loc: {item.searchFilters.location}
-                                      </span>
-                                    )}
-                                    {item.searchFilters.category && (
-                                      <span className="text-xs bg-slate-100 text-slate-700 px-2 py-0.5 rounded">
-                                        Cat: {item.searchFilters.category}
+                                    ))}
+                                    {activeFilters.length > 2 && (
+                                      <span className="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded font-medium">
+                                        +{activeFilters.length - 2} more
                                       </span>
                                     )}
                                   </div>
@@ -561,9 +620,11 @@ export default function TrackingManagerPage() {
                                   <span className="text-xs text-gray-400">-</span>
                                 )}
                               </TableCell>
+
+                              {/* Actions */}
                               <TableCell align="right">
                                 <div className="flex items-center justify-end space-x-1">
-                                  <Tooltip title="View Full Payload">
+                                  <Tooltip title="View All Details">
                                     <IconButton
                                       size="small"
                                       color="primary"
@@ -577,8 +638,8 @@ export default function TrackingManagerPage() {
                                     <IconButton
                                       size="small"
                                       color="error"
-                                      onClick={() => setDeleteEventId(eventId)}
-                                      disabled={!eventId}
+                                      onClick={() => setDeleteEventId(item._id)}
+                                      disabled={!item._id}
                                     >
                                       <Trash2 className="h-4 w-4" />
                                     </IconButton>
@@ -605,7 +666,7 @@ export default function TrackingManagerPage() {
             )}
           </div>
 
-          {/* View Event Details Modal */}
+          {/* View Event Details Modal - Shows ALL fields */}
           <Dialog
             open={!!selectedEvent}
             onClose={() => setSelectedEvent(null)}
@@ -621,10 +682,11 @@ export default function TrackingManagerPage() {
                 <X className="h-4 w-4" />
               </IconButton>
             </DialogTitle>
+
             <DialogContent className="pt-4 space-y-4">
               {selectedEvent && (
                 <div className="space-y-4">
-                  {/* Top summary header */}
+                  {/* Top Action & Timestamp Banner */}
                   <div className="p-4 bg-gray-50 rounded-xl border border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
                       <span
@@ -635,64 +697,185 @@ export default function TrackingManagerPage() {
                         {getActionBadge(selectedEvent.action).label}
                       </span>
                       <h4 className="text-base font-bold text-gray-900 mt-2">
-                        {getCollegeDisplay(selectedEvent) !== '-'
-                          ? getCollegeDisplay(selectedEvent)
-                          : 'General User Interaction'}
+                        {getCollegeName(selectedEvent) || 'General Interaction / Search Event'}
                       </h4>
                     </div>
                     <div className="text-left sm:text-right">
-                      <p className="text-xs text-gray-400 uppercase font-semibold">Timestamp</p>
+                      <p className="text-xs text-gray-400 uppercase font-semibold">Created Date & Time</p>
                       <p className="text-sm font-medium text-gray-800 mt-0.5">
-                        {selectedEvent.createdAt || selectedEvent.timestamp
-                          ? new Date(selectedEvent.createdAt || selectedEvent.timestamp || '').toLocaleString()
+                        {selectedEvent.createdAt
+                          ? new Date(selectedEvent.createdAt).toLocaleString('en-US', {
+                              dateStyle: 'medium',
+                              timeStyle: 'medium',
+                            })
                           : 'N/A'}
                       </p>
                     </div>
                   </div>
 
-                  {/* Key metadata grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                    <div className="p-3 bg-white border rounded-lg">
-                      <p className="text-xs text-gray-400 uppercase font-semibold">Event ID</p>
-                      <p className="font-mono text-gray-800 text-xs mt-1 break-all">
-                        {getEventId(selectedEvent) || 'N/A'}
-                      </p>
+                  {/* Student Details Card */}
+                  <div className="p-4 bg-white border border-gray-200 rounded-xl space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <GraduationCap className="h-5 w-5 text-blue-600" />
+                        <h5 className="font-bold text-gray-900 text-sm">Student Information</h5>
+                      </div>
+                      <span
+                        className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                          selectedEvent.student
+                            ? 'bg-emerald-100 text-emerald-800'
+                            : 'bg-gray-100 text-gray-600'
+                        }`}
+                      >
+                        {selectedEvent.student ? 'Registered Student' : 'Anonymous / Not Logged In'}
+                      </span>
                     </div>
 
-                    <div className="p-3 bg-white border rounded-lg">
-                      <p className="text-xs text-gray-400 uppercase font-semibold">Visitor ID</p>
-                      <p className="font-mono text-gray-800 text-xs mt-1 break-all">
-                        {getVisitorDisplay(selectedEvent)}
+                    {selectedEvent.student ? (
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                        <div className="p-2.5 bg-gray-50 rounded-lg">
+                          <p className="text-xs text-gray-500 font-semibold uppercase">Student Name</p>
+                          <p className="text-sm font-bold text-gray-900 mt-0.5">
+                            {selectedEvent.student.name || '-'}
+                          </p>
+                        </div>
+
+                        <div className="p-2.5 bg-gray-50 rounded-lg">
+                          <p className="text-xs text-gray-500 font-semibold uppercase">Phone</p>
+                          <p className="text-sm font-medium text-gray-900 mt-0.5">
+                            {selectedEvent.student.phone ? (
+                              <a href={`tel:${selectedEvent.student.phone}`} className="text-blue-600 hover:underline">
+                                {selectedEvent.student.phone}
+                              </a>
+                            ) : (
+                              '-'
+                            )}
+                          </p>
+                        </div>
+
+                        <div className="p-2.5 bg-gray-50 rounded-lg">
+                          <p className="text-xs text-gray-500 font-semibold uppercase">Email</p>
+                          <p className="text-sm font-medium text-gray-900 mt-0.5 truncate">
+                            {selectedEvent.student.email ? (
+                              <a href={`mailto:${selectedEvent.student.email}`} className="text-blue-600 hover:underline">
+                                {selectedEvent.student.email}
+                              </a>
+                            ) : (
+                              '-'
+                            )}
+                          </p>
+                        </div>
+
+                        {selectedEvent.student._id && (
+                          <div className="p-2.5 bg-gray-50 rounded-lg sm:col-span-3">
+                            <p className="text-xs text-gray-500 font-semibold uppercase">Student User ID</p>
+                            <p className="text-xs font-mono text-gray-700 mt-0.5">
+                              {selectedEvent.student._id}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <p className="text-xs text-gray-500 italic">
+                        This action was performed by an anonymous visitor before signing in.
                       </p>
+                    )}
+                  </div>
+
+                  {/* College Details Card */}
+                  <div className="p-4 bg-white border border-gray-200 rounded-xl space-y-3">
+                    <div className="flex items-center space-x-2">
+                      <Building2 className="h-5 w-5 text-blue-600" />
+                      <h5 className="font-bold text-gray-900 text-sm">College Target Information</h5>
                     </div>
 
-                    {getUserDisplay(selectedEvent) && (
-                      <div className="p-3 bg-white border rounded-lg sm:col-span-2">
-                        <p className="text-xs text-gray-400 uppercase font-semibold">User Info</p>
-                        <p className="text-gray-800 text-sm mt-1">
-                          {getUserDisplay(selectedEvent)}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                      <div className="p-2.5 bg-gray-50 rounded-lg">
+                        <p className="text-xs text-gray-500 font-semibold uppercase">College Name</p>
+                        <p className="text-sm font-bold text-gray-900 mt-0.5">
+                          {getCollegeName(selectedEvent) || 'None (Search Event)'}
                         </p>
                       </div>
-                    )}
 
-                    {selectedEvent.searchFilters && (
-                      <div className="p-3 bg-white border rounded-lg sm:col-span-2">
-                        <p className="text-xs text-gray-400 uppercase font-semibold mb-2">Search Filters Applied</p>
-                        <div className="grid grid-cols-2 gap-2 text-xs">
-                          {Object.entries(selectedEvent.searchFilters).map(([k, v]) => (
-                            <div key={k} className="p-2 bg-gray-50 rounded">
-                              <span className="font-semibold text-gray-600">{k}: </span>
-                              <span className="text-gray-900">{String(v)}</span>
-                            </div>
-                          ))}
-                        </div>
+                      <div className="p-2.5 bg-gray-50 rounded-lg">
+                        <p className="text-xs text-gray-500 font-semibold uppercase">College ID</p>
+                        <p className="text-xs font-mono text-gray-700 mt-0.5">
+                          {getCollegeId(selectedEvent) || 'N/A'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Search Filters Card */}
+                  <div className="p-4 bg-white border border-gray-200 rounded-xl space-y-3">
+                    <div className="flex items-center space-x-2">
+                      <Search className="h-5 w-5 text-amber-600" />
+                      <h5 className="font-bold text-gray-900 text-sm">Search Filters</h5>
+                    </div>
+
+                    {selectedEvent.searchFilters && getActiveFilters(selectedEvent.searchFilters).length > 0 ? (
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-1">
+                        {Object.entries(selectedEvent.searchFilters).map(([k, v]) => (
+                          <div key={k} className={`p-2.5 rounded-lg border ${v !== null && v !== undefined && v !== '' ? 'bg-amber-50 border-amber-200 text-amber-900' : 'bg-gray-50 border-gray-200 text-gray-400'}`}>
+                            <p className="text-xs font-semibold uppercase">{k}</p>
+                            <p className="text-xs font-medium mt-0.5">{v !== null && v !== undefined && v !== '' ? String(v) : 'null'}</p>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-1">
+                        {selectedEvent.searchFilters && Object.entries(selectedEvent.searchFilters).map(([k, v]) => (
+                          <div key={k} className="p-2 bg-gray-50 rounded border border-gray-200 text-gray-400 text-xs">
+                            <span className="font-semibold uppercase">{k}: </span>
+                            <span>{v === null ? 'null' : String(v)}</span>
+                          </div>
+                        ))}
                       </div>
                     )}
                   </div>
 
-                  {/* Raw JSON viewer */}
+                  {/* Session / IDs Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                    <div className="p-3 bg-white border rounded-lg">
+                      <div className="flex items-center justify-between">
+                        <p className="text-xs text-gray-400 uppercase font-semibold">Visitor ID</p>
+                        {selectedEvent.visitorId && (
+                          <button
+                            type="button"
+                            onClick={() => handleCopy(selectedEvent.visitorId, 'modal-visitor')}
+                            className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1"
+                          >
+                            <Copy className="h-3 w-3" />
+                            Copy
+                          </button>
+                        )}
+                      </div>
+                      <p className="font-mono text-gray-800 text-xs mt-1 break-all">
+                        {selectedEvent.visitorId || 'N/A'}
+                      </p>
+                    </div>
+
+                    <div className="p-3 bg-white border rounded-lg">
+                      <p className="text-xs text-gray-400 uppercase font-semibold">Record ID (_id)</p>
+                      <p className="font-mono text-gray-800 text-xs mt-1 break-all">
+                        {selectedEvent._id || 'N/A'}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Complete Raw JSON Viewer */}
                   <div className="border rounded-lg p-3 bg-slate-900 text-slate-100">
-                    <p className="text-xs font-mono text-slate-400 mb-2 font-semibold">Raw Event Payload:</p>
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="text-xs font-mono text-slate-400 font-semibold">Complete Event JSON Object:</p>
+                      <button
+                        type="button"
+                        onClick={() => handleCopy(JSON.stringify(selectedEvent, null, 2), 'raw-json')}
+                        className="text-xs text-emerald-400 hover:text-emerald-300 flex items-center gap-1 font-mono"
+                      >
+                        <Copy className="h-3 w-3" />
+                        Copy JSON
+                      </button>
+                    </div>
                     <pre className="text-xs font-mono overflow-x-auto max-h-56 text-emerald-400">
                       {JSON.stringify(selectedEvent, null, 2)}
                     </pre>
@@ -700,6 +883,7 @@ export default function TrackingManagerPage() {
                 </div>
               )}
             </DialogContent>
+
             <DialogActions className="border-t p-3">
               <MuiButton onClick={() => setSelectedEvent(null)} variant="outlined">
                 Close
