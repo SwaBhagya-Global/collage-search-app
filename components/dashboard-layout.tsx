@@ -15,6 +15,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   const handleLogout = () => {
     localStorage.removeItem("token")
+    localStorage.removeItem("user")
     window.location.href = "/admin/login"
   }
 
