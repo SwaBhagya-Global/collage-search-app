@@ -71,7 +71,7 @@ export default function BlogsManager() {
   const fetchBlogs = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch(`${BASE_URL}/api/blog`);
+      const res = await fetch(`${BASE_URL}/blog`);
       const data = await res.json();
       const sorted = (data.data || []).sort(
         (a: Blog, b: Blog) => new Date(b.publishedAt!).getTime() - new Date(a.publishedAt!).getTime()

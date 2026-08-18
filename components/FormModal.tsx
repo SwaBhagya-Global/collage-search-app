@@ -90,7 +90,7 @@ export default function FormModal({
     }
 
     try {
-      const res = await fetch(`${BASE_URL}/api/leads`, {
+      const res = await fetch(`${BASE_URL}/leads`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -9,6 +9,15 @@ import { Badge } from "@/components/ui/badge"
 import LoginModal from "./login-modal"
 import SignupModal from "./signup-modal"
 import CompareModal from "./compare-modal"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu"
+
+import { LogOut, Settings, UserCircle, LayoutDashboard } from "lucide-react"
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -16,23 +25,52 @@ export default function Header() {
   const [showSignup, setShowSignup] = useState(false)
   const [showCompare, setShowCompare] = useState(false)
   const [compareCount, setCompareCount] = useState(0)
+  const [user, setUser] = useState<any>(null)
 
-  useEffect(() => {
-    // Load initial compare count
-    const compareList = JSON.parse(localStorage.getItem("compareColleges") || "[]")
-    setCompareCount(compareList.length)
+useEffect(() => {
+  const compareList = JSON.parse(
+    localStorage.getItem("compareColleges") || "[]"
+  );
 
-    // Listen for compare updates
-    const handleCompareUpdate = (event: any) => {
-      setCompareCount(event.detail.count)
+  setCompareCount(compareList.length);
+
+  const storedUser = localStorage.getItem("user");
+
+  if (storedUser) {
+    setUser(JSON.parse(storedUser));
+  }
+
+  const handleCompareUpdate = (event: any) => {
+    setCompareCount(event.detail.count);
+  };
+
+  const handleUserLogin = () => {
+    const storedUser = localStorage.getItem("user");
+
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    } else {
+      setUser(null);
     }
+  };
 
-    window.addEventListener("compareUpdated", handleCompareUpdate)
+  window.addEventListener("compareUpdated", handleCompareUpdate);
+  window.addEventListener("userLogin", handleUserLogin);
 
-    return () => {
-      window.removeEventListener("compareUpdated", handleCompareUpdate)
-    }
-  }, [])
+  return () => {
+    window.removeEventListener("compareUpdated", handleCompareUpdate);
+    window.removeEventListener("userLogin", handleUserLogin);
+  };
+}, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token")
+    localStorage.removeItem("user")
+
+    setUser(null)
+
+    window.location.href = "/"
+  }
 
   return (
     <>
@@ -42,7 +80,7 @@ export default function Header() {
           <div className="flex items-center justify-between py-4">
             {/* Logo */}
             <Link href="/" className="flex items-center space-x-3">
-              <img src="../logo-mba.png" width={150}/>
+              <img src="../logo-mba.png" width={150} />
             </Link>
 
             {/* Desktop Navigation */}
@@ -125,22 +163,100 @@ export default function Header() {
 
               {/* Desktop Auth Buttons */}
               <div className="hidden md:flex items-center space-x-3">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowLogin(true)}
-                  className="border-blue-600 text-blue-600 hover:bg-blue-50"
-                >
-                  <User className="w-4 h-4 mr-2" />
-                  Login
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={() => setShowSignup(true)}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
-                >
-                  Sign Up
-                </Button>
+
+                {user ? (
+
+                  <DropdownMenu>
+
+                    <DropdownMenuTrigger asChild>
+
+                      <Button variant="ghost" className="flex items-center gap-3">
+
+                        <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold text-lg">
+                          {user.name?.charAt(0).toUpperCase()}
+                        </div>
+
+                        <div className="hidden lg:block text-left">
+                          <p className="font-semibold">{user.name}</p>
+                        </div>
+
+                      </Button>
+
+                    </DropdownMenuTrigger>
+
+                    <DropdownMenuContent align="end" className="w-60">
+
+                      {/* <DropdownMenuItem asChild>
+                        <Link href="/profile">
+                          <UserCircle className="mr-2 h-4 w-4" />
+                          My Profile
+                        </Link>
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem asChild>
+                        <Link href="/dashboard">
+                          <LayoutDashboard className="mr-2 h-4 w-4" />
+                          Dashboard
+                        </Link>
+                      </DropdownMenuItem> */}
+
+                      <DropdownMenuItem asChild>
+                        <Link href="/saved-colleges">
+                          ❤️ Saved Colleges
+                        </Link>
+                      </DropdownMenuItem>
+
+                      {/* <DropdownMenuItem asChild>
+                        <Link href="/compare">
+                          Compare Colleges
+                        </Link>
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem asChild>
+                        <Link href="/settings">
+                          <Settings className="mr-2 h-4 w-4" />
+                          Settings
+                        </Link>
+                      </DropdownMenuItem> */}
+
+                      <DropdownMenuSeparator />
+
+                      <DropdownMenuItem
+                        onClick={handleLogout}
+                        className="text-red-600 cursor-pointer"
+                      >
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Logout
+                      </DropdownMenuItem>
+
+                    </DropdownMenuContent>
+
+                  </DropdownMenu>
+
+                ) : (
+
+                  <>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowLogin(true)}
+                      className="border-blue-600 text-blue-600 hover:bg-blue-50"
+                    >
+                      <User className="w-4 h-4 mr-2" />
+                      Login
+                    </Button>
+
+                    <Button
+                      size="sm"
+                      onClick={() => setShowSignup(true)}
+                      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                    >
+                      Sign Up
+                    </Button>
+                  </>
+
+                )}
+
               </div>
 
               {/* Mobile Menu Button */}
@@ -154,7 +270,7 @@ export default function Header() {
                   <div className="flex flex-col h-full">
                     {/* Mobile Menu Header */}
                     <Link href="/" className="flex items-center space-x-3">
-                      <img src="../logo-mba.png" width={150}/>
+                      <img src="../logo-mba.png" width={150} />
                     </Link>
 
                     {/* Mobile Navigation */}
@@ -173,6 +289,7 @@ export default function Header() {
                       >
                         ❓ FAQs
                       </Link>
+                      
                       {/* <Link
                         href="/exams"
                         className="flex items-center text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium py-3 px-4 rounded-lg transition-colors"
@@ -217,28 +334,65 @@ export default function Header() {
                       </Button>
 
                       {/* Mobile Auth Buttons */}
-                      <div className="border-t pt-6 mt-auto space-y-3">
-                        <Button
-                          variant="outline"
-                          className="w-full border-blue-600 text-blue-600 hover:bg-blue-50 bg-transparent"
-                          onClick={() => {
-                            setShowLogin(true)
-                            setIsMenuOpen(false)
-                          }}
-                        >
-                          <User className="w-4 h-4 mr-2" />
-                          Login
-                        </Button>
-                        <Button
-                          className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
-                          onClick={() => {
-                            setShowSignup(true)
-                            setIsMenuOpen(false)
-                          }}
-                        >
-                          Sign Up
-                        </Button>
-                      </div>
+                        {user ? (
+                          <>
+                            <div className="border-t pt-5 mt-5">
+                              <div className="flex items-center gap-3 px-4">
+
+                                <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-lg font-bold">
+                                  {user.name?.charAt(0).toUpperCase()}
+                                </div>
+
+                                <div>
+                                  <p className="font-semibold">{user.name}</p>
+                                  <p className="text-sm text-gray-500">{user.email}</p>
+                                </div>
+
+                              </div>
+                              <br></br>
+
+                              <Button
+                                variant="ghost"
+                                className="w-full justify-start mt-4"
+                                asChild
+                              >
+                                <Link href="/saved-colleges">❤️ Saved Colleges</Link>
+                              </Button>
+                              
+
+                              <Button
+                                variant="ghost"
+                                className="w-full justify-start"
+                                onClick={handleLogout}
+                              >
+                                Logout
+                              </Button>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <Button
+                              variant="outline"
+                              className="w-full border-blue-600 text-blue-600 hover:bg-blue-50 bg-transparent"
+                              onClick={() => {
+                                setShowLogin(true)
+                                setIsMenuOpen(false)
+                              }}
+                            >
+                              <User className="w-4 h-4 mr-2" />
+                              Login
+                            </Button>
+                            <Button
+                              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                              onClick={() => {
+                                setShowSignup(true)
+                                setIsMenuOpen(false)
+                              }}
+                            >
+                              Sign Up
+                            </Button>
+                          </>
+                        )}
                     </div>
                   </div>
                 </SheetContent>
@@ -248,8 +402,22 @@ export default function Header() {
         </div>
       </header>
 
-      <LoginModal open={showLogin} onClose={() => setShowLogin(false)} />
-      <SignupModal open={showSignup} onClose={() => setShowSignup(false)} />
+      <LoginModal
+        open={showLogin}
+        onClose={() => setShowLogin(false)}
+        onOpenSignup={() => {
+          setShowLogin(false)
+          setShowSignup(true)
+        }}
+      />
+      <SignupModal
+        open={showSignup}
+        onClose={() => setShowSignup(false)}
+        onOpenLogin={() => {
+          setShowSignup(false)
+          setShowLogin(true)
+        }}
+      />
       <CompareModal open={showCompare} onClose={() => setShowCompare(false)} />
     </>
   )

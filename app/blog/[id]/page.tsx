@@ -38,7 +38,7 @@ export default function BlogDetailPage() {
 
     const fetchBlog = async () => {
       try {
-        const res = await fetch(`${BASE_URL}/api/blog/name/${id}`);
+        const res = await fetch(`${BASE_URL}/blog/name/${id}`);
         if (!res.ok) throw new Error('Failed to fetch blog');
         const result = await res.json();
         setBlog(result.data);

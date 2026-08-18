@@ -23,7 +23,7 @@ export default function BlogPage() {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const res = await fetch(`${BASE_URL}/api/blog`);
+        const res = await fetch(`${BASE_URL}/blog`);
         if (!res.ok) throw new Error('Failed to fetch blogs');
         const data = await res.json();
         // Check if data is array or wrapped in object
