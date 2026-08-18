@@ -2,7 +2,7 @@
 
 import { useRouter, usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { LayoutDashboard, GraduationCap, LogOut } from "lucide-react"
+import { LayoutDashboard, GraduationCap, LogOut, Users, Activity, FileText, Mail } from "lucide-react"
 import { useState, useEffect } from "react"
 
 interface DashboardLayoutProps {
@@ -21,8 +21,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   const navigation = [
     { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
-    { name: "Blog Manager", href: "/admin/blog-manager", icon: LayoutDashboard },
-    { name: "Contact", href: "/admin/contact-manager", icon: LayoutDashboard },
+    { name: "Blog Manager", href: "/admin/blog-manager", icon: FileText },
+    { name: "Contact", href: "/admin/contact-manager", icon: Mail },
+    { name: "Users Manager", href: "/admin/users-managers", icon: Users },
+    { name: "Tracking Manager", href: "/admin/tracking-manager", icon: Activity },
   ]
 
   // Show loader on route change
@@ -31,6 +33,12 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     const timer = setTimeout(() => setLoading(false), 300) // optional delay
     return () => clearTimeout(timer)
   }, [pathname])
+
+  const isNavActive = (href: string) => {
+    if (pathname === href) return true
+    if (href === "/admin/users-managers" && pathname === "/admin/users-manager") return true
+    return false
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -50,9 +58,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 <a
                   key={item.name}
                   href={item.href}
-                  className={`flex items-center space-x-2 px-3 py-2 rounded hover:bg-gray-100 ${
-                    pathname === item.href
-                      ? "bg-gray-200 text-gray-900"
+                  className={`flex items-center space-x-2 px-3 py-2 rounded hover:bg-gray-100 transition-colors ${
+                    isNavActive(item.href)
+                      ? "bg-gray-200 text-gray-900 font-medium"
                       : "text-gray-700"
                   }`}
                 >

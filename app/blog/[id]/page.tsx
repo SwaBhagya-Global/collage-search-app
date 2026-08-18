@@ -6,7 +6,7 @@ import Image from 'next/image';
 import DOMPurify from 'dompurify';
 import BASE_URL from '@/app/config/api';
 
-export function formatDate(dbDate: string): string {
+function formatDate(dbDate: string): string {
   const date = new Date(dbDate);
   if (isNaN(date.getTime())) return dbDate;
 

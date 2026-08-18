@@ -21,7 +21,7 @@ import FormModal from "@/components/FormModal";
 import { ApiCollege } from "@/lib/types"
 import { trackAction } from "@/lib/tracking";
 
-export default function CollegePage({ params }: { params: { id: string } }) {
+export default function CollegePage() {
   const { id } = useParams<{ id: string }>();
   const [college, setCollege] = useState<ApiCollege | null>(null);
   const [loading, setLoading] = useState(true);
