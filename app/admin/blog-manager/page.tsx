@@ -133,7 +133,7 @@ export default function BlogsManager() {
 
     try {
       const token = localStorage.getItem('token');
-      const url = `${BASE_URL}/api/blog${editingBlog ? `/${editingBlog._id}` : ''}`;
+      const url = `${BASE_URL}/blog${editingBlog ? `/${editingBlog._id}` : ''}`;
       const res = await fetch(url, {
         method: editingBlog ? 'PUT' : 'POST',
         headers: {
@@ -179,7 +179,7 @@ export default function BlogsManager() {
     if (!id) return;
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`${BASE_URL}/api/blog/${id}`, {
+      const res = await fetch(`${BASE_URL}/blog/${id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
