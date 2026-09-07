@@ -52,6 +52,9 @@ export default function Footer() {
                   <SiBluesky className="w-5 h-5 text-gray-600 hover:text-sky-500 transition" />
                 </Link>
               </div>
+              <p className="text-gray-500 text-sm mt-4">
+                A venture by Truewings Education Services and ANS Education Services
+              </p>
             </div>
           </div>
 
